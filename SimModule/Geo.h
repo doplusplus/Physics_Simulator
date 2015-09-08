@@ -16,23 +16,24 @@ public:
 	~Point();
 
 //accessor
-    double getX();
-    double getY();
-    double getZ();
+	double getX();
+	double getY();
+	double getZ();
 
 
 //Display
-    void show();
+	void show();
 
 //Modifier
 	void setX(double x);
 	void setY(double y);
 	void setZ(double z);
-    void nullify();
+	void place(double x,double y, double z);  // place the point a the coordinates (x,y,z)  **
+	void nullify();   // set the point at the origin, to use as initializer **
 
 //Algebraic operator
-    Point operator +( Point B );
-    Point operator *( double a); // scalar multiplication
+	Point operator +( Point B );
+	Point operator *( double a); // scalar multiplication
 
 };
 
