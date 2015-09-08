@@ -3,20 +3,20 @@
 #include <cmath>
 
 //-----------------POINT---------------------------------------------
-    Point::Point()
-    {
-        x=y=z=0;
-    }
-
-    Point::Point(double xc,double yc, double zc)
-    {
-        x=xc;
-        y=yc;
-        z=zc;
-    }
-
-    Point::~Point()
-    {}
+	Point::Point()
+	{
+		x=y=z=0;
+	}
+	
+	Point::Point(double xc,double yc, double zc)
+	{
+		x=xc;
+		y=yc;
+		z=zc;
+	}
+	
+	Point::~Point()
+	{}
 
 
 //Accessors---------------------------------------------------------------
@@ -43,43 +43,54 @@
 
 
 //Modifier-------------------------------------------------------------------
-    void Point::setX(double xe)
-    {
-        x=xe;
-    }
-    void Point::setY(double ye)
-    {
-        y=ye;
-    }
-
-    void Point::setZ(double ze)
-    {
-        z=ze;
-    }
-
-    void Point::nullify()
-    {
-        x=y=z=0;
-    }
+	void Point::setX(double xe)
+	{
+		x=xe;
+	}
+	void Point::setY(double ye)
+	{
+		y=ye;
+	}
+	
+	void Point::setZ(double ze)
+	{
+		z=ze;
+	}
+	void Point::place(double xe,double ye, double ze)   //**
+	{
+		x=xe;
+		y=ye;
+		z=ze;
+	}
+	void Point::nullify()                    //**
+	{
+		x=y=z=0;
+	}
 
 
 //Algebraic operator-------------------------------------------------------------
-    Point Point::operator +( Point B )
-    {Point P;
-       P.setX(x+B.getX());
-       P.setY(y+B.getY());
-       P.setZ(z+B.getZ());
-    return P;
-    }
-
-    Point Point::operator *( double a) //produit scalaire
-    {Point P;
-         P.setX(a*x);
-         P.setX(a*y);
-         P.setX(a*z);
-      return P;
-    }
-
+	Point Point::operator +( Point B )
+	{
+	 Point P;
+		P.setX(x+B.getX());
+		P.setY(y+B.getY());
+		P.setZ(z+B.getZ());
+	 return P;
+	}
+	
+	Point Point::operator *( double a) //multiplication by a scalar
+	{
+	 Point P;
+		P.place(x*a , y*a, z*a);
+	 return P;
+	}
+	
+	Point Point::operator /( double a) //scalar division  **
+	{
+	 Point P;
+		P.place(x/a, y/a, z/a);
+	 return P;
+	}
 
 //.................................End Point......................................
 //================================================================================
@@ -135,7 +146,7 @@
 
 	void Vector::nullify()
 	{
-		this->setVector(0,0,0);
+		setVector(0,0,0);
 	}
 	
 	void Vector::show()
@@ -143,7 +154,6 @@
 		std::cout<<" x: "<<xcomp <<'\n';
 		std::cout<<" y: "<<ycomp <<'\n';
 		std::cout<<" z: "<<zcomp <<'\n';
-		
 	}
 	
 	
@@ -166,7 +176,7 @@
 		return v;
 	}
 	
-	Vector Vector::operator * (double a) //produit scalaire
+	Vector Vector::operator * (double a) //multiplication by a scalar
 	{Vector v;
 		v.xcomp=a*xcomp;
 		v.ycomp=a*ycomp;
