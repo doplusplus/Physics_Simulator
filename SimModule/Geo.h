@@ -34,7 +34,7 @@ public:
 //Algebraic operator
 	Point operator +( Point B );
 	Point operator *( double a); // scalar multiplication
-
+	Point operator /( double a); //division by a scalar **
 };
 
 
