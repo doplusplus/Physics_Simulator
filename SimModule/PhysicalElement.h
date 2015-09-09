@@ -17,16 +17,15 @@ class Force                         //in Newton
 	~Force();
 
 	//Accessors
-	Vector getDirection();
-    Point *getApplicationPoint(); //returns a pointer to the application point
+	Vector getDirection(); //**
+    Point *getApplicationPoint(); //returns a pointer to the application point**
 
 	//Display
 	void show();
 
 	//Modifier
-	void setDirection (Vector V);
-    void setApplication(Point &P);
-    void setApplication(Point *P);
+	void setDirection (Vector V);     //**
+    void setApplication(Point *P);   //set the Point the Force element applies(points) to
 	void nullify();
 	
     Force operator +(Force B);
