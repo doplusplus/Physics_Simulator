@@ -6,7 +6,7 @@
 	MaterialElement::MaterialElement()
 	{}
 	
-	MaterialElement::MaterialElement(Point P, double mass =0, double charge=0)
+	MaterialElement::MaterialElement(Point P, double mass, double charge)
 	{
 		setPosition(P);
 		setMass(mass);
