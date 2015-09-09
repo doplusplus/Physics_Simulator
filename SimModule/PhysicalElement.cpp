@@ -32,9 +32,6 @@
 	void Force::setDirection (Vector V)
 	{direction = V;}
 
-    void Force::setApplication(Point &P)
-    {application = &P;}
-	
     void Force::setApplication(Point *P)
     {application = P;}
 
@@ -58,7 +55,7 @@
 
         V.setVector(x,y,z);
         F.setDirection(V);
-        F.setApplication(*getApplicationPoint());
+        F.setApplication( getApplicationPoint());
     return F;
     }
 
@@ -160,7 +157,6 @@
 //	Vector Velocity::operator +( Vector A, Vector B )
 //	Vector Velocity::operator *( Vector A, Vector B )  //produit vectoriel
 //	Vector Velocity::operator *( double a, Vector B )  //produit scalaire
-
 
 
 
