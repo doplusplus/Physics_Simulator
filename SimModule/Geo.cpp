@@ -35,33 +35,23 @@
         return z;
     }
 
+
     //Display-------------------------------------------------------------------
-    void Point::show()
+   void Point::show()
     {
         std::cout<<"x:"<<x<<'\n'<<"y:"<<y<<'\n'<<"z:"<<z<<'\n';
     }
 
 
 //Modifier-------------------------------------------------------------------
-	void Point::setX(double xe)
-	{
-		x=xe;
-	}
-	void Point::setY(double ye)
-	{
-		y=ye;
-	}
-	
-	void Point::setZ(double ze)
-	{
-		z=ze;
-	}
+
 	void Point::place(double xe,double ye, double ze)   //**
 	{
 		x=xe;
 		y=ye;
 		z=ze;
 	}
+
 	void Point::nullify()                    //**
 	{
 		x=y=z=0;
@@ -69,12 +59,10 @@
 
 
 //Algebraic operator-------------------------------------------------------------
-	Point Point::operator +( Point B )
+	Point Point::operator +( Point B )  // Coordinates addition
 	{
 	 Point P;
-		P.setX(x+B.getX());
-		P.setY(y+B.getY());
-		P.setZ(z+B.getZ());
+	 P.place(x + B.x, y + B.y, z + B.z);
 	 return P;
 	}
 	
