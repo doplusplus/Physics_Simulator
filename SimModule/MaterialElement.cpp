@@ -6,28 +6,33 @@
 	MaterialElement::MaterialElement()
 	{}
 	
-	MaterialElement::MaterialElement(Point P, double mass, double charge)
+	MaterialElement::MaterialElement(Point P, double masse , double charge_)
 	{
-		setPosition(P);
-		setMass(mass);
+		position = P;  // does a shallow copy of P
+		mass = masse;
+        charge = charge_;
 	}
 	
 	MaterialElement::~MaterialElement()
 	{}
 	
 //Accessors---------------------------------------------
-    Point MaterialElement::*pointerToPosition()
-	{
-        return &position;
+    Point * MaterialElement::pointerToPosition()
+    {
+     Point *pos= NULL;
+        pos = &position;
+     return pos;
 	}
-	
+
+
     double MaterialElement::getMass()
 	{
         return mass;
     }
 
+
 //Display-----------------------------------------------
-	virtual void MaterialElement::consoleShow()
+	void MaterialElement::consoleShow()
 	{
 		position.show();
 		std::cout<<"mass: "<<mass<<'\n';
@@ -36,23 +41,21 @@
 //Modifier----------------------------------------------
 	void MaterialElement::setPosition(Point &P)
 	{
-	 position=P;
+	 position = P;
 	}
  
 	void MaterialElement::setPosition(double x, double y, double z)
 	{
-		position.setX(x);
-		position.setY(y);
-		position.setZ(z);
+        position.place(x,y,z);
 	}
 	
-	void setMass(double m)
+	void MaterialElement::setMass(double m)
 	{
-	 mass=m;
+        mass=m;
 	}
 
 //Simulation tool-------------------------------------
-	virtual void MaterialElement::update(double dt) //computes and updates the state of the element at t+dt
+	void MaterialElement::update(double dt) //computes and updates the state of the element at t+dt
 	{ 
 	  Acceleration a;
 		a = getAcceleration();
@@ -60,16 +63,16 @@
 	
 	}
 	
-	virtual Acceleration MaterialElement::getAcceleration()
+	Acceleration MaterialElement::getAcceleration()
 	{
 	  Acceleration a;
-	  a.nullify();
+        a.nullify();
 	  
 	  Vector V = netForce.getDirection();
 		
-        if( mPoint.getMass() != 0 )
+        if( mass != 0 )
 			{
-                V = V*( 1 / mPoint.getMass());
+                V = V*( 1 / mass);
                 a.setDirection(V);
 			}
 		else
@@ -80,7 +83,7 @@
 	  return a;
 	}
 	
-	virtual void MaterialElement::updateSpeedandPosition(Acceleration a, double dt)
+	void MaterialElement::updateSpeedandPosition(Acceleration a, double dt)
 	{
 	  double Vx,Vy,Vz,X,Y,Z;
 		
@@ -93,7 +96,7 @@
         X = 0.5*a.getDirection().getx()*dt*dt + Vx*dt + position.getX();
         Y = 0.5*a.getDirection().gety()*dt*dt + Vy*dt + position.getY();
         Z = 0.5*a.getDirection().getz()*dt*dt + Vz*dt + position.getZ();
-        mPoint.setPosition(X,Y,Z);
+        position.place(X,Y,Z);
 		
      //integration of the accelerations gives final speeds
         Vx = a.getDirection().getx()*dt + V.getDirection().getx();
