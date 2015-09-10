@@ -15,25 +15,25 @@ private:
 	double charge; 	// in Coulomb
 	Point position; // m 
 	Force netForce; // Newton
-	Velocity v;		// m/s	
+	Velocity V;		// m/s
 	
 public:
 
 
 	//Constructors & destructor
 	MaterialElement();	
-	MaterialElement(Point P, double mass =0, double charge=0);
+    MaterialElement(Point P, double masse =0, double charge_=0);
 	~MaterialElement();		
 
 	//Accessors
-    Point *pointerToPosition();
-    double getMass();
+    Point *pointerToPosition(); //** necessary for display
+    double getMass(); //** necessary for display
 
 	//Display
 	virtual void consoleShow();
 	
 	//Modifier
-	void setPosition(Point &P);
+    void setPosition(Point &P);
 	void setPosition(double x, double y, double z);
 	void setMass(double m);
 	
