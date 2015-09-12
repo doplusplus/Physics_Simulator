@@ -17,6 +17,9 @@ private:
 	Force netForce; // Newton
 	Velocity V;		// m/s
 	
+	virtual void updateSpeedandPosition(Acceleration a, double dt); 
+
+
 public:
 
 
@@ -40,7 +43,7 @@ public:
 	//Simulation tool
 	virtual void update(double dt); //computes and updates the state of the element at t+dt
 	virtual Acceleration getAcceleration();
-	virtual void updateSpeedandPosition(Acceleration a, double dt); 
+
 	
 };
 
