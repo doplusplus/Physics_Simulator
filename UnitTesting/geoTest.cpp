@@ -84,15 +84,14 @@ namespace GeoTest
 			Assert::IsTrue(A.getZ() == std::numeric_limits<double>::min());
 		}
 
-		TEST_METHOD(AdditionTest_Doublelimits_integerfraction)
+			TEST_METHOD(AdditionTest_integerfraction)  //assumes compiler performs integer division
 		{
 			Point A(1000000/2, -2000001/2, 3);
 			Point B(1000000/2, -2000001/2, 0);
 
 			A = A + B;
-
 			Assert::IsTrue(A.getX() == 1000000);
-			Assert::IsTrue(A.getY() == -2000001);
+			Assert::IsTrue(A.getY() == -2000000);
 			Assert::IsTrue(A.getZ() == 3);
 		}
 
