@@ -2,7 +2,7 @@
 #include "CppUnitTest.h"
 #include "..\SimModule\Geo.h"
 #include <limits>
-#include <iostream> ///to remove in a bit
+#include <iostream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
