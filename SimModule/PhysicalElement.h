@@ -4,41 +4,60 @@
 #include "Geo.h"
 
 
-class Force                         //in Newton
+
+//****************************************************************************
+
+class InstanciatedVect
 {
 	private:
-    Point  *application;
-    Vector direction;
-	
+	Point * application;
+	Vect  direction;
 
 	public:
 	//Constructors and destructor
-	Force();
-	~Force();
+	InstanciatedVect();
+	InstanciatedVect(Vect V);
+	InstanciatedVect(Point P, Vect V);
+	~InstanciatedVect();
 
 	//Accessors
-	Vector getDirection(); //**
-    Point *getApplicationPoint(); //returns a pointer to the application point**
+	Vect getDirection(); //**
+	Point *getApplicationPoint(); //returns a pointer to the application point**
 
 	//Display
 	void show();
 
 	//Modifier
-	void setDirection (Vector V);     //**
-    void setApplication(Point *P);   //set the Point the Force element applies(points) to
+	void setDirection(Vect V);     //**
+	void setDirection(double x, double y, double z);
+	void setApplication(Point *P);  
 	void nullify();
-	
-    Force operator +(Force B);
-    Force operator -();
-//	Vector operator *( Vector A, Vector B ); //produit vectoriel
-//	Vector operator *( double a, Vector B ); //produit scalaire
 };
 
-class Acceleration                    // m/s²
+//******************************************************************
+
+class Force : public InstanciatedVect                         //in Newton
+{
+	public:
+	//Constructors and destructor
+	Force();
+	Force(Point P, Vect V);
+	~Force();
+
+	//Display
+	void show();
+
+	//Modifier	
+    Force operator +(Force B);
+    Force operator -();
+
+};
+
+class Acceleration : public InstanciatedVect                      // m/s²
 {
 	private:
     Point  *application;
-	Vector direction;
+	Vect direction;
 	
 
 	public:
@@ -47,55 +66,19 @@ class Acceleration                    // m/s²
 	Acceleration(Force F, double mass);				// valid for point element
 	~Acceleration();
 	
-	
-	//Accessors
-	Vector getDirection();
-    Point *getApplicationPoint();
-
 	//Display
 	void show();
-
-	//Modifier
-	void setDirection (Vector V);
-    void setApplication(Point *P);
-	void nullify();
-	
-//	Vector operator +( Vector A, Vector B );
-//	Vector operator *( Vector A, Vector B ); //produit vectoriel
-//	Vector operator *( double a, Vector B ); //produit scalaire
 };
 
-class Velocity                    // m/s
+class Velocity : public InstanciatedVect                     // m/s
 {
-	private:
-    Point  *application;
-	Vector direction;
-	
-
 	public:
 	//Constructors and destructor
 	Velocity();
 	~Velocity();
-	
-	
-	//Accessors
-	Vector getDirection();
-    Point *getApplicationPoint();
 
 	//Display
 	void show();
-
-	//Modifier
-	void setDirection (Vector V);
-	
-	void setDirection (double x, double y, double z);
-	
-    void setApplication(Point *P);
-	void nullify();
-	
-//	Vector operator +( Vector A, Vector B );
-//	Vector operator *( Vector A, Vector B ); //produit vectoriel
-//	Vector operator *( double a, Vector B ); //produit scalaire
 };
 
 struct timedForce  //all public
