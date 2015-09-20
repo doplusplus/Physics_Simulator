@@ -6,11 +6,11 @@
 	MaterialElement::MaterialElement()
 	{}
 	
-	MaterialElement::MaterialElement(Point P, double masse , double charge_)
+	MaterialElement::MaterialElement(Point p, double masse , double charge_)
 	{
-		position = P;  // does a shallow copy of P
-		mass = masse;
-        charge = charge_;
+		Position = p;  // does a shallow copy of P
+		Mass = masse;
+        Charge = charge_;
 	}
 	
 	MaterialElement::~MaterialElement()
@@ -20,38 +20,38 @@
     Point * MaterialElement::pointerToPosition()
     {
      Point *pos= NULL;
-        pos = &position;
+        pos = &Position;
      return pos;
 	}
 
 
     double MaterialElement::getMass()
 	{
-        return mass;
+        return Mass;
     }
 
 
 //Display-----------------------------------------------
 	void MaterialElement::consoleShow()
 	{
-		position.show();
-		std::cout<<"mass: "<<mass<<'\n';
+		Position.show();
+		std::cout<<"mass: "<<Mass<<'\n';
 	}
 
 //Modifier----------------------------------------------
 	void MaterialElement::setPosition(Point &P)
 	{
-	 position = P;
+		Position = P;
 	}
  
 	void MaterialElement::setPosition(double x, double y, double z)
 	{
-        position.place(x,y,z);
+        Position.set(x,y,z);
 	}
 	
 	void MaterialElement::setMass(double m)
 	{
-        mass=m;
+        Mass=m;
 	}
 
 //Simulation tool-------------------------------------
@@ -68,11 +68,11 @@
 	  Acceleration a;
         a.nullify();
 	  
-	  Vector V = netForce.getDirection();
+	  Vect V = NetForce.getDirection();
 		
-        if( mass != 0 )
+        if( Mass != 0 )
 			{
-                V = V*( 1 / mass);
+                V = V / Mass;
                 a.setDirection(V);
 			}
 		else
@@ -88,20 +88,20 @@
 	  double Vx,Vy,Vz,X,Y,Z;
 		
      //Initial speeds
-        Vx = V.getDirection().getx();
-        Vy = V.getDirection().gety();
-        Vz = V.getDirection().getz();	
+        Vx = V.getDirection().getX();
+        Vy = V.getDirection().getY();
+        Vz = V.getDirection().getZ();	
 		
      //Double integration of the accelerations gives final positions
-        X = 0.5*a.getDirection().getx()*dt*dt + Vx*dt + position.getX();
-        Y = 0.5*a.getDirection().gety()*dt*dt + Vy*dt + position.getY();
-        Z = 0.5*a.getDirection().getz()*dt*dt + Vz*dt + position.getZ();
-        position.place(X,Y,Z);
+        X = 0.5*a.getDirection().getX()*dt*dt + Vx*dt + Position.getX();
+        Y = 0.5*a.getDirection().getY()*dt*dt + Vy*dt + Position.getY();
+        Z = 0.5*a.getDirection().getZ()*dt*dt + Vz*dt + Position.getZ();
+        Position.set(X,Y,Z);
 		
      //integration of the accelerations gives final speeds
-        Vx = a.getDirection().getx()*dt + V.getDirection().getx();
-        Vy = a.getDirection().gety()*dt + V.getDirection().gety();
-        Vz = a.getDirection().getz()*dt + V.getDirection().getz();
+        Vx = a.getDirection().getX()*dt + V.getDirection().getX();
+        Vy = a.getDirection().getY()*dt + V.getDirection().getY();
+        Vz = a.getDirection().getZ()*dt + V.getDirection().getZ();
         V.setDirection(Vx,Vy,Vz);
 	}
 	
