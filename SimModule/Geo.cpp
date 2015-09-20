@@ -2,83 +2,116 @@
 #include <iostream>
 #include <cmath>
 
-//-----------------POINT---------------------------------------------
-	Point::Point()
+//----------------------------- Cartesian element ------------------------------------
+CartesianElement::CartesianElement() { X = Y = Z = 0; }
+
+CartesianElement::CartesianElement(double x, double y, double z) 
+{
+	X = x;
+	Y = y;
+	Z = z;
+}
+
+CartesianElement::~CartesianElement(){}
+
+//accessor
+double CartesianElement::getX() { return X; } //**  double
+double CartesianElement::getY() { return Y; } //**
+double CartesianElement::getZ() { return Z; } //**
+
+//Display
+void CartesianElement::show()
+{
+	std::cout << "x:" << X << '\n' << "y:" << Y << '\n' << "z:" << Z << '\n';
+}
+
+//Modifier
+void CartesianElement::set(double x, double y, double z) // place the point a the coordinates (x,y,z)  **
+{
+	X = x;
+	Y = y;
+	Z = z;
+}
+
+void CartesianElement::set(CartesianElement C)
+{
+	X = C.X;
+	Y = C.Y;
+	Z = C.Z;
+}
+
+void CartesianElement::nullify()  // set the point at the origin, to use as initializer **
+{
+	X = Y = Z = 0;
+}
+
+//Algebraic operator
+CartesianElement CartesianElement ::operator +(CartesianElement B)
+{
+	CartesianElement C(X + B.X, Y + B.Y, Z + B.Z);
+	return C;
+}
+
+CartesianElement CartesianElement ::operator -()
+{
+ CartesianElement C;
+	C.X = -X;
+	C.Y = -Y;
+	C.Z = -Z;
+ return C;
+}
+
+CartesianElement CartesianElement ::operator *(double a)	//multiplication by a scalar
+{
+	CartesianElement C(X *a, Y *a, Z *a);
+	return C;
+}
+
+CartesianElement CartesianElement ::operator /(double a)	//division by a scalar **
+{
+ CartesianElement C;
+	if (a == 0)
 	{
-		x=y=z=0;
+		C.nullify();
+		throw "divideByZero";
 	}
+	C.set(X / a, Y / a, Z / a);
+ return C;
+}				
+
+//logical operator	
+bool CartesianElement ::operator ==(CartesianElement B) 
+{
+	return (X == B.X) && (Y == B.Y) && (Z == B.Z);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+//-----------------POINT------------------------------------------------------------------------------
+	Point::Point()
+	{}
 	
-	Point::Point(double xc,double yc, double zc)
+	Point::Point(double x,double y, double z):CartesianElement(x,y,z)
+	{/*that's pretty it*/}
+
+	Point::Point(CartesianElement C)
 	{
-		x=xc;
-		y=yc;
-		z=zc;
+		set(C);
+	}
+
+	Point::Point(Vect V)  //creates a point at the end of the instance of V starting at the origin
+	{
+		set(V);
+	}
+
+	Point::Point(Point P, Vect V) //creates a point at the end of the instance of V starting at point P
+	{
+		set(P + V);
 	}
 	
 	Point::~Point()
 	{}
-
-
-//Accessors---------------------------------------------------------------
-    double Point::getX()
-    {
-        return x;
-    }
-
-    double Point::getY()
-    {
-        return y;
-    }
-
-    double Point::getZ()
-    {
-        return z;
-    }
-
-
-    //Display-------------------------------------------------------------------
-   void Point::show()
-    {
-        std::cout<<"x:"<<x<<'\n'<<"y:"<<y<<'\n'<<"z:"<<z<<'\n';
-    }
-
-
-//Modifier-------------------------------------------------------------------
-
-	void Point::place(double xe,double ye, double ze)   //**
-	{
-		x=xe;
-		y=ye;
-		z=ze;
-	}
-
-	void Point::nullify()                    //**
-	{
-		x=y=z=0;
-	}
-
-
-//Algebraic operator-------------------------------------------------------------
-	Point Point::operator +( Point B )  // Coordinates addition
-	{
-	 Point P;
-	 P.place(x + B.x, y + B.y, z + B.z);
-	 return P;
-	}
-	
-	Point Point::operator *( double a) //multiplication by a scalar
-	{
-	 Point P;
-		P.place(x*a , y*a, z*a);
-	 return P;
-	}
-	
-	Point Point::operator /( double a) //scalar division  **
-	{
-	 Point P;
-		P.place(x/a, y/a, z/a);
-	 return P;
-	}
 
 //.................................End Point......................................
 //================================================================================
@@ -86,110 +119,65 @@
 
 
 //================================================================================
-//----------------------------------- Vector -------------------------------------
+//----------------------------------- Vect -------------------------------------
 	
 //constructors	and destructor
-	Vector::Vector()
+	Vect::Vect()
 	{}
 	
-	Vector::Vector( double x, double y, double z)
+	Vect::Vect(double x, double y, double z) :CartesianElement(x, y, z)
+	{/*that's pretty it*/}
+
+	Vect::Vect(CartesianElement C)
 	{
-		xcomp=x;
-		ycomp=y;
-		zcomp=z;
+		set(C);
+	}
+
+	Vect::Vect(Point P)
+	{
+		set(P);
+	}
+
+	Vect::Vect(Point start, Point end)
+	{
+		set(end + (-start));
 	}
 	
-	Vector::~Vector()
+	Vect::~Vect()
     {}
-
 	
-//--------------------Accessors-------------------------------
-	
-	double Vector::getx()
-	{return xcomp;}
-	
-	double Vector::gety()
-	{return ycomp;}
-	
-	double Vector::getz()
-	{return zcomp;}
-	
-	
-//Modifiers----------------------------------------------------	
-	
-	void Vector::setVector( double x, double y, double z)
+	Vect Vect::operator ^( Vect &B ) //produit Vectiel
 	{
-		xcomp=x;
-		ycomp=y;
-		zcomp=z;
-	}
-	
+	 double x, y, z;
+		x = getY()*B.getZ()- getZ()*B.getY();
+		y = getZ()*B.getX() - getX()*B.getZ();
+		z = getX()*B.getY() - getY()*B.getX();
+		Vect v(x, y, z);
 
-	void Vector::setVector( Vector C)
-	{
-		xcomp=C.getx();
-		ycomp=C.gety();
-		zcomp=C.getz();
-	}
-
-	void Vector::nullify()
-	{
-		setVector(0,0,0);
+	 return v;
 	}
 	
-	void Vector::show()
-	{
-		std::cout<<" x: "<<xcomp <<'\n';
-		std::cout<<" y: "<<ycomp <<'\n';
-		std::cout<<" z: "<<zcomp <<'\n';
-	}
-	
-	
-//Operators definition---------------------------------------------------------
-	
-	Vector Vector::operator +( Vector &B )
-	{Vector v;
-		v.xcomp=xcomp+B.xcomp;
-		v.ycomp=ycomp+B.ycomp;
-		v.zcomp=zcomp+B.zcomp;
-		return v;
-	}
-	
-	Vector Vector::operator ^( Vector &B ) //produit vectoriel
-	{Vector v;
-	
-		v.xcomp= ycomp*B.zcomp-zcomp*B.ycomp;
-		v.ycomp= zcomp*B.xcomp-xcomp*B.zcomp;
-		v.zcomp= xcomp*B.ycomp-ycomp*B.xcomp;
-		return v;
-	}
-	
-	Vector Vector::operator * (double a) //multiplication by a scalar
-	{Vector v;
-		v.xcomp=a*xcomp;
-		v.ycomp=a*ycomp;
-		v.zcomp=a*zcomp;
-		return v;
-	}
-
-    double Vector::operator *(Vector &B) //dot product
+    double Vect::operator *(Vect &B) //dot product
     {
         double s;
-        s=xcomp*B.xcomp+ycomp*B.ycomp+zcomp*B.zcomp;
+        s= getX()*B.getX() + getY()*B.getY() + getZ()*B.getZ();
         return s;
     }
 
+
 //derived values
-    Vector Vector::unitarized()
+
+	double Vect::norm()
+	{
+		double sq = *this * (*this);
+		sq = sqrt(sq);
+		return sq;
+	}
+	
+	Vect Vect::unitarized()
     {
-        Vector u;
-        double sq= *this * (*this);
-
-        sq=sqrt(sq);
-        u.setVector(getx()/sq,gety()/sq,getz()/sq);
-
+        Vect u;
+		u = (*this) / norm();
+   
         return u;
     }
-
-
-
