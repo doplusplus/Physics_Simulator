@@ -3,6 +3,8 @@
 #include <cmath>
 
 //----------------------------- Cartesian element ------------------------------------
+
+// Constructors and destructor
 CartesianElement::CartesianElement() { X = Y = Z = 0; }
 
 CartesianElement::CartesianElement(double x, double y, double z) 
@@ -14,18 +16,18 @@ CartesianElement::CartesianElement(double x, double y, double z)
 
 CartesianElement::~CartesianElement(){}
 
-//accessor
+// Accessors
 double CartesianElement::getX() { return X; } //**  double
 double CartesianElement::getY() { return Y; } //**
 double CartesianElement::getZ() { return Z; } //**
 
-//Display
+// Display
 void CartesianElement::show()
 {
 	std::cout << "x:" << X << '\n' << "y:" << Y << '\n' << "z:" << Z << '\n';
 }
 
-//Modifier
+// Modifier
 void CartesianElement::set(double x, double y, double z) // place the point a the coordinates (x,y,z)  **
 {
 	X = x;
@@ -40,19 +42,19 @@ void CartesianElement::set(CartesianElement C)
 	Z = C.Z;
 }
 
-void CartesianElement::nullify()  // set the point at the origin, to use as initializer **
+void CartesianElement::nullify() 
 {
 	X = Y = Z = 0;
 }
 
-//Algebraic operator
+// Algebraic operators
 CartesianElement CartesianElement ::operator +(CartesianElement B)
 {
 	CartesianElement C(X + B.X, Y + B.Y, Z + B.Z);
 	return C;
 }
 
-CartesianElement CartesianElement ::operator -()
+CartesianElement CartesianElement ::operator -()		// returns the opposite element
 {
  CartesianElement C;
 	C.X = -X;
@@ -61,13 +63,13 @@ CartesianElement CartesianElement ::operator -()
  return C;
 }
 
-CartesianElement CartesianElement ::operator *(double a)	//multiplication by a scalar
+CartesianElement CartesianElement ::operator *(double a)	// multiplication by a scalar
 {
 	CartesianElement C(X *a, Y *a, Z *a);
 	return C;
 }
 
-CartesianElement CartesianElement ::operator /(double a)	//division by a scalar **
+CartesianElement CartesianElement ::operator /(double a)	// division by a scalar **
 {
  CartesianElement C;
 	if (a == 0)
@@ -79,16 +81,21 @@ CartesianElement CartesianElement ::operator /(double a)	//division by a scalar 
  return C;
 }				
 
-//logical operator	
+//Logical operator	
 bool CartesianElement ::operator ==(CartesianElement B) 
 {
 	return (X == B.X) && (Y == B.Y) && (Z == B.Z);
 }
-
-
-
 //--------------------------------------------------------------------------------------------------
-//-----------------POINT------------------------------------------------------------------------------
+//==================================================================================================
+
+
+
+
+
+
+//----------------------------------------------- POINT -----------------------------------------------
+// Constructors	and destructor
 	Point::Point()
 	{}
 	
@@ -118,14 +125,13 @@ bool CartesianElement ::operator ==(CartesianElement B)
 
 
 
-//================================================================================
 //----------------------------------- Vect -------------------------------------
 	
-//constructors	and destructor
+// Constructors	and destructor
 	Vect::Vect()
 	{}
 	
-	Vect::Vect(double x, double y, double z) :CartesianElement(x, y, z)
+	Vect::Vect(double x, double y, double z) : CartesianElement(x, y, z)
 	{/*that's pretty it*/}
 
 	Vect::Vect(CartesianElement C)
@@ -144,7 +150,7 @@ bool CartesianElement ::operator ==(CartesianElement B)
 	}
 	
 	Vect::~Vect()
-    {}
+	{}
 	
 	Vect Vect::operator ^( Vect &B ) //produit Vectiel
 	{
@@ -153,31 +159,28 @@ bool CartesianElement ::operator ==(CartesianElement B)
 		y = getZ()*B.getX() - getX()*B.getZ();
 		z = getX()*B.getY() - getY()*B.getX();
 		Vect v(x, y, z);
-
 	 return v;
 	}
 	
-    double Vect::operator *(Vect &B) //dot product
-    {
-        double s;
-        s= getX()*B.getX() + getY()*B.getY() + getZ()*B.getZ();
-        return s;
-    }
+	double Vect::operator *(Vect &B) //dot product
+    	{
+         double s;
+        	s= getX()*B.getX() + getY()*B.getY() + getZ()*B.getZ();
+         return s;
+    	}
 
 
-//derived values
-
+// toolbox
 	double Vect::norm()
 	{
-		double sq = *this * (*this);
+	double sq = *this * (*this);
 		sq = sqrt(sq);
-		return sq;
+	 return sq;
 	}
 	
 	Vect Vect::unitarized()
-    {
-        Vect u;
+    	{
+         Vect u;
 		u = (*this) / norm();
-   
-        return u;
-    }
+         return u;
+    	}
