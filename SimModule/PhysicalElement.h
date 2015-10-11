@@ -9,20 +9,21 @@
 
 class InstanciatedVect
 {
-	private:
+private:
 	Point * application;
 	Vect  direction;
 
-	public:
+public:
 	//Constructors and destructor
 	InstanciatedVect();
+	InstanciatedVect(const InstanciatedVect &Iv);
 	InstanciatedVect(Vect V);
-	InstanciatedVect(Point P, Vect V);
+	InstanciatedVect(Point &P, Vect V);
 	~InstanciatedVect();
 
 	//Accessors
-	Vect getDirection(); //**
-	Point *getApplicationPoint(); //returns a pointer to the application point**
+	Vect getDirection(); 		//**
+	Point *getApplicationPoint(); 	//returns a pointer to the application point**
 
 	//Display
 	void show();
@@ -30,51 +31,48 @@ class InstanciatedVect
 	//Modifier
 	void setDirection(Vect V);     //**
 	void setDirection(double x, double y, double z);
-	void setApplication(Point *P);  
+	void setApplication(Point *P);
 	void nullify();
 };
 
 //******************************************************************
 
-class Force : public InstanciatedVect                         //in Newton
+class Force : public InstanciatedVect     	//in Newton
 {
-	public:
+public:
 	//Constructors and destructor
 	Force();
-	Force(Point P, Vect V);
+	Force(Point &P, Vect V);
 	~Force();
 
 	//Display
 	void show();
 
 	//Modifier	
-    Force operator +(Force B);
-    Force operator -();
+	void operator +(Force &B);	 	//adds up the right end of the + to the left one; placing the force in the middle
+	Force operator -();			//returns opposite force
 
 };
 
 class Acceleration : public InstanciatedVect                      // m/s²
 {
-	private:
-    Point  *application;
-	Vect direction;
-	
-
-	public:
+public:
 	//Constructors and destructor
 	Acceleration();
-	Acceleration(Force F, double mass);				// valid for point element
+	Acceleration(Point &P, Vect V);
+	Acceleration(Force &Resultant, double mass);				// valid for point element
 	~Acceleration();
-	
+
 	//Display
 	void show();
 };
 
 class Velocity : public InstanciatedVect                     // m/s
 {
-	public:
+public:
 	//Constructors and destructor
 	Velocity();
+	Velocity(Point &P, Vect V);
 	~Velocity();
 
 	//Display
@@ -83,9 +81,9 @@ class Velocity : public InstanciatedVect                     // m/s
 
 struct timedForce  //all public
 {
-    double startTime;
-    double endTime;
-    Force F;
+	double startTime;
+	double endTime;
+	Force F;
 };
 
 
