@@ -1,90 +1,162 @@
-#ifndef PhysElem
-#define PhysElem
+#include "PhysicalElement.h"
+#include <iostream>
 
-#include "Geo.h"
+//-------------------------- Instanciated Vector ------------------------------------
 
-
-
-//****************************************************************************
-
-class InstanciatedVect
+//Constructors and destructor
+InstanciatedVect::InstanciatedVect()
 {
-private:
-	Point * application;
-	Vect  direction;
+	//application = new Point;
+}
 
-public:
-	//Constructors and destructor
-	InstanciatedVect();
-	InstanciatedVect(const InstanciatedVect &Iv);
-	InstanciatedVect(Vect V);
-	InstanciatedVect(Point &P, Vect V);
-	~InstanciatedVect();
 
-	//Accessors
-	Vect getDirection(); //**
-	Point *getApplicationPoint(); //returns a pointer to the application point**
-
-	//Display
-	void show();
-
-	//Modifier
-	void setDirection(Vect V);     //**
-	void setDirection(double x, double y, double z);
-	void setApplication(Point *P);
-	void nullify();
-};
-
-//******************************************************************
-
-class Force : public InstanciatedVect    	//in Newton
+InstanciatedVect::InstanciatedVect(const InstanciatedVect &Iv)
 {
-public:
-	//Constructors and destructor
-	Force();
-	Force(Point &P, Vect V);
-	~Force();
+	this->application = Iv.application; //something is happening here!
+	direction = Iv.direction;
+}
 
-	//Display
-	void show();
 
-	//Modifier	
-	void operator +(Force &B);	 	//adds up the right end of the + to the left one; placing the force in the middle
-	Force operator -();			//returns opposite force
-
-};
-
-class Acceleration : public InstanciatedVect                      // m/s²
+InstanciatedVect::InstanciatedVect(Vect V)
 {
-public:
-	//Constructors and destructor
-	Acceleration();
-	Acceleration(Point &P, Vect V);
-	Acceleration(Force &Resultant, double mass);				// valid for point element
-	~Acceleration();
+	Point P;
+	P.nullify();
+	application = &P;
+	direction = V;
+}
 
-	//Display
-	void show();
-};
-
-class Velocity : public InstanciatedVect                     // m/s
+InstanciatedVect::InstanciatedVect(Point &P, Vect V)
 {
-public:
-	//Constructors and destructor
-	Velocity();
-	Velocity(Point &P, Vect V);
-	~Velocity();
+	application = &P;
+	direction = V;
+}
 
-	//Display
-	void show();
-};
-
-struct timedForce  //all public
+InstanciatedVect::~InstanciatedVect()
 {
-	double startTime;
-	double endTime;
+	//delete application;
+}
+
+//Accessors
+Vect InstanciatedVect::getDirection() { return direction; } //**
+
+Point *InstanciatedVect::getApplicationPoint() //returns a pointer to the application point**
+{
+	return application;
+}
+
+//Display
+void InstanciatedVect::show()
+{
+	std::cout << "Direction:" << '\n';
+	direction.show();
+
+	std::cout << "Application point:" << '\n';
+	application->show();
+}
+
+//Modifier
+void InstanciatedVect::setDirection(Vect V)     //**
+{
+	direction.set(V);
+}
+
+void InstanciatedVect::setDirection(double x, double y, double z)
+{
+	direction.set(x, y, z);
+}
+
+
+void InstanciatedVect::setApplication(Point *P)
+{
+	application = P;
+}
+
+void InstanciatedVect::nullify()
+{
+	direction.nullify();
+	application->nullify();
+}
+
+
+
+
+//-------------------------- Forces ------------------------------------
+
+//Constructors and destructor
+Force::Force()
+{}
+
+Force::Force(Point &P, Vect V) : InstanciatedVect(P, V)
+{}
+
+Force::~Force()
+{}
+
+//Display
+void Force::show()
+{
+	std::cout << "   ---- Force ----   " << '\n';
+	InstanciatedVect::show();
+}
+
+
+void Force::operator +(Force &B) //adds up the right end of the + to the left one
+{
+
+	*getApplicationPoint() = (*getApplicationPoint() + *B.getApplicationPoint())*0.5;
+	setDirection(getDirection() + B.getDirection());
+}
+
+Force Force::operator -()
+{
 	Force F;
-};
+	F.setApplication(this->getApplicationPoint());
+	F.setDirection(-this->getDirection());
+	return F;
+}
 
 
-#endif
+
+//-------------------------- Acceleration ------------------------------------
+//Constructors and destructor
+Acceleration::Acceleration()
+{}
+
+Acceleration::Acceleration(Point &P, Vect V) : InstanciatedVect(P, V)
+{
+}
+
+Acceleration::Acceleration(Force &Resultant, double mass) : InstanciatedVect(*(Resultant.getApplicationPoint()), Resultant.getDirection() / mass)
+{
+	//returns the linear acceleration of the center of gravity
+	//of an object given its mass and resultant	
+}
+
+Acceleration::~Acceleration()
+{}
+
+//Display
+void Acceleration::show()
+{
+	std::cout << "   ---- Acceleration ----   " << '\n';
+	InstanciatedVect::show();
+}
+
+//-------------------------- Velocity ------------------------------------
+//Constructors and destructor
+Velocity::Velocity()
+{}
+
+Velocity::Velocity(Point &P, Vect V) : InstanciatedVect(P, V)
+{
+}
+
+Velocity::~Velocity()
+{}
+
+//Display
+void Velocity::show()
+{
+	std::cout << "   ---- Velocity ----   " << '\n';
+	InstanciatedVect::show();
+}
