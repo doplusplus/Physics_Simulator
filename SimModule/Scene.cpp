@@ -16,7 +16,7 @@ Scene::~Scene()
 {
 	for (auto it = S.begin(); it != S.end(); it++)
 	{
-		delete (*it);
+		delete *it;
 	}
 }
 
@@ -36,6 +36,10 @@ MaterialElement *Scene::getElement(unsigned int i)
 	return M;
 }
 
+double Scene::getTime()
+{
+	return Time;
+}
 
 //Display
 void Scene::consoleShow()
@@ -71,11 +75,12 @@ void Scene::update(double dt)
 void Scene::simulate(double step, double duration)
 {
  double t=0;
-	while(t <= duration)
+	while(t < duration)
 	{
 		update(step);
 		t= t+step;
 	}
+	Time += t;
 }
 
 
