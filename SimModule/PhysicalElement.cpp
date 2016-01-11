@@ -6,13 +6,12 @@
 //Constructors and destructor
 InstanciatedVect::InstanciatedVect()
 {
-	//application = new Point;
 }
 
 
 InstanciatedVect::InstanciatedVect(const InstanciatedVect &Iv)
 {
-	this->application = Iv.application; //something is happening here!
+	application = Iv.application;
 	direction = Iv.direction;
 }
 
@@ -33,13 +32,12 @@ InstanciatedVect::InstanciatedVect(Point &P, Vect V)
 
 InstanciatedVect::~InstanciatedVect()
 {
-	//delete application;
 }
 
 //Accessors
-Vect InstanciatedVect::getDirection() { return direction; } //**
+Vect InstanciatedVect::getDirection() { return direction; }
 
-Point *InstanciatedVect::getApplicationPoint() //returns a pointer to the application point**
+Point *InstanciatedVect::getApplicationPoint()
 {
 	return application;
 }
@@ -55,14 +53,14 @@ void InstanciatedVect::show()
 }
 
 //Modifier
-void InstanciatedVect::setDirection(Vect V)     //**
+void InstanciatedVect::setDirection(Vect V)
 {
-	direction.set(V);
+	direction.place(V);
 }
 
 void InstanciatedVect::setDirection(double x, double y, double z)
 {
-	direction.set(x, y, z);
+	direction.place(x, y, z);
 }
 
 
@@ -74,20 +72,36 @@ void InstanciatedVect::setApplication(Point *P)
 void InstanciatedVect::nullify()
 {
 	direction.nullify();
-	application->nullify();
 }
 
+InstanciatedVect InstanciatedVect::operator +(InstanciatedVect &B)
+{
+	InstanciatedVect I;
+	
+	Point *P = new Point(); P->trackAsHeap();
+	*P = (*application + *B.application)*0.5;
+	I.setDirection(getDirection()+ B.getDirection());
+	I.setApplication(P);
+
+	return I;
+}
 
 
 
 //-------------------------- Forces ------------------------------------
 
-//Constructors and destructor
+	//Constructors and destructor
 Force::Force()
 {}
 
 Force::Force(Point &P, Vect V) : InstanciatedVect(P, V)
 {}
+
+Force::Force(InstanciatedVect V)
+{
+	this->setApplication( V.getApplicationPoint());
+	this->setDirection(V.getDirection());
+}
 
 Force::~Force()
 {}
@@ -99,12 +113,10 @@ void Force::show()
 	InstanciatedVect::show();
 }
 
-
-void Force::operator +(Force &B) //adds up the right end of the + to the left one
+Force Force::operator +(Force &B)
 {
-
-	*getApplicationPoint() = (*getApplicationPoint() + *B.getApplicationPoint())*0.5;
-	setDirection(getDirection() + B.getDirection());
+	Force F = (InstanciatedVect)(*this) + B;
+	return F;
 }
 
 Force Force::operator -()
