@@ -5,13 +5,12 @@
 #include "MaterialElement.h"
 #include "PhysicalElement.h"
 
-
-
 class Scene
 {
 	private:
 		std::vector<MaterialElement*> S;
-	
+		double Time = 0;
+
 	public:
 
 	//Constructors and destructor
@@ -19,20 +18,21 @@ class Scene
 	~Scene();
 	
 	//Accessors
-    MaterialElement* getElement(unsigned int i);
+	MaterialElement* getElement(unsigned int i);
+	double getTime();
 
 	//Display
 	void consoleShow();
 
 	//Modifier
-    void setForce(Force F, unsigned int place);				// adds force to element i starting from 0
-    void update(double dt);							//calculates the scene configuration in dt seconds
-	void simulate(double step, double duration);	//simulates the scene of certain duration and increment
+    	void setForce(Force F, unsigned int place);		// adds force to element i starting from 0
+    	void update(double dt);				// calculates the scene configuration in dt seconds
+	void simulate(double step, double duration);	// simulates the scene of certain duration and increment
 	
 	
 	//----------Model interface-----------------------
 	void addMatPoint();
-    void addMatPoint(double x, double y, double z, double mass = 0, double charge = 0);
+    	void addMatPoint(double x, double y, double z, double mass = 0, double charge = 0);
 	
 };
 
