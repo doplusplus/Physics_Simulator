@@ -9,10 +9,6 @@
 
 class InstanciatedVect
 {
-private:
-	Point * application;
-	Vect  direction;
-
 public:
 	//Constructors and destructor
 	InstanciatedVect();
@@ -22,8 +18,8 @@ public:
 	~InstanciatedVect();
 
 	//Accessors
-	Vect getDirection(); 		//**
-	Point *getApplicationPoint(); 	//returns a pointer to the application point**
+	Vect getDirection(); //**
+	Point *getApplicationPoint(); //returns a pointer to the application point**
 
 	//Display
 	void show();
@@ -32,16 +28,28 @@ public:
 	void setDirection(Vect V);     //**
 	void setDirection(double x, double y, double z);
 	void setApplication(Point *P);
-	void nullify();
+	void nullify();  //sets the direction to 0
+
+	//Operators
+	InstanciatedVect operator +(InstanciatedVect&B);
+
+
+
+private:
+	Point *application;
+	Vect  direction;
+	bool owns = false;
+
 };
 
 //******************************************************************
 
-class Force : public InstanciatedVect     	//in Newton
+class Force : public InstanciatedVect                         //in Newton
 {
 public:
 	//Constructors and destructor
 	Force();
+	Force(InstanciatedVect V);
 	Force(Point &P, Vect V);
 	~Force();
 
@@ -49,7 +57,7 @@ public:
 	void show();
 
 	//Modifier	
-	void operator +(Force &B);	 	//adds up the right end of the + to the left one; placing the force in the middle
+	Force operator +(Force &B);
 	Force operator -();			//returns opposite force
 
 };
@@ -81,8 +89,8 @@ public:
 
 struct timedForce  //all public
 {
-	double startTime;
-	double endTime;
+	double StartTime;
+	double EndTime;
 	Force F;
 };
 
