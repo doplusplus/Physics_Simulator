@@ -1,44 +1,46 @@
 #ifndef GEO_H
 #define GEO_H
 
+#include <vector>
+
 //------------------------------ CartesianElement-------------------------------------------------
 
 class CartesianElement
 {
-	private:
-		double X;
-		double Y;
-		double Z;
+public:
+	CartesianElement();
+	CartesianElement(double x, double y, double z);
+	~CartesianElement();
 
-	public:
-		CartesianElement();
-		CartesianElement(double x, double y, double z);
-		~CartesianElement();
+	//accessor
+	double xComponent();
+	double yComponent();
+	double zComponent();
 
-//accessor
-	double getX(); //** 
-	double getY(); //**
-	double getZ(); //**
-
-//Display
+	//Display
 	void show();
 
-//Modifier
-	void set(double x,double y, double z); 		// places the point a the coordinates (x,y,z)  **
-	void set(CartesianElement C);			// changes the coordinates to the C one 
-	void nullify();					// sets the point at the origin, to use as initializer **
+	//Modifier
+	void place(double x, double y, double z);
+	void place(CartesianElement C);					// places on C
+	void nullify();
 
-//Algebraic operator
-	CartesianElement operator +( CartesianElement B);	// adds each coordinate together
-	CartesianElement operator-();				// reverses the sign of each coodinate 
-	CartesianElement operator *( double a);			// multiplication by a scalar
-	CartesianElement operator /( double a);			// division by a scalar **
+	//Algebraic operator
+	CartesianElement operator +(const CartesianElement &B);
+	CartesianElement operator-();
+	CartesianElement operator *(double a);			// multiplication by a scalar
+	CartesianElement operator /(double a);			// division by a scalar, exception thrown if null 
 
 //logical operator	
 	bool operator ==(CartesianElement B);
+
+private:
+	double X;
+	double Y;
+	double Z;
 };
 
-class Point;
+
 
 //--------------------------------- Vect --------------------------------------------------
 class Vect : public CartesianElement
@@ -47,33 +49,39 @@ public:
 	Vect();
 	Vect(double x, double y, double z);
 	Vect(CartesianElement C);
-	Vect(Point P);					//creates a vector bringing the origin to P
-	Vect(Point start, Point end);			//creates a vector bringing start to end
 	~Vect();
 
-
-
-	Vect operator ^(Vect &B);		// vectorial multiplication
+	Vect operator ^(Vect &B);		// Vectorial multiplication
 	double operator *(Vect &B);		// dot product
-	double norm();				// returns the norm of a vector
-	Vect unitarized();			// returns a vector of same direction with a norm of 1
+	Vect unitVector();
+	double norm();
+
 };
 
 
 
-//--------------------------------- Point ---------------------------------------------
+//--------------------------------- Point --------------------------------------------------
 
 class Point : public CartesianElement
 {
-
 public:
 	Point();
 	Point(double x, double y, double z);
 	Point(CartesianElement C);
-	Point(Vect V);				//creates a point at the extremity of the instance of V placed at the origin
-	Point(Point P, Vect V);
+	Point(Vect V);				//At the non null extremity of V 
+	Point(Point P, Vect V);		//At the image of P translated by V 
 	~Point();
+
+
+	void trackAsHeap();			// tracking points allocated on the heap
+	static void clearHeapPoints();
+	static void showHeapPoints();
+	static double PointsHeapSize();
+
+private:
+	static std::vector< Point* > OnHeap;
 };
 //-----------------------------------------------------------------------------------------
+
 
 #endif
