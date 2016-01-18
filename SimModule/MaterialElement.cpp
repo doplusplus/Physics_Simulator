@@ -1,17 +1,18 @@
 #include "MaterialElement.h"
-#include "PhysicalElement.h"
+#include "Geo.h"
 #include <iostream>
 
 //Constructors & destructor-------------------------------
 MaterialElement::MaterialElement()
 {}
 
-MaterialElement::MaterialElement(Point p, Force res, Velocity vel, double masse, double charge_)
+MaterialElement::MaterialElement(Point p, Vect resultantForce, Vect velocity,
+	double masse, double charge_ )
 {
 	Charge = charge_; 	// in Coulomb
 	Mass = masse;   	// in kg
-	V = vel;			// m/s
-	NetForce = res;		// Newton
+	Velocity = velocity;	// m/s
+	NetForce = resultantForce;		// Newton
 	Position = p;		// m 
 }
 
@@ -42,6 +43,7 @@ void MaterialElement::consoleShow()
 {
 	Position.show();
 	std::cout << "mass: " << Mass << '\n';
+	std::cout << "charge: " << Charge << '\n';
 }
 
 //Modifier----------------------------------------------
@@ -64,31 +66,30 @@ void MaterialElement::setCharge(double c)
 	Charge = c;
 }
 
-void MaterialElement::setResultant(Force F)
+void MaterialElement::setResultant(Vect force)
 {
-	NetForce = F;
+	NetForce = force;
 }
 
 //Simulation tool-------------------------------------
 void MaterialElement::update(double dt) //computes and updates the state of the element at t+dt
 {
-	Acceleration a;
+	Vect a;
 	a = getAcceleration();
 	updateSpeedandPosition(a, dt);
 
 }
 
-Acceleration MaterialElement::getAcceleration()
+Vect MaterialElement::getAcceleration()
 {
-	Acceleration a;
+	Vect a;
 	a.nullify();
 
-	Vect V = NetForce.getDirection();
+	Vect V = NetForce;
 
 	if (Mass != 0)
 	{
-		V = V / Mass;
-		a.setDirection(V);
+		a = V / Mass;
 	}
 	else
 	{
@@ -98,26 +99,16 @@ Acceleration MaterialElement::getAcceleration()
 	return a;
 }
 
-void MaterialElement::updateSpeedandPosition(Acceleration a, double dt)
+void MaterialElement::updateSpeedandPosition(Vect a, double dt)
 {
-	double Vx, Vy, Vz, X, Y, Z;
+	CartesianElement Acceleration = a;
+	CartesianElement InitialVelocity = Velocity;
 
-	//Initial speeds
-	Vx = V.getDirection().xComponent();
-	Vy = V.getDirection().yComponent();
-	Vz = V.getDirection().zComponent();
+	//double integration of the acceleration gives final position
+	Position = Acceleration*0.5*dt*dt + InitialVelocity*dt + Position;
 
-	//Double integration of the accelerations gives final positions
-	X = 0.5*a.getDirection().xComponent()*dt*dt + Vx*dt + Position.xComponent();
-	Y = 0.5*a.getDirection().yComponent()*dt*dt + Vy*dt + Position.yComponent();
-	Z = 0.5*a.getDirection().zComponent()*dt*dt + Vz*dt + Position.zComponent();
-	Position.place(X, Y, Z);
-
-	//integration of the accelerations gives final speeds
-	Vx += a.getDirection().xComponent()*dt;
-	Vy += a.getDirection().yComponent()*dt;
-	Vz += a.getDirection().zComponent()*dt;
-	V.setDirection(Vx, Vy, Vz);
+	//integration of the acceleration gives final speeds
+	Velocity = InitialVelocity + Acceleration;
 }
 
 
