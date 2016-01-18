@@ -2,9 +2,6 @@
 #define MatElem
 
 #include "Geo.h"
-#include "PhysicalElement.h"
-
-
 
 //===============================Material element==============================
 class MaterialElement
@@ -14,8 +11,8 @@ public:
 
 	//Constructors & destructor
 	MaterialElement();	
-
-	MaterialElement(Point p, Force res = Force() , Velocity vel = Velocity() , double masse = 0, double charge_ = 0);
+	MaterialElement(Point p, Vect resultantForce , Vect velocity,
+		double masse = 0, double charge_ = 0);
 	~MaterialElement();		
 
 	//Accessors
@@ -31,20 +28,20 @@ public:
 	void setPosition(double x, double y, double z);
 	void setMass(double m);
 	void setCharge(double c);
-	void setResultant(Force F);
+	void setResultant(Vect force);
 
 	//Simulation tool
 	virtual void update(double dt); //computes and updates the state of the element to t+dt
-	virtual Acceleration getAcceleration();
+	virtual Vect getAcceleration();
 
 private:
 	double		Charge; 	// in Coulomb
 	double		Mass;   	// in kg
-	Velocity	V;			// m/s
-	Force		NetForce;	// Newton
+	Vect		Velocity;	// m/s
+	Vect		NetForce;	// Newton
 	Point		Position;	// m 
 
-	virtual void updateSpeedandPosition(Acceleration a, double dt);
+	virtual void updateSpeedandPosition(Vect acceleration, double dt);
 
 };
 
@@ -54,17 +51,5 @@ class MaterialPoint : public MaterialElement
 		MaterialPoint();
 		~MaterialPoint();
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
