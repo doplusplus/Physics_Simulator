@@ -23,9 +23,9 @@ public:
 	void consoleShow();
 
 	//Modifier
-	void setForce(Vect F, unsigned int place);		// adds force to element i starting from 0
-	void update(double dt);				// calculates the scene configuration in dt seconds
-	void simulate(double step, double duration);	// simulates the scene of certain duration and increment
+	void addExternalAction(Vect F, unsigned int place);	// adds force to element i starting from 0
+	void update(double dt);					// calculates the scene configuration in dt seconds
+	void simulate(double step, double duration);		// simulates the scene of certain duration and increment
 
 
 	//----------Model interface-----------------------
