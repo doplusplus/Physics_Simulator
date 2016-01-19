@@ -1,6 +1,7 @@
 #ifndef MatElem
 #define MatElem
 
+#include<vector>
 #include "Geo.h"
 
 //===============================Material element==============================
@@ -8,48 +9,46 @@ class MaterialElement
 {
 public:
 
-
 	//Constructors & destructor
-	MaterialElement();	
-	MaterialElement(Point p, Vect resultantForce , Vect velocity,
-		double masse = 0, double charge_ = 0);
-	~MaterialElement();		
+	MaterialElement();
+	MaterialElement(Point p, std::vector<Vect> actions, Vect velocity,
+		double masse, double charge_);
+	~MaterialElement();
 
 	//Accessors
-    Point *pointerToPosition(); 
-    double getMass();		
+	Point *pointerToPosition();
+	double getMass();
 	double getCharge();
 
 	//Display
 	virtual void consoleShow();
-	
+
 	//Modifier
-    void setPosition(Point &p);
-	void setPosition(double x, double y, double z);
+	void place(Point &p);
+	void place(double x, double y, double z);
 	void setMass(double m);
 	void setCharge(double c);
-	void setResultant(Vect force);
+	void addExternalAction(Vect MechanicalAction);
 
 	//Simulation tool
 	virtual void update(double dt); //computes and updates the state of the element to t+dt
-	virtual Vect getAcceleration();
+	virtual Vect Acceleration();
 
 private:
-	double		Charge; 	// in Coulomb
-	double		Mass;   	// in kg
-	Vect		Velocity;	// m/s
-	Vect		NetForce;	// Newton
-	Point		Position;	// m 
+	double				Charge; 	// in Coulomb
+	double				Mass;   	// in kg
+	Vect				Velocity;	// m/s
+	std::vector<Vect>	ExternalActions;
+	Point				Position;	// m 
 
-	virtual void updateSpeedandPosition(Vect acceleration, double dt);
-
+	virtual void updateSpeedandPosition(double dt);
 };
 
 class MaterialPoint : public MaterialElement
 {
-	public:
-		MaterialPoint();
-		~MaterialPoint();
+public:
+	MaterialPoint();
+	~MaterialPoint();
 };
 
 #endif
