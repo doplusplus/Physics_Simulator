@@ -178,15 +178,15 @@ Vect Vect::operator ^(Vect &B)
 	x = yComponent()*B.zComponent() - zComponent()*B.yComponent();
 	y = zComponent()*B.xComponent() - xComponent()*B.zComponent();
 	z = xComponent()*B.yComponent() - yComponent()*B.xComponent();
-	Vect v(x, y, z);
-
-	return v;
+	return Vect(x, y, z);
 }
 
 double Vect::operator *(Vect &B)
 {
-	double s;
-	s = xComponent()*B.xComponent() + yComponent()*B.yComponent() + zComponent()*B.zComponent();
+	double s =
+		  xComponent()*B.xComponent()
+		+ yComponent()*B.yComponent()
+		+ zComponent()*B.zComponent();
 	return s;
 }
 
@@ -203,6 +203,5 @@ Vect Vect::unitVector()
 {
 	Vect u;
 	u = (*this) / norm();
-
 	return u;
 }
