@@ -24,7 +24,7 @@ Scene::~Scene()
 
 MaterialElement *Scene::getElement(unsigned int i)
 {
-	MaterialElement *M = NULL;
+	MaterialElement *M = nullptr;
 
 	if (i < S.size())
 	{
@@ -58,19 +58,17 @@ void Scene::consoleShow()
 
 
 //Modifier
-void Scene::setForce(Vect F, unsigned int place) // add force to element i
+void Scene::addExternalAction(Vect F, unsigned int place) // add force to element i
 {
-	S[place]->setResultant(F);
+	S[place]->addExternalAction(F);
 }
 
 void Scene::update(double dt)
 {
-	//std::vector<MaterialElement*>::iterator it;
 	for (auto it = S.begin(); it != S.end(); it++)
 	{
 		(*it)->update(dt);
 	}
-
 }
 
 void Scene::simulate(double step, double duration)
@@ -96,10 +94,10 @@ void Scene::addMatPoint()
 void Scene::addMatPoint(double x, double y, double z, double mass, double charge)
 {
 	MaterialPoint *Mp = new MaterialPoint;
-	Mp->setPosition(x, y, z);
+	Mp->place(x, y, z);
 	Mp->setMass(mass);
 	Mp->setCharge(charge);
 	Mp->setMass(mass);
-	Mp->setPosition(x, y, z);
+	Mp->place(x, y, z);
 	S.push_back(Mp);
 }
