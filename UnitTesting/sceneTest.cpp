@@ -43,15 +43,14 @@ namespace SceneTest
 			
 
 			Sc.getElement(0)->setMass(mass);
-			Sc.getElement(0)->setPosition(0, 0, 0);
-			Sc.setForce(G, 0);
+			Sc.getElement(0)->place(0, 0, 0);
+			//Sc.setForce(G, 0);
+			Sc.getElement(0)->addExternalAction(G);
 
 			Sc.update(FallTime);
 
 			Assert::AreEqual(0.5*9.81*FallTime*FallTime, Sc.getElement(0)->pointerToPosition()->zComponent());
-
 		}
-
-
+		
 	};
 }
