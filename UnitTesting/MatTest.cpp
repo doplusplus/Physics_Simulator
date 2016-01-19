@@ -16,7 +16,7 @@ namespace MatElementTest
 			MaterialElement M;
 			Point P(1, 2, 3);
 
-			M.setPosition(P);
+			M.place(P);
 			M.setMass(2002020202.333);
 			M.setCharge(2.3423);
 
@@ -27,37 +27,32 @@ namespace MatElementTest
 			Assert::AreEqual(P.zComponent(), M.pointerToPosition()->zComponent());
 		}
 
-		TEST_METHOD(ZeroMassSimulation)
+		TEST_METHOD(ZeroMassException)
 		{
-			MaterialElement M;
-
-			Point P(1, 2, 3);
-			M.setPosition(P);
-			M.update(2345.8778);
-			
-			double x = M.getAcceleration().xComponent();
-			double y = M.getAcceleration().yComponent();
-			double z = M.getAcceleration().zComponent();
-
-			Assert::AreEqual(0.0, x);
-			Assert::AreEqual(0.0, y);
-			Assert::AreEqual(0.0, z);
+			auto func = []() 
+			{
+				MaterialElement M;
+				Point P(1, 2, 3);
+				M.place(P);
+				M.update(123);
+			};
+			Assert::ExpectException<std::invalid_argument>(func);
 		}
 
 		TEST_METHOD(Acceleration_at_unitForce)
 		{
 			MaterialElement M;
 			Point P(0, 0, 0);
-			M.setPosition(P);
+			M.place(P);
 			M.setMass(1);
 
 			Vect F(1, 1, 1);
-			M.setResultant(F);
+			M.addExternalAction(F);
 			M.update(1);
 
-			double x = M.getAcceleration().xComponent();
-			double y = M.getAcceleration().yComponent();
-			double z = M.getAcceleration().zComponent();
+			double x = M.Acceleration().xComponent();
+			double y = M.Acceleration().yComponent();
+			double z = M.Acceleration().zComponent();
 
 			Assert::AreEqual(1.0, x);
 			Assert::AreEqual(1.0, y);
@@ -69,11 +64,11 @@ namespace MatElementTest
 			MaterialElement M;
 
 			Point P(0, 0, 0);
-			M.setPosition(P);
+			M.place(P);
 			M.setMass(1);
 
 			Vect F(1, 1, 1);
-			M.setResultant(F);
+			M.addExternalAction(F);
 			M.update(1);
 
 			double x = M.pointerToPosition()->xComponent();
@@ -92,12 +87,12 @@ namespace MatElementTest
 			double expectedZ = 490.5;
 
 			Point P(0, 0, 0);
-			M.setPosition(P);
+			M.place(P);
 			M.setMass(10); //kg
 
 			Vect F(0, 0, 98.1); // force set to gravity * mass
 
-			M.setResultant(F);
+			M.addExternalAction(F);
 			M.update(10);  //seconds
 
 			double x = M.pointerToPosition()->xComponent();
