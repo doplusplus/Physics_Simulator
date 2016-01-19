@@ -1,19 +1,21 @@
 #include "MaterialElement.h"
 #include "Geo.h"
+#include "Calculator.h"
+#include<vector>
 #include <iostream>
 
 //Constructors & destructor-------------------------------
 MaterialElement::MaterialElement()
 {}
 
-MaterialElement::MaterialElement(Point p, Vect resultantForce, Vect velocity,
-	double masse, double charge_ )
+MaterialElement::MaterialElement(Point p, std::vector<Vect> actions, Vect velocity,
+	double masse, double charge_)
 {
-	Charge = charge_; 	// in Coulomb
-	Mass = masse;   	// in kg
-	Velocity = velocity;	// m/s
-	NetForce = resultantForce;		// Newton
-	Position = p;		// m 
+	Charge = charge_; 			// in Coulomb
+	Mass = masse;   			// in kg
+	Velocity = velocity;		// m/s
+	ExternalActions = actions;  //Newton
+	Position = p;				// m 
 }
 
 MaterialElement::~MaterialElement()
@@ -47,12 +49,12 @@ void MaterialElement::consoleShow()
 }
 
 //Modifier----------------------------------------------
-void MaterialElement::setPosition(Point &P)
+void MaterialElement::place(Point &P)
 {
 	Position = P;
 }
 
-void MaterialElement::setPosition(double x, double y, double z)
+void MaterialElement::place(double x, double y, double z)
 {
 	Position.place(x, y, z);
 }
@@ -61,57 +63,35 @@ void MaterialElement::setMass(double m)
 {
 	Mass = m;
 }
+
 void MaterialElement::setCharge(double c)
 {
 	Charge = c;
 }
 
-void MaterialElement::setResultant(Vect force)
+void MaterialElement::addExternalAction(Vect MechanicalAction)
 {
-	NetForce = force;
+	ExternalActions.push_back(MechanicalAction);
 }
 
 //Simulation tool-------------------------------------
-void MaterialElement::update(double dt) //computes and updates the state of the element at t+dt
+void MaterialElement::update(double dt)		//computes and updates the state of the element at t+dt
 {
-	Vect a;
-	a = getAcceleration();
-	updateSpeedandPosition(a, dt);
-
+	updateSpeedandPosition(dt);
 }
 
-Vect MaterialElement::getAcceleration()
+Vect MaterialElement::Acceleration()
 {
-	Vect a;
-	a.nullify();
-
-	Vect V = NetForce;
-
-	if (Mass != 0)
-	{
-		a = V / Mass;
-	}
-	else
-	{
-		std::cout << "** No mass no accs :-( **" << '\n';
-	}
-
-	return a;
+	Calculator C;
+	return C.acceleration(ExternalActions,Mass);
 }
 
-void MaterialElement::updateSpeedandPosition(Vect a, double dt)
+void MaterialElement::updateSpeedandPosition(double dt)
 {
-	CartesianElement Acceleration = a;
-	CartesianElement InitialVelocity = Velocity;
-
-	//double integration of the acceleration gives final position
-	Position = Acceleration*0.5*dt*dt + InitialVelocity*dt + Position;
-
-	//integration of the acceleration gives final speeds
-	Velocity = InitialVelocity + Acceleration;
+	Calculator C;
+	Position = C.Position(C.acceleration(ExternalActions, Mass), Velocity, Position, dt);
+	Velocity = C.Velocity(C.acceleration(ExternalActions, Mass), Velocity, dt);
 }
-
-
 
 // ------------------- Material Point ----------------
 
