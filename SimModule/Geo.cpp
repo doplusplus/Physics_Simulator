@@ -114,38 +114,6 @@ Point::~Point()
 {}
 
 
-//--------------------------Memory tools ------------------------------------------
-std::vector< Point* > Point::OnHeap;
-
-void Point::trackAsHeap()
-{
-	OnHeap.push_back(this);
-}
-
-
-void Point::showHeapPoints()
-{
-	for (auto it = OnHeap.begin(); it != OnHeap.end(); it++)
-	{
-		(**it).show();
-	}
-}
-
-double Point::PointsHeapSize()
-{
-	return OnHeap.size();
-}
-
-void Point::clearHeapPoints()
-{
-	while (!OnHeap.empty())
-	{
-		Point *cleanser = OnHeap.back();
-		OnHeap.pop_back();
-		delete cleanser;
-		cleanser = nullptr;
-	}
-}
 
 //.................................End Point......................................
 //================================================================================
