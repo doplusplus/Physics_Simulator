@@ -22,7 +22,7 @@ public:
 
 	//Modifier
 	void place(double x, double y, double z);
-	void place(CartesianElement C);					// places on C
+	void place(CartesianElement C);				// places on C
 	void nullify();
 
 	//Algebraic operator
@@ -52,7 +52,7 @@ public:
 	~Vect();
 
 	Vect operator ^(Vect &B);		// Vectorial multiplication
-	double operator *(Vect &B);		// dot product
+	double operator *(Vect &B);		// dot product	
 	Vect unitVector();
 	double norm();
 
@@ -69,17 +69,9 @@ public:
 	Point(double x, double y, double z);
 	Point(CartesianElement C);
 	Point(Vect V);				//At the non null extremity of V 
-	Point(Point P, Vect V);		//At the image of P translated by V 
+	Point(Point P, Vect V);			//At the image of P translated by V 
 	~Point();
 
-
-	void trackAsHeap();			// tracking points allocated on the heap
-	static void clearHeapPoints();
-	static void showHeapPoints();
-	static double PointsHeapSize();
-
-private:
-	static std::vector< Point* > OnHeap;
 };
 //-----------------------------------------------------------------------------------------
 
