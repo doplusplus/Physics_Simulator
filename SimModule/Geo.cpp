@@ -12,12 +12,14 @@ CartesianElement::CartesianElement(double x, double y, double z)
 	Z = z;
 }
 
-CartesianElement::~CartesianElement() {}
+CartesianElement::CartesianElement(const CartesianElement &C)
+{
+	X = C.X;
+	Y = C.Y;
+	Z = C.Z;
+}
 
-//Accessors
-double CartesianElement::xComponent() { return X; }
-double CartesianElement::yComponent() { return Y; }
-double CartesianElement::zComponent() { return Z; }
+CartesianElement::~CartesianElement() {}
 
 //Displays
 void CartesianElement::show()
@@ -26,18 +28,11 @@ void CartesianElement::show()
 }
 
 //Modifiers
-void CartesianElement::place(double x, double y, double z)
+void CartesianElement::move(double dx, double dy, double dz)
 {
-	X = x;
-	Y = y;
-	Z = z;
-}
-
-void CartesianElement::place(CartesianElement C)
-{
-	X = C.X;
-	Y = C.Y;
-	Z = C.Z;
+	X += dx;
+	Y += dy;
+	Z += dz;
 }
 
 void CartesianElement::nullify()
@@ -61,6 +56,15 @@ CartesianElement CartesianElement ::operator -()
 	return C;
 }
 
+CartesianElement CartesianElement ::operator -(CartesianElement B)
+{
+	CartesianElement C;
+	C.X = X - B.X;
+	C.Y = Y - B.Y;
+	C.Z = Z - B.Z;
+	return C;
+}
+
 CartesianElement CartesianElement ::operator *(double a)	//multiplication by a scalar
 {
 	CartesianElement C(X *a, Y *a, Z *a);
@@ -69,14 +73,9 @@ CartesianElement CartesianElement ::operator *(double a)	//multiplication by a s
 
 CartesianElement CartesianElement ::operator /(double a)
 {
-	CartesianElement C;
-	if (a == 0)
-	{
-		C.nullify();
-		throw "divideByZero";
-	}
-	C.place(X / a, Y / a, Z / a);
-	return C;
+	if (a == 0)	throw "divideByZero";
+
+	return CartesianElement(X / a, Y / a, Z / a);
 }
 
 //logical operator	
@@ -95,29 +94,17 @@ Point::Point()
 Point::Point(double x, double y, double z) :CartesianElement(x, y, z)
 {}
 
-Point::Point(CartesianElement C)
-{
-	place(C);
-}
+Point::Point(CartesianElement C):CartesianElement(C)
+{}
 
-Point::Point(Vect V)
-{
-	place(V);
-}
+Point::Point(Vect V):CartesianElement(V)
+{}
 
-Point::Point(Point P, Vect V)
-{
-	place(P + V);
-}
+Point::Point(Point P, Vect V): CartesianElement(P+V)
+{}
 
 Point::~Point()
 {}
-
-
-
-//.................................End Point......................................
-//================================================================================
-
 
 
 //================================================================================
@@ -130,11 +117,11 @@ Vect::Vect()
 Vect::Vect(double x, double y, double z) :CartesianElement(x, y, z)
 {}
 
-Vect::Vect(CartesianElement C)
-{
-	place(C);
-}
+Vect::Vect(CartesianElement C): CartesianElement(C)
+{}
 
+Vect::Vect(Point A, Point B) : Vect(B - A)
+{}
 
 Vect::~Vect()
 {}
@@ -143,21 +130,20 @@ Vect::~Vect()
 Vect Vect::operator ^(Vect &B)
 {
 	double x, y, z;
-	x = yComponent()*B.zComponent() - zComponent()*B.yComponent();
-	y = zComponent()*B.xComponent() - xComponent()*B.zComponent();
-	z = xComponent()*B.yComponent() - yComponent()*B.xComponent();
+	x = Y*B.Z - Z*B.Y;
+	y = Z*B.X - X*B.Z;
+	z = X*B.Y - Y*B.X;
 	return Vect(x, y, z);
 }
 
 double Vect::operator *(Vect &B)
 {
 	double s =
-		  xComponent()*B.xComponent()
-		+ yComponent()*B.yComponent()
-		+ zComponent()*B.zComponent();
+			X*B.X
+		+	Y*B.Y
+		+	Z*B.Z;
 	return s;
 }
-
 
 // Characteristic elements
 double Vect::norm()
