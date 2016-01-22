@@ -58,9 +58,15 @@ void Scene::consoleShow()
 
 
 //Modifier
-void Scene::addExternalAction(Vect F, unsigned int place) // add force to element i
+
+void Scene::addExternalAction(unsigned int place, Vect F, Torsor T)	// adds force to element i starting from 0
 {
-	S[place]->addExternalAction(F);
+	S[place]->addExternalAction(F, T);
+}
+
+void Scene::addExternalAction(unsigned int place, Torsor T)
+{
+	addExternalAction(place, Vect(0, 0, 0), T);
 }
 
 void Scene::update(double dt)
@@ -91,13 +97,21 @@ void Scene::addMatPoint()
 	S.push_back(Mp);
 }
 
-void Scene::addMatPoint(double x, double y, double z, double mass, double charge)
+void Scene::addMatPoint(Point p, Vect velocity, double mass, double charge_)
 {
-	MaterialPoint *Mp = new MaterialPoint;
-	Mp->place(x, y, z);
-	Mp->setMass(mass);
-	Mp->setCharge(charge);
-	Mp->setMass(mass);
-	Mp->place(x, y, z);
+	MaterialElement *Mp = new MaterialPoint(p, velocity, mass, charge_);
 	S.push_back(Mp);
+}
+
+
+void Scene::addSolid()
+{
+	Solid *Sol = new Solid;
+	S.push_back(Sol);
+}
+
+void Scene::addSolid(Point p, Vect velocity, double mass, double charge_)
+{
+	Solid *Sol = new Solid(p, velocity, mass, charge_);
+	S.push_back(Sol);
 }
