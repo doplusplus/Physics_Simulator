@@ -1,3 +1,4 @@
+
 #include "MaterialElement.h"
 #include "Geo.h"
 #include "Calculator.h"
@@ -8,14 +9,12 @@
 MaterialElement::MaterialElement()
 {}
 
-MaterialElement::MaterialElement(Point p, std::vector<Vect> actions, Vect velocity,
-	double masse, double charge_)
+MaterialElement::MaterialElement(Point p, Vect velocity, double mass, double charge_)
 {
-	Charge = charge_; 			// in Coulomb
-	Mass = masse;   			// in kg
-	Velocity = velocity;		// m/s
-	ExternalActions = actions;  //Newton
-	Position = p;				// m 
+	Charge = charge_; 		// in Coulomb
+	Mass = mass;   			// in kg
+	CenterOfMassVelocity = velocity;// m/s
+	CenterOfMassPosition = p;	// m 
 }
 
 MaterialElement::~MaterialElement()
@@ -24,18 +23,18 @@ MaterialElement::~MaterialElement()
 //Accessors---------------------------------------------
 Point * MaterialElement::pointerToPosition()
 {
-	Point *pos = NULL;
-	pos = &Position;
+	Point *pos = nullptr;
+	pos = &CenterOfMassPosition;
 	return pos;
 }
 
 
-double MaterialElement::getMass()
+double MaterialElement::mass()
 {
 	return Mass;
 }
 
-double MaterialElement::getCharge()
+double MaterialElement::charge()
 {
 	return Charge;
 }
@@ -43,20 +42,16 @@ double MaterialElement::getCharge()
 //Display-----------------------------------------------
 void MaterialElement::consoleShow()
 {
-	Position.show();
+	CenterOfMassPosition.show();
 	std::cout << "mass: " << Mass << '\n';
 	std::cout << "charge: " << Charge << '\n';
 }
 
-//Modifier----------------------------------------------
-void MaterialElement::place(Point &P)
-{
-	Position = P;
-}
+//Modifiers----------------------------------------------
 
-void MaterialElement::place(double x, double y, double z)
+void MaterialElement::move(double dx, double dy, double dz)
 {
-	Position.place(x, y, z);
+	CenterOfMassPosition.move(dx, dy, dz);
 }
 
 void MaterialElement::setMass(double m)
@@ -69,31 +64,78 @@ void MaterialElement::setCharge(double c)
 	Charge = c;
 }
 
-void MaterialElement::addExternalAction(Vect MechanicalAction)
+
+// ============================== Material Point ============================================================ 
+
+MaterialPoint::MaterialPoint() {}
+MaterialPoint::MaterialPoint(Point G, Vect velocity, double mass, double charge):MaterialElement(G,velocity,mass,charge)
+{}
+MaterialPoint::~MaterialPoint() {}
+
+void MaterialPoint::addExternalAction(Vect MechanicalAction)
 {
 	ExternalActions.push_back(MechanicalAction);
 }
 
+void MaterialPoint::addExternalAction(Vect F, Torsor T)
+{
+	addExternalAction(F);
+}
+
+
 //Simulation tool-------------------------------------
-void MaterialElement::update(double dt)		//computes and updates the state of the element at t+dt
+Vect MaterialPoint::Acceleration()
+{
+	Calculator C;
+	return C.centerOfMassAcceleration(ExternalActions, mass());
+}
+
+void MaterialPoint::updateSpeedandPosition(double dt)
+{
+	Calculator C;
+	CenterOfMassPosition = C.Position(C.centerOfMassAcceleration(ExternalActions, Mass), CenterOfMassVelocity, CenterOfMassPosition, dt);
+	CenterOfMassVelocity = C.Velocity(C.centerOfMassAcceleration(ExternalActions, Mass), CenterOfMassVelocity, dt);
+}
+
+void MaterialPoint::update(double dt)		//computes and updates the state of the element at t+dt
 {
 	updateSpeedandPosition(dt);
 }
 
-Vect MaterialElement::Acceleration()
+
+// ============================== Solids Point ============================================================================
+Solid::Solid(){}
+Solid::Solid(Point G, Vect velocity, double mass, double charge) 
+	: MaterialElement(G, velocity, mass, charge)
+{}
+Solid::~Solid(){}
+
+void Solid::addExternalAction(Torsor MechanicalAction)
 {
-	Calculator C;
-	return C.acceleration(ExternalActions,Mass);
+	ExternalActions.push_back(MechanicalAction);
 }
 
-void MaterialElement::updateSpeedandPosition(double dt)
+void Solid::addExternalAction(Vect F, Torsor T)
 {
-	Calculator C;
-	Position = C.Position(C.acceleration(ExternalActions, Mass), Velocity, Position, dt);
-	Velocity = C.Velocity(C.acceleration(ExternalActions, Mass), Velocity, dt);
+	addExternalAction(T);
 }
 
-// ------------------- Material Point ----------------
+//Simulation tool-------------------------------------
 
-MaterialPoint::MaterialPoint() {}
-MaterialPoint::~MaterialPoint() {}
+Vect Solid::Acceleration()
+{
+	Calculator C;
+	return C.centerOfMassAcceleration(ExternalActions, mass());
+}
+
+void Solid::updateSpeedandPosition(double dt)
+{
+	Calculator C;
+	CenterOfMassPosition = C.Position(C.centerOfMassAcceleration(ExternalActions, Mass), CenterOfMassVelocity, CenterOfMassPosition, dt);
+	CenterOfMassVelocity = C.Velocity(C.centerOfMassAcceleration(ExternalActions, Mass), CenterOfMassVelocity, dt);
+}
+
+void Solid::update(double dt)		//computes and updates the state of the element at t+dt
+{
+	updateSpeedandPosition(dt);
+}
