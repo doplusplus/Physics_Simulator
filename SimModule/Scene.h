@@ -7,8 +7,6 @@
 
 class Scene
 {
-
-
 public:
 
 	//Constructors and destructor
@@ -23,14 +21,18 @@ public:
 	void consoleShow();
 
 	//Modifier
-	void addExternalAction(Vect F, unsigned int place);	// adds force to element i starting from 0
-	void update(double dt);					// calculates the scene configuration in dt seconds
-	void simulate(double step, double duration);		// simulates the scene of certain duration and increment
+	void addExternalAction(unsigned int place, Vect F=Vect(),Torsor T=Torsor());	// adds force to element i starting from 0
+	void addExternalAction(unsigned int place, Torsor T);
+	void update(double dt);								// calculates the scene configuration in dt seconds
+	void simulate(double step, double duration);					// simulates the scene of certain duration and increment
 
 
-	//----------Model interface-----------------------
+	//---------- Model interface-----------------------
 	void addMatPoint();
-	void addMatPoint(double x, double y, double z, double mass = 0, double charge = 0);
+	void addMatPoint(Point p, Vect velocity=Vect(0,0,0), double mass=0, double charge_=0);
+
+	void addSolid();
+	void addSolid(Point p, Vect velocity = Vect(0, 0, 0), double mass = 0, double charge_ = 0);
 
 private:
 	std::vector<MaterialElement*> S;
