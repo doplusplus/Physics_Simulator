@@ -3,52 +3,87 @@
 
 #include<vector>
 #include "Geo.h"
+#include "Torsor.h"
 
-//===============================Material element==============================
+//=============================== Material element ==============================
 class MaterialElement
 {
 public:
-
 	//Constructors & destructor
 	MaterialElement();
-	MaterialElement(Point p, std::vector<Vect> actions, Vect velocity,
-		double masse, double charge_);
-	~MaterialElement();
+	MaterialElement(Point p, Vect velocity, double mass, double charge_);
+	virtual ~MaterialElement();
 
 	//Accessors
 	Point *pointerToPosition();
-	double getMass();
-	double getCharge();
+	double mass();
+	double charge();
 
 	//Display
 	virtual void consoleShow();
 
 	//Modifier
-	void place(Point &p);
-	void place(double x, double y, double z);
+	void move(double dx, double dy, double dz);
 	void setMass(double m);
 	void setCharge(double c);
-	void addExternalAction(Vect MechanicalAction);
 
 	//Simulation tool
-	virtual void update(double dt); //computes and updates the state of the element to t+dt
-	virtual Vect Acceleration();
+	virtual void addExternalAction(Vect F=Vect(), Torsor T=Torsor()) = 0;
+	virtual void update(double dt) = 0; //computes and updates the state of the element to t+dt
+	virtual Vect Acceleration() = 0;
 
-private:
+protected:
 	double				Charge; 	// in Coulomb
 	double				Mass;   	// in kg
-	Vect				Velocity;	// m/s
-	std::vector<Vect>	ExternalActions;
-	Point				Position;	// m 
-
-	virtual void updateSpeedandPosition(double dt);
+	Vect				CenterOfMassVelocity;	// m/s
+	Point				CenterOfMassPosition;	// m 
 };
 
 class MaterialPoint : public MaterialElement
 {
 public:
 	MaterialPoint();
+	MaterialPoint(Point G, Vect velocity=Vect(0,0,0), double mass=0, double charge=0);
 	~MaterialPoint();
+
+	void addExternalAction(Vect MechanicalAction);
+	void addExternalAction(Vect F, Torsor T);
+	Vect Acceleration();
+	void update(double dt);
+
+private:
+	std::vector<Vect>	ExternalActions;
+	
+	void updateSpeedandPosition(double dt);
 };
+
+class Solid : public MaterialElement
+{
+public:
+	Solid();
+	Solid(Point G, Vect velocity=Vect(0,0,0), double mass=0, double charge=0);
+	~Solid();
+
+	void addExternalAction(Torsor MechanicalAction);
+	void addExternalAction(Vect F, Torsor T);
+	Vect Acceleration();
+	void update(double dt);
+
+private:
+	std::vector<Torsor>	ExternalActions;
+
+	void updateSpeedandPosition(double dt);
+
+	double	FirstInertiaMoment;
+	double	SecondInertiaMoment;
+	double	ThirdInertiaMoment;
+	Vect	FirstPrincipalComponent;
+	Vect	SecondPrincipalComponent;
+	Vect	ThirdPrincipalComponent;
+
+
+};
+
+
 
 #endif
