@@ -8,59 +8,66 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace GeoTest
 {
+	const double LOWEST = std::numeric_limits<double>::lowest();
+	const double MIN = std::numeric_limits<double>::min();
+	const double MAX = std::numeric_limits<double>::max();
+
 	TEST_CLASS(CartesianTest)
 	{
 	public:
-		TEST_METHOD(Nullity)
+
+		TEST_METHOD(ParameterlessCartesian)
 		{
 			CartesianElement C;
+			Assert::IsTrue(C == CartesianElement(0, 0, 0));
+		}
 
-			C.nullify();
 
-			Assert::IsTrue(C.xComponent() == 0);
-			Assert::IsTrue(C.yComponent() == 0);
-			Assert::IsTrue(C.zComponent() == 0);
+		TEST_METHOD(CopyConstructor)
+		{
+			CartesianElement C(1234142.124214, 2411.24, 45.4500000000787);
+			CartesianElement Copied(C);
+
+			Assert::IsTrue(C == Copied);
 		}
 
 		// Element Creation tests--------------------------------------------
-		TEST_METHOD(CreateCartesianElement_min200000_0_200000)
+		TEST_METHOD(MoveTest)
 		{
 			CartesianElement C(-200000, 0, 200000);
+			CartesianElement M;
+			M.move(-200000, 0, 200000);
 
-			Assert::IsTrue(C.xComponent() == -200000);
-			Assert::IsTrue(C.yComponent() == 0);
-			Assert::IsTrue(C.zComponent() == 200000);
+			Assert::IsTrue(C == M);
 		}
 
-		TEST_METHOD(CreateCartesianElement_origin)
+		TEST_METHOD(noMoveTest)
 		{
 			CartesianElement C(-200000, 0, 200000);
+			C.move(0, 0, 0);
 
-			Assert::IsTrue(C.xComponent() == -200000);
-			Assert::IsTrue(C.yComponent() == 0);
-			Assert::IsTrue(C.zComponent() == 200000);
+			Assert::IsTrue(C == CartesianElement(-200000, 0, 200000));
 		}
 
-		TEST_METHOD(CreateCartesianElement_infRange_supRange_limitPrecision)
+		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision)
 		{
-			CartesianElement C(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement C(LOWEST, MAX,
+				MIN);
 
-			Assert::IsTrue(C.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(C.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(C.zComponent() == std::numeric_limits<double>::min());
+			CartesianElement M;
+			M.move(LOWEST, MAX,
+				MIN);
+
+			Assert::IsTrue(C == M);
 		}
 
-
-		//Element setting tests--------------------------------------------------------------------
-		TEST_METHOD(PlaceTest_infRange_supRange_limitPrecision)
+		TEST_METHOD(Nullity)
 		{
-			CartesianElement C;
+			CartesianElement C(2, 3, 4);
+			C.move(435235, .3453235, 5634);
+			C.nullify();
 
-			C.place(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			Assert::IsTrue(C.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(C.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(C.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(C == CartesianElement(0, 0, 0));
 		}
 
 		//Operators tests--------------------------------------------------
@@ -69,23 +76,20 @@ namespace GeoTest
 			CartesianElement A(1000000, -2000000, 0);
 			CartesianElement B(1, 1, 1);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == 1000001);
-			Assert::IsTrue(A.yComponent() == -1999999);
-			Assert::IsTrue(A.zComponent() == 1);
+			Assert::IsTrue(A + B == CartesianElement(1000001, -1999999, 1));
 		}
 
 		TEST_METHOD(AdditionTest_Doublelimits_suitableInterger)
 		{
 			CartesianElement A(1000000, -2000000, 0);
-			CartesianElement B(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement B(LOWEST, MAX, MIN);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == std::numeric_limits<double>::lowest() + 1000000.0);
-			Assert::IsTrue(A.yComponent() == std::numeric_limits<double>::max() - 2000000.0);
-			Assert::IsTrue(A.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(A + B ==
+				CartesianElement(LOWEST + 1000000.0,
+					MAX - 2000000.0,
+					MIN
+					)
+				);
 		}
 
 		TEST_METHOD(AdditionTest_integerfraction)  //assumes compiler performs integer division
@@ -93,95 +97,88 @@ namespace GeoTest
 			CartesianElement A(1000000 / 2, -2000001 / 2, 3);
 			CartesianElement B(1000000 / 2, -2000001 / 2, 0);
 
-			A = A + B;
-			Assert::IsTrue(A.xComponent() == 1000000);
-			Assert::IsTrue(A.yComponent() == -2000000);
-			Assert::IsTrue(A.zComponent() == 3);
+			Assert::IsTrue(A + B == CartesianElement(1000000, -2000000, 3));
 		}
 
 		TEST_METHOD(multiplication_integersZero)
 		{
 			CartesianElement A(1000000, -2000000, 2);
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == CartesianElement(0, 0, 0));
 		}
 
 		TEST_METHOD(multiplication_doubleZero)
 		{
 			CartesianElement A(1000.04400, -2000.0300, 2.1);
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == CartesianElement(0, 0, 0));
 		}
 
-		TEST_METHOD(multiplication_doublelimit_Zero)
+		TEST_METHOD(multiplication_integerLimits_Zero)
 		{
-			CartesianElement A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement A(std::numeric_limits<int>::lowest(), std::numeric_limits<int>::max(), std::numeric_limits<int>::min());
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == CartesianElement(0, 0, 0));
+		}
+
+		TEST_METHOD(multiplication_doubleLimits_Zero)
+		{
+			CartesianElement A(LOWEST, MAX, MIN);
+
+			Assert::IsTrue(A * 0 == CartesianElement(0, 0, 0));
 		}
 
 		TEST_METHOD(multiplication_doublelimit_One)
 		{
-			CartesianElement A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement A(LOWEST, MAX, MIN);
 
-			Assert::IsTrue((A * 1).xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue((A * 1).yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue((A * 1).zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(A * 1 ==
+				CartesianElement(LOWEST,
+					MAX,
+					MIN
+					)
+				);
 		}
 
-		TEST_METHOD(multiplication_5CartesianElement5_bye2)
+		TEST_METHOD(multiplication_by2)
 		{
 			CartesianElement A(0.5, 0.555, 555555.55555);
 
-			Assert::IsTrue((A * 2).xComponent() == 1);
-			Assert::IsTrue((A * 2).yComponent() == 1.11);
-			Assert::IsTrue((A * 2).zComponent() == 1111111.1111);
+			Assert::IsTrue(A * 2 == CartesianElement(1, 1.11, 1111111.1111));
 		}
 
 		TEST_METHOD(divide_doubleatlimit_byOne)
 		{
-			CartesianElement A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement A(LOWEST, MAX, MIN);
 
-			Assert::IsTrue((A / 1).xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue((A / 1).yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue((A / 1).zComponent() == std::numeric_limits<double>::min());
+
+			Assert::IsTrue(A / 1 ==
+				CartesianElement(LOWEST,
+					MAX,
+					MIN
+					)
+				);
 		}
 
 		TEST_METHOD(divide_doubleatlimit_by0) //Checks how division by zero is handled
 		{
-			CartesianElement A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			try
+			auto func = []()
 			{
-				A = A / 0;
-			}
-			catch (char *S)
-			{
-				std::cerr << S << '\n';
-				A.nullify();
-			}
+				CartesianElement A(LOWEST, MAX, MIN);
+				A / 0;
+			};
 
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
-
+			Assert::ExpectException<std::string>(func);
 		}
-
 
 		TEST_METHOD(divide_doubleat0_byLimits)
 		{
-			CartesianElement A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			CartesianElement A(997, MAX, LOWEST);
 			A.nullify();
 
-			Assert::IsTrue((A / std::numeric_limits<double>::lowest()).xComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::max()).yComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::min()).zComponent() == 0);
+			Assert::IsTrue((A / LOWEST) == CartesianElement(0, 0, 0));
+			Assert::IsTrue((A / MAX) == CartesianElement(0, 0, 0));
+			Assert::IsTrue((A / MIN) == CartesianElement(0, 0, 0));
 		}
 		//------------------------------------------------------------------------------------
 
@@ -190,395 +187,371 @@ namespace GeoTest
 	TEST_CLASS(PointTests)
 	{
 	public:
-
-		TEST_METHOD(Nullity)
+		TEST_METHOD(ParameterlessPoint)
 		{
-			Point P;
-
-			P.nullify();
-
-			Assert::IsTrue(P.xComponent() == 0);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 0);
+			Point C;
+			Assert::IsTrue(C == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(CreatePoint_min200000_0_200000)
+		TEST_METHOD(PointCopyConstructor)
 		{
-			Point P(-200000, 0, 200000);
+			CartesianElement C(1234142.124214, 2411.24, 45.4500000000787);
+			Point Copied(C);
 
-			Assert::IsTrue(P.xComponent() == -200000);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 200000);
+			Assert::IsTrue(Point(1234142.124214, 2411.24, 45.4500000000787) == Copied);
+		}
+							//SPECIFIC TO POINT CLASS INTERFACE================================
+							TEST_METHOD(VectToPoint)
+							{
+								Vect V(2,352,.5643566);
+								Point P(V);
+
+								Assert::IsTrue(P == Point(2, 352, .5643566));
+							}
+
+							TEST_METHOD(ImagePoint)
+							{
+								Vect V(2, 352, .5643566);
+								Point A(-35353, 342, 4);
+								Point P(A,V);
+
+								Assert::IsTrue(P == Point(-35351, 694, 4.5643566));
+							}
+							//===============================================================================
+		// Element Creation tests--------------------------------------------
+		TEST_METHOD(MoveTest_Point)
+		{
+			Point C(-200000, 0, 200000);
+			Point M;
+			M.move(-200000, 0, 200000);
+
+			Assert::IsTrue(C == M);
 		}
 
-		TEST_METHOD(CreatePoint_origin)
+		TEST_METHOD(noMoveTest_Point)
 		{
-			Point P(-200000, 0, 200000);
+			Point C(-200000, 0, 200000);
+			C.move(0, 0, 0);
 
-			Assert::IsTrue(P.xComponent() == -200000);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 200000);
+			Assert::IsTrue(C == Point(-200000, 0, 200000));
 		}
 
-		TEST_METHOD(CreatePoint_infRange_supRange_limitPrecision)
+		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision_Point)
 		{
-			Point P(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Point C(LOWEST, MAX,
+				MIN);
 
-			Assert::IsTrue(P.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(P.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(P.zComponent() == std::numeric_limits<double>::min());
+			Point M;
+			M.move(LOWEST, MAX,
+				MIN);
+
+			Assert::IsTrue(C == M);
 		}
 
-		TEST_METHOD(PlaceTest_infRange_supRange_limitPrecision)
+		TEST_METHOD(Nullity_Point)
 		{
-			Point P;
+			Point C(2, 3, 4);
+			C.move(435235, .3453235, 5634);
+			C.nullify();
 
-			P.place(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			Assert::IsTrue(P.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(P.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(P.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(C == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(AdditionTest_integers)
+		//Operators tests--------------------------------------------------
+		TEST_METHOD(AdditionTest_integers_Point)
 		{
 			Point A(1000000, -2000000, 0);
 			Point B(1, 1, 1);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == 1000001);
-			Assert::IsTrue(A.yComponent() == -1999999);
-			Assert::IsTrue(A.zComponent() == 1);
+			Assert::IsTrue(A + B == Point(1000001, -1999999, 1));
 		}
 
 		TEST_METHOD(AdditionTest_Doublelimits_suitableInterger)
 		{
 			Point A(1000000, -2000000, 0);
-			Point B(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Point B(LOWEST, MAX, MIN);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == std::numeric_limits<double>::lowest() + 1000000.0);
-			Assert::IsTrue(A.yComponent() == std::numeric_limits<double>::max() - 2000000.0);
-			Assert::IsTrue(A.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(A + B ==
+				Point(LOWEST + 1000000.0,
+					MAX - 2000000.0,
+					MIN
+					)
+				);
 		}
 
-		TEST_METHOD(AdditionTest_integerfraction)  //assumes compiler performs integer division
+		TEST_METHOD(AdditionTest_integerfraction_Point)  //assumes compiler performs integer division
 		{
 			Point A(1000000 / 2, -2000001 / 2, 3);
 			Point B(1000000 / 2, -2000001 / 2, 0);
 
-			A = A + B;
-			Assert::IsTrue(A.xComponent() == 1000000);
-			Assert::IsTrue(A.yComponent() == -2000000);
-			Assert::IsTrue(A.zComponent() == 3);
+			Assert::IsTrue(A + B == Point(1000000, -2000000, 3));
 		}
 
-		TEST_METHOD(multiplication_integersZero)
+		TEST_METHOD(multiplication_integersZero_Point)
 		{
 			Point A(1000000, -2000000, 2);
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(multiplication_doubleZero)
+		TEST_METHOD(multiplication_doubleZero_Point)
 		{
 			Point A(1000.04400, -2000.0300, 2.1);
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(multiplication_doublelimit_Zero)
+		TEST_METHOD(multiplication_integerLimits_Zero_Point)
 		{
-			Point A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Point A(std::numeric_limits<int>::lowest(), std::numeric_limits<int>::max(), std::numeric_limits<int>::min());
 
-			Assert::IsTrue((A * 0).xComponent() == 0);
-			Assert::IsTrue((A * 0).yComponent() == 0);
-			Assert::IsTrue((A * 0).zComponent() == 0);
+			Assert::IsTrue(A * 0 == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(multiplication_doublelimit_One)
+		TEST_METHOD(multiplication_doubleLimits_Zero_Point)
 		{
-			Point A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Point A(LOWEST, MAX, MIN);
 
-			Assert::IsTrue((A * 1).xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue((A * 1).yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue((A * 1).zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(A * 0 == Point(0, 0, 0));
 		}
 
-		TEST_METHOD(multiplication_5Point5_bye2)
+		TEST_METHOD(multiplication_doublelimit_One_Point)
+		{
+			Point A(LOWEST, MAX, MIN);
+
+			Assert::IsTrue(A * 1 ==
+				Point(LOWEST,
+					MAX,
+					MIN
+					)
+				);
+		}
+
+		TEST_METHOD(multiplication_by2_Point)
 		{
 			Point A(0.5, 0.555, 555555.55555);
 
-			Assert::IsTrue((A * 2).xComponent() == 1);
-			Assert::IsTrue((A * 2).yComponent() == 1.11);
-			Assert::IsTrue((A * 2).zComponent() == 1111111.1111);
+			Assert::IsTrue(A * 2 == Point(1, 1.11, 1111111.1111));
 		}
 
-		TEST_METHOD(divide_doubleatlimit_byOne)
+		TEST_METHOD(divide_doubleatlimit_byOne_Point)
 		{
-			Point A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			Assert::IsTrue((A / 1).xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue((A / 1).yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue((A / 1).zComponent() == std::numeric_limits<double>::min());
+			Point A(LOWEST, MAX, MIN);
+			
+			Assert::IsTrue(A / 1 ==
+				Point(LOWEST,
+					MAX,
+					MIN
+					)
+				);
 		}
 
-		TEST_METHOD(divide_doubleatlimit_by0) //Checks how division by zero is handled
+		TEST_METHOD(divide_doubleatlimit_by0_Point) //Checks how division by zero is handled
 		{
-			Point A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			try
+			auto func = []()
 			{
-				A = A / 0;
-			}
-			catch (char *S)
-			{
-				std::cerr << S << '\n';
-				A.nullify();
-			}
+				Point A(LOWEST, MAX, MIN);
+				A / 0;
+			};
 
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
+			Assert::ExpectException<std::string>(func);
 		}
 
-
-		TEST_METHOD(divide_doubleat0_byLimits)
+		TEST_METHOD(divide_doubleat0_byLimits_Point)
 		{
-			Point A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Point A(997, MAX, LOWEST);
 			A.nullify();
 
-			Assert::IsTrue((A / std::numeric_limits<double>::lowest()).xComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::max()).yComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::min()).zComponent() == 0);
+			Assert::IsTrue((A / LOWEST) == Point(0, 0, 0));
+			Assert::IsTrue((A / MAX) == Point(0, 0, 0));
+			Assert::IsTrue((A / MIN) == Point(0, 0, 0));
 		}
-
-		TEST_METHOD(HeapPointsAllocation)
-		{
-			Point *A = new Point(1, 2, 3);
-			Point *B = new Point(1, 2, 3);
-			Point *C = new Point(1, 2, 3);
-			Point *D = new Point(1, 2, 3);
-
-			A->trackAsHeap();
-			B->trackAsHeap();
-			C->trackAsHeap();
-			D->trackAsHeap();
-
-			Assert::IsTrue(Point::PointsHeapSize() == 4);
-			Point::clearHeapPoints();
-			Assert::IsTrue(Point::PointsHeapSize() == 0);
-		}
-
-		TEST_METHOD(EmptyHeapPoints)
-		{
-			Assert::IsTrue(Point::PointsHeapSize() == 0);
-			Point::clearHeapPoints();
-			Assert::IsTrue(Point::PointsHeapSize() == 0);
-		}
-
-
+		//------------------------------------------------------------------------------------
 	};
 
+	
 	TEST_CLASS(VectTests)
 	{
 	public:
-
-		TEST_METHOD(VectNullity)
+		
+		TEST_METHOD(ParameterlessVect)
 		{
-			Vect P;
-
-			P.nullify();
-
-			Assert::IsTrue(P.xComponent() == 0);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 0);
+			Vect C;
+			Assert::IsTrue(C == Vect(0, 0, 0));
 		}
 
-		TEST_METHOD(CreateVect_min200000_0_200000)
+		TEST_METHOD(VectCopyConstructor)
 		{
-			Vect P(-200000, 0, 200000);
+			CartesianElement C(1234142.124214, 2411.24, 45.4500000000787);
+			Vect Copied(C);
 
-			Assert::IsTrue(P.xComponent() == -200000);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 200000);
+			Assert::IsTrue(Vect(1234142.124214, 2411.24, 45.4500000000787) == Copied);
 		}
 
-		TEST_METHOD(CreateVect_origin)
+		TEST_METHOD(VectFromPoints)
 		{
-			Vect P(-200000, 0, 200000);
+			Point C(1234142.124214, 2411.24, 45.4500000000787);
+			Point D(.34234, 23423, 45634563.346);
 
-			Assert::IsTrue(P.xComponent() == -200000);
-			Assert::IsTrue(P.yComponent() == 0);
-			Assert::IsTrue(P.zComponent() == 200000);
+			Assert::IsTrue(Vect(C,D) == Vect(.34234- 1234142.124214, 23423- 2411.24, 45634563.346- 45.4500000000787));
+		}
+		
+		//==============================FROM BASE CLASS=================================================
+		// Element Creation tests--------------------------------------------
+		TEST_METHOD(MoveTest_Vect)
+		{
+			Vect C(-200000, 0, 200000);
+			Vect M;
+			M.move(-200000, 0, 200000);
+
+			Assert::IsTrue(C == M);
 		}
 
-		TEST_METHOD(CreateVect_infRange_supRange_limitPrecision)
+		TEST_METHOD(noMoveTest_Vect)
 		{
-			Vect P(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect C(-200000, 0, 200000);
+			C.move(0, 0, 0);
 
-			Assert::IsTrue(P.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(P.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(P.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(C == Vect(-200000, 0, 200000));
 		}
 
-		TEST_METHOD(setVectTest_infRange_supRange_limitPrecision)
+		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision_Vect)
 		{
-			Vect P;
+			Vect C(LOWEST, MAX,
+				MIN);
 
-			P.place(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect M;
+			M.move(LOWEST, MAX,
+				MIN);
 
-			Assert::IsTrue(P.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(P.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(P.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(C == M);
 		}
 
-		TEST_METHOD(VectAdditionTest_integers)
+		TEST_METHOD(Nullity_Vect)
+		{
+			Vect C(2, 3, 4);
+			C.move(435235, .3453235, 5634);
+			C.nullify();
+
+			Assert::IsTrue(C == Vect(0, 0, 0));
+		}
+
+		//Operators tests--------------------------------------------------
+		TEST_METHOD(AdditionTest_integers_Vect)
 		{
 			Vect A(1000000, -2000000, 0);
 			Vect B(1, 1, 1);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == 1000001);
-			Assert::IsTrue(A.yComponent() == -1999999);
-			Assert::IsTrue(A.zComponent() == 1);
+			Assert::IsTrue(A + B == Vect(1000001, -1999999, 1));
 		}
 
-		TEST_METHOD(VectAdditionTest_Doublelimits_suitableInterger)
+		TEST_METHOD(AdditionTest_Doublelimits_suitableInterger)
 		{
 			Vect A(1000000, -2000000, 0);
-			Vect B(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect B(LOWEST, MAX, MIN);
 
-			A = A + B;
-
-			Assert::IsTrue(A.xComponent() == std::numeric_limits<double>::lowest() + 1000000.0);
-			Assert::IsTrue(A.yComponent() == std::numeric_limits<double>::max() - 2000000.0);
-			Assert::IsTrue(A.zComponent() == std::numeric_limits<double>::min());
+			Assert::IsTrue(A + B ==
+				Vect(LOWEST + 1000000.0,
+					MAX - 2000000.0,
+					MIN
+					)
+				);
 		}
 
-		TEST_METHOD(VectAdditionTest_integerfraction)  //assumes compiler performs integer division
+		TEST_METHOD(AdditionTest_integerfraction_Vect)  //assumes compiler performs integer division
 		{
 			Vect A(1000000 / 2, -2000001 / 2, 3);
 			Vect B(1000000 / 2, -2000001 / 2, 0);
 
-			A = A + B;
-			Assert::IsTrue(A.xComponent() == 1000000);
-			Assert::IsTrue(A.yComponent() == -2000000);
-			Assert::IsTrue(A.zComponent() == 3);
+			Assert::IsTrue(A + B == Vect(1000000, -2000000, 3));
+		}
+		
+		TEST_METHOD(divide_doubleatlimit_byOne_Vect)
+		{
+			Vect A(LOWEST, MAX, MIN);
+
+
+			Assert::IsTrue(A / 1 ==
+				Vect(LOWEST,
+					MAX,
+					MIN
+					)
+				);
 		}
 
-		TEST_METHOD(Vectmultiplication_integersZero)
+		TEST_METHOD(divide_doubleatlimit_by0_Vect) //Checks how division by zero is handled
 		{
-			Vect A(1000000, -2000000, 2);
-			A = (CartesianElement)A * 0;
-
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
-		}
-
-		TEST_METHOD(Vectmultiplication_doubleZero)
-		{
-			Vect A(1000.04400, -2000.0300, 2.1);
-			A = (CartesianElement)A * 0;
-
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
-		}
-
-		TEST_METHOD(Vectmultiplication_doublelimit_Zero)
-		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-			A = (CartesianElement)A * 0;
-
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
-		}
-
-		TEST_METHOD(Vectmultiplication_doublelimit_One)
-		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-			A = (CartesianElement)A * 1;
-
-			Assert::IsTrue(A.xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue(A.yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue(A.zComponent() == std::numeric_limits<double>::min());
-		}
-
-		TEST_METHOD(Vectmultiplication_5point5_bye2)
-		{
-			Vect A(0.5, 0.555, 555555.55555);
-			A = (CartesianElement)A * 2;
-
-			Assert::IsTrue(A.xComponent() == 1);
-			Assert::IsTrue(A.yComponent() == 1.11);
-			Assert::IsTrue(A.zComponent() == 1111111.1111);
-		}
-
-		TEST_METHOD(Vectdivide_doubleatlimit_byOne)
-		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			Assert::IsTrue((A / 1).xComponent() == std::numeric_limits<double>::lowest());
-			Assert::IsTrue((A / 1).yComponent() == std::numeric_limits<double>::max());
-			Assert::IsTrue((A / 1).zComponent() == std::numeric_limits<double>::min());
-		}
-
-		TEST_METHOD(Vectdivide_doubleatlimit_by0) //Checks how division by zero is handled
-		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-
-			try
+			auto func = []()
 			{
-				A = A / 0;
-			}
-			catch (char *S)
-			{
-				std::cerr << S << '\n';
-				A.nullify();
-			}
+				Vect A(LOWEST, MAX, MIN);
+				A / 0;
+			};
 
-			Assert::IsTrue(A.xComponent() == 0);
-			Assert::IsTrue(A.yComponent() == 0);
-			Assert::IsTrue(A.zComponent() == 0);
+			Assert::ExpectException<std::string>(func);
 		}
 
-
-		TEST_METHOD(Vectdivide_doubleat0_byLimits)
+		TEST_METHOD(divide_doubleat0_byLimits_Vect)
 		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect A(997, MAX, LOWEST);
 			A.nullify();
 
-			Assert::IsTrue((A / std::numeric_limits<double>::lowest()).xComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::max()).yComponent() == 0);
-			Assert::IsTrue((A / std::numeric_limits<double>::min()).zComponent() == 0);
+			Assert::IsTrue((A / LOWEST) == Vect(0, 0, 0));
+			Assert::IsTrue((A / MAX) == Vect(0, 0, 0));
+			Assert::IsTrue((A / MIN) == Vect(0, 0, 0));
 		}
-
-
+		
+		//========================VECT CLASS SPECIFIC============================================================
 		TEST_METHOD(VectEquality)
 		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-			Vect B(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect A(LOWEST, MAX, MIN);
+			Vect B(LOWEST, MAX, MIN);
 
 			Assert::IsTrue(A == B);
 		}
 
 		TEST_METHOD(VectInequality)
 		{
-			Vect A(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
-			Vect B(std::numeric_limits<double>::lowest() + 1, std::numeric_limits<double>::max(), std::numeric_limits<double>::min());
+			Vect A(LOWEST, MAX, MIN);
+			Vect B(LOWEST + 1, MAX, MIN);
 
-			Assert::IsTrue(A == B);
+			Assert::IsFalse(A == B);
 		}
+
+		TEST_METHOD(CanonicVectorialProducts)
+		{
+			Vect x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+			
+			Assert::IsTrue((x^y) == z);
+			Assert::IsTrue((y^z) == x);
+			Assert::IsTrue((z^x) == y);
+
+			Assert::IsTrue((y^x) == -z);
+			Assert::IsTrue((z^y) == -x);
+			Assert::IsTrue((x^z) == -y);
+		}
+		
+		TEST_METHOD(LimitsVectorialProducts)
+		{
+			Vect v(LOWEST, MIN, MAX), u(1, 1, 1);
+
+			Assert::IsTrue((v^u) ==Vect(MIN-MAX,MAX-LOWEST,LOWEST -MIN));
+		}
+
+		TEST_METHOD(ScalarProductLimits)
+		{
+			Vect a(MIN, MAX, 1),b(LOWEST,LOWEST,1);
+			Assert::IsTrue(a*b == MIN*LOWEST + MAX*LOWEST + 1);
+		}
+
+		TEST_METHOD(CanonicScalarlProducts)
+		{
+			Vect x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+
+			Assert::IsTrue((x*y) == 0);
+			Assert::IsTrue((y*z) == 0);
+			Assert::IsTrue((z*x) == 0);
+		}
+
 	};
 
 
