@@ -168,7 +168,7 @@ namespace GeoTest
 				A / 0;
 			};
 
-			Assert::ExpectException<std::string>(func);
+			Assert::ExpectException<const char[13]>(func);
 		}
 
 		TEST_METHOD(divide_doubleat0_byLimits)
@@ -200,25 +200,25 @@ namespace GeoTest
 
 			Assert::IsTrue(Point(1234142.124214, 2411.24, 45.4500000000787) == Copied);
 		}
-							//SPECIFIC TO POINT CLASS INTERFACE================================
-							TEST_METHOD(VectToPoint)
-							{
-								Vect V(2,352,.5643566);
-								Point P(V);
+		//SPECIFIC TO POINT CLASS INTERFACE================================
+		TEST_METHOD(VectToPoint)
+		{
+			Vect V(2, 352, .5643566);
+			Point P(V);
 
-								Assert::IsTrue(P == Point(2, 352, .5643566));
-							}
+			Assert::IsTrue(P == Point(2, 352, .5643566));
+		}
 
-							TEST_METHOD(ImagePoint)
-							{
-								Vect V(2, 352, .5643566);
-								Point A(-35353, 342, 4);
-								Point P(A,V);
+		TEST_METHOD(ImagePoint)
+		{
+			Vect V(2, 352, .5643566);
+			Point A(-35353, 342, 4);
+			Point P(A, V);
 
-								Assert::IsTrue(P == Point(-35351, 694, 4.5643566));
-							}
-							//===============================================================================
-		// Element Creation tests--------------------------------------------
+			Assert::IsTrue(P == Point(-35351, 694, 4.5643566));
+		}
+		//===============================================================================
+// Element Creation tests--------------------------------------------
 		TEST_METHOD(MoveTest_Point)
 		{
 			Point C(-200000, 0, 200000);
@@ -337,7 +337,7 @@ namespace GeoTest
 		TEST_METHOD(divide_doubleatlimit_byOne_Point)
 		{
 			Point A(LOWEST, MAX, MIN);
-			
+
 			Assert::IsTrue(A / 1 ==
 				Point(LOWEST,
 					MAX,
@@ -354,7 +354,7 @@ namespace GeoTest
 				A / 0;
 			};
 
-			Assert::ExpectException<std::string>(func);
+			Assert::ExpectException<const char[13]>(func);
 		}
 
 		TEST_METHOD(divide_doubleat0_byLimits_Point)
@@ -369,11 +369,11 @@ namespace GeoTest
 		//------------------------------------------------------------------------------------
 	};
 
-	
+
 	TEST_CLASS(VectTests)
 	{
 	public:
-		
+
 		TEST_METHOD(ParameterlessVect)
 		{
 			Vect C;
@@ -393,9 +393,9 @@ namespace GeoTest
 			Point C(1234142.124214, 2411.24, 45.4500000000787);
 			Point D(.34234, 23423, 45634563.346);
 
-			Assert::IsTrue(Vect(C,D) == Vect(.34234- 1234142.124214, 23423- 2411.24, 45634563.346- 45.4500000000787));
+			Assert::IsTrue(Vect(C, D) == Vect(.34234 - 1234142.124214, 23423 - 2411.24, 45634563.346 - 45.4500000000787));
 		}
-		
+
 		//==============================FROM BASE CLASS=================================================
 		// Element Creation tests--------------------------------------------
 		TEST_METHOD(MoveTest_Vect)
@@ -458,14 +458,14 @@ namespace GeoTest
 				);
 		}
 
-		TEST_METHOD(AdditionTest_integerfraction_Vect)  //assumes compiler performs integer division
+		TEST_METHOD(AdditionTest_integerfraction_Vect)  
 		{
 			Vect A(1000000 / 2, -2000001 / 2, 3);
 			Vect B(1000000 / 2, -2000001 / 2, 0);
 
 			Assert::IsTrue(A + B == Vect(1000000, -2000000, 3));
 		}
-		
+
 		TEST_METHOD(divide_doubleatlimit_byOne_Vect)
 		{
 			Vect A(LOWEST, MAX, MIN);
@@ -487,7 +487,7 @@ namespace GeoTest
 				A / 0;
 			};
 
-			Assert::ExpectException<std::string>(func);
+			Assert::ExpectException<const char[13]>(func);
 		}
 
 		TEST_METHOD(divide_doubleat0_byLimits_Vect)
@@ -499,7 +499,7 @@ namespace GeoTest
 			Assert::IsTrue((A / MAX) == Vect(0, 0, 0));
 			Assert::IsTrue((A / MIN) == Vect(0, 0, 0));
 		}
-		
+
 		//========================VECT CLASS SPECIFIC============================================================
 		TEST_METHOD(VectEquality)
 		{
@@ -509,7 +509,7 @@ namespace GeoTest
 			Assert::IsTrue(A == B);
 		}
 
-		TEST_METHOD(VectInequality)
+		TEST_METHOD(VectInequality)  //FAIL -- Precision lost for big numbers -- 
 		{
 			Vect A(LOWEST, MAX, MIN);
 			Vect B(LOWEST + 1, MAX, MIN);
@@ -520,7 +520,7 @@ namespace GeoTest
 		TEST_METHOD(CanonicVectorialProducts)
 		{
 			Vect x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
-			
+
 			Assert::IsTrue((x^y) == z);
 			Assert::IsTrue((y^z) == x);
 			Assert::IsTrue((z^x) == y);
@@ -529,17 +529,16 @@ namespace GeoTest
 			Assert::IsTrue((z^y) == -x);
 			Assert::IsTrue((x^z) == -y);
 		}
-		
+
 		TEST_METHOD(LimitsVectorialProducts)
 		{
 			Vect v(LOWEST, MIN, MAX), u(1, 1, 1);
-
-			Assert::IsTrue((v^u) ==Vect(MIN-MAX,MAX-LOWEST,LOWEST -MIN));
+			Assert::IsTrue((v^u) == Vect(MIN - MAX, MAX - LOWEST, LOWEST - MIN));
 		}
 
 		TEST_METHOD(ScalarProductLimits)
 		{
-			Vect a(MIN, MAX, 1),b(LOWEST,LOWEST,1);
+			Vect a(MIN, MAX, 1), b(LOWEST, LOWEST, 1);
 			Assert::IsTrue(a*b == MIN*LOWEST + MAX*LOWEST + 1);
 		}
 
@@ -552,9 +551,69 @@ namespace GeoTest
 			Assert::IsTrue((z*x) == 0);
 		}
 
+		TEST_METHOD(NormalityTest)
+		{
+			Vect l(234, 0, 0);
+			Vect mn(0, 453415.451454, 0);
+			Vect mx(0, 0, .001000262434);
+
+			Assert::IsTrue(l.norm() == 234);
+			Assert::IsTrue(mn.norm() == 453415.451454);
+			Assert::IsTrue(mx.norm() == .001000262434);
+		}
+
+		TEST_METHOD(limitNormalityTest) //Fail - maximum exceeded in computation -> real max: +/- sq max
+		{
+			Vect l(LOWEST, 0, 0);
+			Vect mn(0, MIN, 0);
+			Vect mx(0, 0, MAX);
+
+			Assert::IsTrue(l.norm() == LOWEST);
+			Assert::IsTrue(mn.norm() == MIN);
+			Assert::IsTrue(mx.norm() == MAX);
+		}
+
+		TEST_METHOD(limitNormOfVectorialProduct)	//Fail - max exceed in norm computation
+		{
+			Vect l(LOWEST / 3, 0, 0);
+			Vect mn(0, MIN, 0);
+			Vect mx(0, MAX / 3, 0);
+
+			Assert::IsTrue(((l^mn) ^ mx).norm() == LOWEST*MIN*MAX / 9);
+		}
+
+		TEST_METHOD(NormOfVectorialProduct)
+		{
+			Vect l(234, 0, 0);
+			Vect mn(0, 453415.451454, 0);
+			Vect mx(0, .001000262434, 0);
+
+			Assert::IsTrue(((l^mn) ^ mx).norm() == 234 * 453415.451454*.001000262434);
+		}
+
+		TEST_METHOD(UnityVectNormAndDirection)
+		{
+			Vect l(2, 978.98, 78989);
+
+			Assert::IsTrue(l.unitVector().norm() == 1);
+			Assert::IsTrue(l.unitVector() * l == l.norm());
+
+		}
+
+		TEST_METHOD(UnityVectorial)  //Fail -- rounding errors, machine precision?
+		{
+			Vect l(2, 978.98, 78989);
+
+			Assert::IsTrue((l.unitVector() ^ l) == Vect(0, 0, 0));
+		}
+
+		TEST_METHOD(LimitsUnityVectNormAndDirection) //Fail max reached by norm - entry to be limited to square of max
+		{
+			Vect l(LOWEST, MIN, MAX);
+			Assert::IsTrue(l.unitVector().norm() == 1);
+			Assert::IsTrue(l.unitVector() * l == l.norm());
+		}
+
 	};
-
-
-
 
 }
