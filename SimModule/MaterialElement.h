@@ -10,8 +10,7 @@ class MaterialElement
 {
 public:
 	//Constructors & destructor
-	MaterialElement();
-	MaterialElement(Point p, Vect velocity, double mass, double charge_);
+	MaterialElement(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
 	virtual ~MaterialElement();
 
 	//Accessors
@@ -27,46 +26,50 @@ public:
 	void setMass(double m);
 	void setCharge(double c);
 
+	//Operators
+	bool operator==(const MaterialElement & B);
+
 	//Simulation tool
-	virtual void addExternalAction(Vect F=Vect(), Torsor T=Torsor()) = 0;
+	virtual void addExternalAction(Vect F = Vect(), Torsor T = Torsor()) = 0;
 	virtual void update(double dt) = 0; //computes and updates the state of the element to t+dt
-	virtual Vect Acceleration() = 0;
+
 
 protected:
-	double				Charge; 	// in Coulomb
-	double				Mass;   	// in kg
-	Vect				CenterOfMassVelocity;	// m/s
-	Point				CenterOfMassPosition;	// m 
+	double	Charge = 0; 				// in Coulomb
+	double	Mass = 0;   				// in kg
+	Vect	CenterOfMassVelocity = Vect(0, 0, 0);	// m/s
+	Point	CenterOfMassPosition = Point(0, 0, 0);	// m 
 };
 
 class MaterialPoint : public MaterialElement
 {
+	using MaterialElement::MaterialElement;
+
 public:
 	MaterialPoint();
-	MaterialPoint(Point G, Vect velocity=Vect(0,0,0), double mass=0, double charge=0);
 	~MaterialPoint();
 
 	void addExternalAction(Vect MechanicalAction);
 	void addExternalAction(Vect F, Torsor T);
-	Vect Acceleration();
+
 	void update(double dt);
 
 private:
 	std::vector<Vect>	ExternalActions;
-	
 	void updateSpeedandPosition(double dt);
 };
 
 class Solid : public MaterialElement
 {
+	using MaterialElement::MaterialElement;
+
 public:
 	Solid();
-	Solid(Point G, Vect velocity=Vect(0,0,0), double mass=0, double charge=0);
 	~Solid();
 
 	void addExternalAction(Torsor MechanicalAction);
 	void addExternalAction(Vect F, Torsor T);
-	Vect Acceleration();
+
 	void update(double dt);
 
 private:
