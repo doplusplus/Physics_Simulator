@@ -28,12 +28,6 @@ void CartesianElement::show()
 }
 
 //Modifiers
-void CartesianElement::move(double dx, double dy, double dz)
-{
-	X += dx;
-	Y += dy;
-	Z += dz;
-}
 
 void CartesianElement::nullify()
 {
@@ -79,11 +73,10 @@ CartesianElement CartesianElement ::operator /(double a)
 }
 
 //logical operator	
-bool CartesianElement ::operator ==(CartesianElement B)
+bool CartesianElement ::operator ==(const CartesianElement &B)
 {
 	return (X == B.X) && (Y == B.Y) && (Z == B.Z);
 }
-
 
 
 //----------------------------------------------------------------------------------------------------
@@ -148,7 +141,7 @@ double Vect::operator *(Vect &B)
 // Characteristic elements
 double Vect::norm()
 {
-	double sq = *this * (*this);
+	double sq = *this * *this;
 	sq = sqrt(sq);
 	return sq;
 }
