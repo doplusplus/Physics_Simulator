@@ -12,18 +12,10 @@ public:
 	CartesianElement(const CartesianElement &C);
 	virtual ~CartesianElement();
 
-	//accessor
-	double xComponent() { return X; };
-	double yComponent() { return Y; };
-	double zComponent() { return Z; };
 
 	//Display
 	void show();
 	
-	//Modifier
-	void move(double dx, double dy, double dz);
-	void nullify();
-
 	//Algebraic operator
 	CartesianElement operator +(const CartesianElement &B);
 	CartesianElement operator-();
@@ -33,12 +25,14 @@ public:
 	CartesianElement operator /(double a);			// division by a scalar, exception thrown if null 
 
 //logical operator	
-	bool operator ==(CartesianElement B);
+	bool operator ==(const CartesianElement &B);
 
 protected:
 	double X;
 	double Y;
 	double Z;
+
+void nullify();
 };
 
 //==================================== Point ====================================
@@ -67,8 +61,8 @@ public:
 
 	Vect operator ^(Vect &B);		// Vectorial multiplication
 	double operator *(Vect &B);		// dot product	
-	Vect unitVector();
 	double norm();
+	Vect unitVector();
 };
 
 #endif
