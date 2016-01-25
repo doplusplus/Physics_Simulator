@@ -23,8 +23,6 @@ public:
 
 	//Modifier
 	void move(double dx, double dy, double dz);
-	void setMass(double m);
-	void setCharge(double c);
 
 	//Operators
 	bool operator==(const MaterialElement & B);
@@ -35,8 +33,8 @@ public:
 
 
 protected:
-	double	Charge = 0; 				// in Coulomb
-	double	Mass = 0;   				// in kg
+	double	Charge = 0; 							// in Coulomb
+	double	Mass = 0;   							// in kg
 	Vect	CenterOfMassVelocity = Vect(0, 0, 0);	// m/s
 	Point	CenterOfMassPosition = Point(0, 0, 0);	// m 
 };
@@ -77,14 +75,12 @@ private:
 
 	void updateSpeedandPosition(double dt);
 
-	double	FirstInertiaMoment;
-	double	SecondInertiaMoment;
-	double	ThirdInertiaMoment;
+	double	MomentOfInertia1;
+	double	MomentOfInertia2;
+	double	MomentOfInertia3;
 	Vect	FirstPrincipalComponent;
 	Vect	SecondPrincipalComponent;
 	Vect	ThirdPrincipalComponent;
-
-
 };
 
 
