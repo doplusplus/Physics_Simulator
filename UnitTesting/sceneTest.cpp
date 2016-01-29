@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "..\Scene.h"
+#include "..\SimModule\Scene.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -15,13 +15,7 @@ namespace SceneTest
 			Scene Sc;
 			Sc.addMatPoint();
 
-			double x = Sc.getElement(0)->pointerToPosition()->xComponent();
-			double y = Sc.getElement(0)->pointerToPosition()->yComponent();
-			double z = Sc.getElement(0)->pointerToPosition()->zComponent();
-
-			Assert::AreEqual(0.0, x);
-			Assert::AreEqual(0.0, y);
-			Assert::AreEqual(0.0, z);
+			Assert::IsTrue(*(Sc.getElement(0)->pointerToPosition()) == Point(0, 0, 0));
 		}
 
 		TEST_METHOD(SceneCreationEmpty)
@@ -33,24 +27,16 @@ namespace SceneTest
 		TEST_METHOD(FreeFallEarth)
 		{
 			Scene Sc;
-			Sc.addMatPoint();
-
 			double FallTime = 10;	//seconds
 			double mass = 1;		//kg	
 			const double earthGravity = 9.81;
 
 			Vect G(0, 0, mass*earthGravity);
-			
-
-			Sc.getElement(0)->setMass(mass);
-			Sc.getElement(0)->place(0, 0, 0);
-			//Sc.setForce(G, 0);
+			Sc.addMatPoint(Point(0, 0, 0), Vect(0, 0, 0), mass);
 			Sc.getElement(0)->addExternalAction(G);
-
 			Sc.update(FallTime);
 
-			Assert::AreEqual(0.5*9.81*FallTime*FallTime, Sc.getElement(0)->pointerToPosition()->zComponent());
+			Assert::IsTrue(Point(0, 0, 0.5*9.81*FallTime*FallTime) == *(Sc.getElement(0)->pointerToPosition()));
 		}
-		
 	};
 }

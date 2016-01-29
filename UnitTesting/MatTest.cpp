@@ -1,109 +1,99 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "..\MaterialElement.h"
+#include "..\SimModule\MaterialElement.h"
 #include <iostream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MatElementTest
 {
-	TEST_CLASS(MatTest1)
+	TEST_CLASS(MatPointTest)
 	{
 	public:
 
-		TEST_METHOD(settersTest)
+		TEST_METHOD(ParameterlessMat)
 		{
-			MaterialElement M;
-			Point P(1, 2, 3);
-
-			M.place(P);
-			M.setMass(2002020202.333);
-			M.setCharge(2.3423);
-
-			Assert::AreEqual(M.getMass(), 2002020202.333);
-			Assert::AreEqual(M.getCharge(), 2.3423);
-			Assert::AreEqual(P.xComponent(), M.pointerToPosition()->xComponent());
-			Assert::AreEqual(P.yComponent(), M.pointerToPosition()->yComponent());
-			Assert::AreEqual(P.zComponent(), M.pointerToPosition()->zComponent());
+			MaterialPoint M;
+			Point P(0, 0, 0);
+			MaterialPoint N(P);
+			Assert::IsTrue(M == N);
 		}
+
+		TEST_METHOD(PositionPointer)
+		{
+			MaterialPoint M;
+			M.move(23.3243, 324, 546.7856);
+
+			Assert::IsTrue(*M.pointerToPosition() == Point(23.3243, 324, 546.7856));
+		}
+
+		TEST_METHOD(moveTest)
+		{
+			Point P(1, 2, 3);
+			Vect V(2.3, 3.3, 4.4);
+			double mass = 2002020202.333;
+			double charge = 2.3423;
+
+			MaterialPoint M(P, V, mass, charge);
+			M.move(-13233, .2232, -232.2333);
+
+			Assert::IsTrue(M == MaterialPoint(Point(-13232, 2.2232, -229.2333), V, mass, charge));
+		}
+
+		TEST_METHOD(equality)
+		{
+			Point P(13223.3232, 3223.23233232, 23222323232.276473);
+			Vect V(2, 3.123, 4342.4352314);
+			double mass = 44555456.545545543;
+			double charge = 27357357654567475666.3423;
+
+			MaterialPoint M(P, V, mass, charge);
+
+			Assert::IsTrue(M == M);
+		}
+
 
 		TEST_METHOD(ZeroMassException)
 		{
-			auto func = []() 
+			auto func = []()
 			{
-				MaterialElement M;
 				Point P(1, 2, 3);
-				M.place(P);
+				MaterialPoint M(P);
 				M.update(123);
 			};
 			Assert::ExpectException<std::invalid_argument>(func);
 		}
 
-		TEST_METHOD(Acceleration_at_unitForce)
-		{
-			MaterialElement M;
-			Point P(0, 0, 0);
-			M.place(P);
-			M.setMass(1);
-
-			Vect F(1, 1, 1);
-			M.addExternalAction(F);
-			M.update(1);
-
-			double x = M.Acceleration().xComponent();
-			double y = M.Acceleration().yComponent();
-			double z = M.Acceleration().zComponent();
-
-			Assert::AreEqual(1.0, x);
-			Assert::AreEqual(1.0, y);
-			Assert::AreEqual(1.0, z);
-		}
-
 		TEST_METHOD(Position_at_unitForce)
 		{
-			MaterialElement M;
-
 			Point P(0, 0, 0);
-			M.place(P);
-			M.setMass(1);
+			double mass = 1;
+			MaterialPoint M(P, Vect(0, 0, 0), mass);
 
 			Vect F(1, 1, 1);
 			M.addExternalAction(F);
 			M.update(1);
 
-			double x = M.pointerToPosition()->xComponent();
-			double y = M.pointerToPosition()->yComponent();
-			double z = M.pointerToPosition()->zComponent();
-
-			Assert::AreEqual(0.5, x);
-			Assert::AreEqual(0.5, y);
-			Assert::AreEqual(0.5, z);
+			Assert::IsTrue(*M.pointerToPosition() == Point(0.5, 0.5, 0.5));
 		}
 
 		TEST_METHOD(Position_at_10kg_10sec_underGravity)
 		{
-			MaterialElement M;
 			double accuracy = 0.000001;
 			double expectedZ = 490.5;
 
 			Point P(0, 0, 0);
-			M.place(P);
-			M.setMass(10); //kg
+			double mass = 10;
+			MaterialPoint M(P, Vect(0, 0, 0), mass);
 
 			Vect F(0, 0, 98.1); // force set to gravity * mass
 
 			M.addExternalAction(F);
 			M.update(10);  //seconds
 
-			double x = M.pointerToPosition()->xComponent();
-			double y = M.pointerToPosition()->yComponent();
-			double z = M.pointerToPosition()->zComponent();
-
-			Assert::AreEqual(0.0, x);
-			Assert::AreEqual(0.0, y);
-			Assert::IsTrue(abs(z - expectedZ) < accuracy);
+			Assert::IsTrue(*M.pointerToPosition() == Point(0, 0, expectedZ));
 		}
-
-
 	};
+
+
 }

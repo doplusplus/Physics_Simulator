@@ -9,10 +9,10 @@
 
 MaterialElement::MaterialElement(Point p, Vect velocity, double mass, double charge_)
 {
-	Charge = charge_; 			// in Coulomb
-	Mass = mass;   				// in kg
+	Charge = charge_; 					// in Coulomb
+	Mass = mass;   						// in kg
 	CenterOfMassVelocity = velocity;	// m/s
-	CenterOfMassPosition = p;		// m 
+	CenterOfMassPosition = p;			// m 
 }
 
 MaterialElement::~MaterialElement()
@@ -25,7 +25,6 @@ Point * MaterialElement::pointerToPosition()
 	pos = &CenterOfMassPosition;
 	return pos;
 }
-
 
 double MaterialElement::mass()
 {
@@ -49,18 +48,9 @@ void MaterialElement::consoleShow()
 
 void MaterialElement::move(double dx, double dy, double dz)
 {
-	CenterOfMassPosition.move(dx, dy, dz);
+	CenterOfMassPosition = CenterOfMassPosition + Point(dx, dy, dz);
 }
 
-void MaterialElement::setMass(double m)
-{
-	Mass = m;
-}
-
-void MaterialElement::setCharge(double c)
-{
-	Charge = c;
-}
 
 bool MaterialElement::operator ==(const MaterialElement &B)
 {
@@ -71,7 +61,7 @@ bool MaterialElement::operator ==(const MaterialElement &B)
 
 
 // ================================== Material Point==================================================================== 
-MaterialPoint::MaterialPoint():MaterialElement()
+MaterialPoint::MaterialPoint() :MaterialElement()
 {}
 MaterialPoint::~MaterialPoint() {}
 
@@ -102,9 +92,8 @@ void MaterialPoint::update(double dt)		//computes and updates the state of the e
 	updateSpeedandPosition(dt);
 }
 
-
 // ================================== Solids Point ==================================================================== 
-Solid::Solid():MaterialElement()
+Solid::Solid() :MaterialElement()
 {}
 Solid::~Solid() {}
 

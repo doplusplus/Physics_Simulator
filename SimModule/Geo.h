@@ -15,7 +15,7 @@ public:
 
 	//Display
 	void show();
-	
+
 	//Algebraic operator
 	CartesianElement operator +(const CartesianElement &B);
 	CartesianElement operator-();
@@ -24,7 +24,7 @@ public:
 	CartesianElement operator *(double a);			// multiplication by a scalar
 	CartesianElement operator /(double a);			// division by a scalar, exception thrown if null 
 
-//logical operator	
+													//logical operator	
 	bool operator ==(const CartesianElement &B);
 
 protected:
@@ -32,7 +32,7 @@ protected:
 	double Y;
 	double Z;
 
-void nullify();
+	void nullify();
 };
 
 //==================================== Point ====================================

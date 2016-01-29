@@ -87,13 +87,13 @@ Point::Point()
 Point::Point(double x, double y, double z) :CartesianElement(x, y, z)
 {}
 
-Point::Point(CartesianElement C):CartesianElement(C)
+Point::Point(CartesianElement C) : CartesianElement(C)
 {}
 
-Point::Point(Vect V):CartesianElement(V)
+Point::Point(Vect V) : CartesianElement(V)
 {}
 
-Point::Point(Point P, Vect V): CartesianElement(P+V)
+Point::Point(Point P, Vect V) : CartesianElement(P + V)
 {}
 
 Point::~Point()
@@ -110,7 +110,7 @@ Vect::Vect()
 Vect::Vect(double x, double y, double z) :CartesianElement(x, y, z)
 {}
 
-Vect::Vect(CartesianElement C): CartesianElement(C)
+Vect::Vect(CartesianElement C) : CartesianElement(C)
 {}
 
 Vect::Vect(Point A, Point B) : Vect(B - A)
@@ -132,9 +132,9 @@ Vect Vect::operator ^(Vect &B)
 double Vect::operator *(Vect &B)
 {
 	double s =
-			X*B.X
-		+	Y*B.Y
-		+	Z*B.Z;
+		X*B.X
+		+ Y*B.Y
+		+ Z*B.Z;
 	return s;
 }
 

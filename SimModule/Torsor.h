@@ -26,9 +26,9 @@ public:
 	void show();
 
 	//Modifiers
-	void nullify();  //sets the direction to 0
+
 	void divideResultant(double d);
-	
+
 	//Transportation
 	Vect momentAt(Point P);
 
@@ -39,6 +39,8 @@ private:
 	Point	Application;
 	Vect	Resultant;
 	Vect	Moment;
+
+	void nullify();  //sets the direction to 0
 
 };
 

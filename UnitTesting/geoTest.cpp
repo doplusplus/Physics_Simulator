@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "..\Geo.h"
+#include "..\SimModule\Geo.h"
 #include <limits>
 #include <iostream> 
 
@@ -22,52 +22,12 @@ namespace GeoTest
 			Assert::IsTrue(C == CartesianElement(0, 0, 0));
 		}
 
-
 		TEST_METHOD(CopyConstructor)
 		{
 			CartesianElement C(1234142.124214, 2411.24, 45.4500000000787);
 			CartesianElement Copied(C);
 
 			Assert::IsTrue(C == Copied);
-		}
-
-		// Element Creation tests--------------------------------------------
-		TEST_METHOD(MoveTest)
-		{
-			CartesianElement C(-200000, 0, 200000);
-			CartesianElement M;
-			M.move(-200000, 0, 200000);
-
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(noMoveTest)
-		{
-			CartesianElement C(-200000, 0, 200000);
-			C.move(0, 0, 0);
-
-			Assert::IsTrue(C == CartesianElement(-200000, 0, 200000));
-		}
-
-		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision)
-		{
-			CartesianElement C(LOWEST, MAX,
-				MIN);
-
-			CartesianElement M;
-			M.move(LOWEST, MAX,
-				MIN);
-
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(Nullity)
-		{
-			CartesianElement C(2, 3, 4);
-			C.move(435235, .3453235, 5634);
-			C.nullify();
-
-			Assert::IsTrue(C == CartesianElement(0, 0, 0));
 		}
 
 		//Operators tests--------------------------------------------------
@@ -151,7 +111,6 @@ namespace GeoTest
 		{
 			CartesianElement A(LOWEST, MAX, MIN);
 
-
 			Assert::IsTrue(A / 1 ==
 				CartesianElement(LOWEST,
 					MAX,
@@ -170,20 +129,9 @@ namespace GeoTest
 
 			Assert::ExpectException<const char[13]>(func);
 		}
-
-		TEST_METHOD(divide_doubleat0_byLimits)
-		{
-			CartesianElement A(997, MAX, LOWEST);
-			A.nullify();
-
-			Assert::IsTrue((A / LOWEST) == CartesianElement(0, 0, 0));
-			Assert::IsTrue((A / MAX) == CartesianElement(0, 0, 0));
-			Assert::IsTrue((A / MIN) == CartesianElement(0, 0, 0));
-		}
-		//------------------------------------------------------------------------------------
-
 	};
 
+	//============================================================================================
 	TEST_CLASS(PointTests)
 	{
 	public:
@@ -200,6 +148,7 @@ namespace GeoTest
 
 			Assert::IsTrue(Point(1234142.124214, 2411.24, 45.4500000000787) == Copied);
 		}
+
 		//SPECIFIC TO POINT CLASS INTERFACE================================
 		TEST_METHOD(VectToPoint)
 		{
@@ -218,44 +167,8 @@ namespace GeoTest
 			Assert::IsTrue(P == Point(-35351, 694, 4.5643566));
 		}
 		//===============================================================================
-// Element Creation tests--------------------------------------------
-		TEST_METHOD(MoveTest_Point)
-		{
-			Point C(-200000, 0, 200000);
-			Point M;
-			M.move(-200000, 0, 200000);
+		// Element Creation tests--------------------------------------------
 
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(noMoveTest_Point)
-		{
-			Point C(-200000, 0, 200000);
-			C.move(0, 0, 0);
-
-			Assert::IsTrue(C == Point(-200000, 0, 200000));
-		}
-
-		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision_Point)
-		{
-			Point C(LOWEST, MAX,
-				MIN);
-
-			Point M;
-			M.move(LOWEST, MAX,
-				MIN);
-
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(Nullity_Point)
-		{
-			Point C(2, 3, 4);
-			C.move(435235, .3453235, 5634);
-			C.nullify();
-
-			Assert::IsTrue(C == Point(0, 0, 0));
-		}
 
 		//Operators tests--------------------------------------------------
 		TEST_METHOD(AdditionTest_integers_Point)
@@ -356,20 +269,9 @@ namespace GeoTest
 
 			Assert::ExpectException<const char[13]>(func);
 		}
-
-		TEST_METHOD(divide_doubleat0_byLimits_Point)
-		{
-			Point A(997, MAX, LOWEST);
-			A.nullify();
-
-			Assert::IsTrue((A / LOWEST) == Point(0, 0, 0));
-			Assert::IsTrue((A / MAX) == Point(0, 0, 0));
-			Assert::IsTrue((A / MIN) == Point(0, 0, 0));
-		}
-		//------------------------------------------------------------------------------------
 	};
 
-
+	//============================================================================================
 	TEST_CLASS(VectTests)
 	{
 	public:
@@ -397,45 +299,6 @@ namespace GeoTest
 		}
 
 		//==============================FROM BASE CLASS=================================================
-		// Element Creation tests--------------------------------------------
-		TEST_METHOD(MoveTest_Vect)
-		{
-			Vect C(-200000, 0, 200000);
-			Vect M;
-			M.move(-200000, 0, 200000);
-
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(noMoveTest_Vect)
-		{
-			Vect C(-200000, 0, 200000);
-			C.move(0, 0, 0);
-
-			Assert::IsTrue(C == Vect(-200000, 0, 200000));
-		}
-
-		TEST_METHOD(MoveTest_infRange_supRange_limitPrecision_Vect)
-		{
-			Vect C(LOWEST, MAX,
-				MIN);
-
-			Vect M;
-			M.move(LOWEST, MAX,
-				MIN);
-
-			Assert::IsTrue(C == M);
-		}
-
-		TEST_METHOD(Nullity_Vect)
-		{
-			Vect C(2, 3, 4);
-			C.move(435235, .3453235, 5634);
-			C.nullify();
-
-			Assert::IsTrue(C == Vect(0, 0, 0));
-		}
-
 		//Operators tests--------------------------------------------------
 		TEST_METHOD(AdditionTest_integers_Vect)
 		{
@@ -458,7 +321,7 @@ namespace GeoTest
 				);
 		}
 
-		TEST_METHOD(AdditionTest_integerfraction_Vect)  
+		TEST_METHOD(AdditionTest_integerfraction_Vect)
 		{
 			Vect A(1000000 / 2, -2000001 / 2, 3);
 			Vect B(1000000 / 2, -2000001 / 2, 0);
@@ -479,7 +342,7 @@ namespace GeoTest
 				);
 		}
 
-		TEST_METHOD(divide_doubleatlimit_by0_Vect) //Checks how division by zero is handled
+		TEST_METHOD(divideBy0_doubleatlimit_Vect)
 		{
 			auto func = []()
 			{
@@ -490,15 +353,6 @@ namespace GeoTest
 			Assert::ExpectException<const char[13]>(func);
 		}
 
-		TEST_METHOD(divide_doubleat0_byLimits_Vect)
-		{
-			Vect A(997, MAX, LOWEST);
-			A.nullify();
-
-			Assert::IsTrue((A / LOWEST) == Vect(0, 0, 0));
-			Assert::IsTrue((A / MAX) == Vect(0, 0, 0));
-			Assert::IsTrue((A / MIN) == Vect(0, 0, 0));
-		}
 
 		//========================VECT CLASS SPECIFIC============================================================
 		TEST_METHOD(VectEquality)
@@ -600,7 +454,7 @@ namespace GeoTest
 
 		}
 
-		TEST_METHOD(UnityVectorial)  //Fail -- rounding errors, machine precision?
+		TEST_METHOD(UnityVectorial)  //Fail -- rounding error, machine precision?
 		{
 			Vect l(2, 978.98, 78989);
 

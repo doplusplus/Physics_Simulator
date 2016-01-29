@@ -54,9 +54,10 @@ void Torsor::show()
 //Modifiers
 void Torsor::nullify()
 {
-	Resultant.nullify();
-	Moment.nullify();
+	Resultant = Vect(0, 0, 0);
+	Moment = Vect(0, 0, 0);
 }
+
 
 void Torsor::divideResultant(double d)
 {
@@ -74,7 +75,7 @@ Torsor Torsor::operator +(Torsor B)
 {
 	Torsor I;
 	Point P = I.Application = Application + B.Application;
-	
+
 	I.Resultant = Resultant + B.Resultant;
 	I.Moment = momentAt(P) + B.momentAt(P);
 
