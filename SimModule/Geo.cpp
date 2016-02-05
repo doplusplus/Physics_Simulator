@@ -27,13 +27,6 @@ void CartesianElement::show()
 	std::cout << "x:" << X << '\n' << "y:" << Y << '\n' << "z:" << Z << '\n';
 }
 
-//Modifiers
-
-void CartesianElement::nullify()
-{
-	X = Y = Z = 0;
-}
-
 //Algebraic operators
 CartesianElement CartesianElement ::operator +(const CartesianElement &B)
 {
@@ -99,7 +92,12 @@ Point::Point(Point P, Vect V) : CartesianElement(P + V)
 Point::~Point()
 {}
 
-
+void Point::move(double dx, double dy, double dz)
+{
+	X += dx;
+	Y += dy;
+	Z += dz;
+}
 //================================================================================
 //----------------------------------- Vect -------------------------------------
 
@@ -151,4 +149,9 @@ Vect Vect::unitVector()
 	Vect u;
 	u = (*this) / norm();
 	return u;
+}
+
+Vect Vect::VectComponent(Vect V)
+{
+	return V;
 }

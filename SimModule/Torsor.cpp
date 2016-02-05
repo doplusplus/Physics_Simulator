@@ -16,25 +16,26 @@ Torsor::Torsor(const Torsor &Iv)
 	Moment = Iv.Moment;
 }
 
-Torsor::Torsor(Point P, Vect resultant, Vect moment)
+Torsor::Torsor(Point P, Vect force, Vect moment)
 {
 	Application = P;
-	Resultant = resultant;
+	Resultant = force;
 	Moment = moment;
 }
 
-Torsor::Torsor(Vect resultant, Vect moment)
+/*Torsor::Torsor(Vect force, Vect moment)
 {
-	Resultant = resultant;
+	Resultant = force;
 	Moment = moment;
 }
+*/
 
 Torsor::~Torsor()
 {
 }
 
 //Accessors
-Vect Torsor::resultant() { return Resultant; }
+Vect Torsor::VectComponent() { return Resultant; }
 Vect Torsor::moment() { return Moment; }
 Point Torsor::applicationPoint() { return Application; }
 
@@ -80,4 +81,9 @@ Torsor Torsor::operator +(Torsor B)
 	I.Moment = momentAt(P) + B.momentAt(P);
 
 	return I;
+}
+
+Torsor Torsor::nullTorsor()
+{
+	return Torsor();
 }

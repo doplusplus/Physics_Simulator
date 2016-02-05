@@ -14,11 +14,11 @@ public:
 	Torsor();
 	Torsor(const Torsor &Iv);
 	Torsor(Point P, Vect resultant, Vect moment);
-	Torsor(Vect resultant, Vect moment);
+	//Torsor(Vect resultant, Vect moment);
 	~Torsor();
 
 	//Accessors
-	Vect  resultant(); //**
+	Vect VectComponent();
 	Vect  moment();
 	Point applicationPoint();
 
@@ -34,6 +34,8 @@ public:
 
 	//Operators
 	Torsor operator +(Torsor B);
+
+	static Torsor nullTorsor();
 
 private:
 	Point	Application;

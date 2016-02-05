@@ -8,7 +8,11 @@
 
 //Constructors and destructor
 Scene::Scene()
+{}
+
+Scene::Scene(std::vector<MaterialElement*> content)
 {
+	S = content;
 }
 
 Scene::~Scene()
@@ -18,7 +22,6 @@ Scene::~Scene()
 		delete *it;
 	}
 }
-
 
 //Accessors
 
@@ -56,24 +59,11 @@ void Scene::consoleShow()
 	else { std::cout << "empty scene " << '\n'; }
 }
 
-
-//Modifier
-
-void Scene::addExternalAction(unsigned int place, Vect F, Torsor T)	// adds force to element i starting from 0
-{
-	S[place]->addExternalAction(F, T);
-}
-
-void Scene::addExternalAction(unsigned int place, Torsor T)
-{
-	addExternalAction(place, Vect(0, 0, 0), T);
-}
-
 void Scene::update(double dt)
 {
 	for (auto it = S.begin(); it != S.end(); it++)
 	{
-		(*it)->update(dt);
+	//	(*it)->update(dt);
 	}
 }
 
@@ -88,10 +78,14 @@ void Scene::simulate(double step, double duration)
 	Time += t;
 }
 
+void Scene::addMatPoint(MaterialPoint *Mp)
+{
+	S.push_back(Mp);
+}
+
 
 //----------Model interface-----------------------
-
-void Scene::addMatPoint()
+/*void Scene::addMatPoint()
 {
 	MaterialPoint *Mp = new MaterialPoint;
 	S.push_back(Mp);
@@ -115,3 +109,4 @@ void Scene::addSolid(Point p, Vect velocity, double mass, double charge_)
 	Solid *Sol = new Solid(p, velocity, mass, charge_);
 	S.push_back(Sol);
 }
+*/

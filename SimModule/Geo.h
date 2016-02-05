@@ -31,8 +31,6 @@ protected:
 	double X;
 	double Y;
 	double Z;
-
-	void nullify();
 };
 
 //==================================== Point ====================================
@@ -46,6 +44,10 @@ public:
 	Point(Vect V);				//At the non null extremity of V 
 	Point(Point P, Vect V);		//At the image of P translated by V 
 	~Point();
+
+private:
+	void move(double dx, double dy, double dz);
+
 };
 
 //==================================== Vect ====================================
@@ -63,6 +65,7 @@ public:
 	double operator *(Vect &B);		// dot product	
 	double norm();
 	Vect unitVector();
+	static Vect VectComponent(Vect v);
 };
 
 #endif
