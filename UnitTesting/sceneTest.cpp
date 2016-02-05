@@ -13,8 +13,7 @@ namespace SceneTest
 		TEST_METHOD(SceneCreationInit)
 		{
 			Scene Sc;
-//			Sc.addMatPoint();
-
+		//	Sc.addMatPoint();
 		//	Assert::IsTrue(*(Sc.getElement(0)->pointerToPosition()) == Point(0, 0, 0));
 		}
 
