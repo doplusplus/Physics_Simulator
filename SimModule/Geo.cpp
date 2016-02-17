@@ -136,6 +136,12 @@ double Vect::operator *(Vect &B)
 	return s;
 }
 
+Vect Vect::operator *(double a)
+{
+	return (Vect)((CartesianElement)(*this)*a);
+};
+
+
 // Characteristic elements
 double Vect::norm()
 {
@@ -151,7 +157,3 @@ Vect Vect::unitVector()
 	return u;
 }
 
-Vect Vect::VectComponent(Vect V)
-{
-	return V;
-}

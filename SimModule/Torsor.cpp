@@ -23,19 +23,12 @@ Torsor::Torsor(Point P, Vect force, Vect moment)
 	Moment = moment;
 }
 
-/*Torsor::Torsor(Vect force, Vect moment)
-{
-	Resultant = force;
-	Moment = moment;
-}
-*/
-
 Torsor::~Torsor()
 {
 }
 
 //Accessors
-Vect Torsor::VectComponent() { return Resultant; }
+Vect Torsor::vectComponent() { return Resultant; }
 Vect Torsor::moment() { return Moment; }
 Point Torsor::applicationPoint() { return Application; }
 
@@ -86,4 +79,16 @@ Torsor Torsor::operator +(Torsor B)
 Torsor Torsor::nullTorsor()
 {
 	return Torsor();
+}
+
+bool Torsor::operator ==(Torsor B)
+{
+	if (Resultant == B.Resultant)
+	{
+		Point P(0, 0, 0);
+		bool b = (momentAt(P) == B.momentAt(P));
+		return b;
+	}
+
+	return false;
 }

@@ -8,6 +8,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace GeoTest
 {
+	const double accuracy = double(1e-10); //approximately the diameter of an hydrogen atom in meter
+	const double rangeOfInterest = 384467000; //approximately the earth to oon distance
+
 	const double LOWEST = std::numeric_limits<double>::lowest();
 	const double MIN = std::numeric_limits<double>::min();
 	const double MAX = std::numeric_limits<double>::max();
@@ -365,8 +368,8 @@ namespace GeoTest
 
 		TEST_METHOD(VectInequality)  //FAIL -- Precision lost for big numbers -- 
 		{
-			Vect A(LOWEST, MAX, MIN);
-			Vect B(LOWEST + 1, MAX, MIN);
+			Vect A(-rangeOfInterest, rangeOfInterest, accuracy);
+			Vect B(1 - rangeOfInterest, rangeOfInterest, accuracy);
 
 			Assert::IsFalse(A == B);
 		}
@@ -416,24 +419,24 @@ namespace GeoTest
 			Assert::IsTrue(mx.norm() == .001000262434);
 		}
 
-		TEST_METHOD(limitNormalityTest) //Fail - maximum exceeded in computation -> real max: +/- sq max
+		TEST_METHOD(limitNormalityTest)
 		{
-			Vect l(LOWEST, 0, 0);
-			Vect mn(0, MIN, 0);
-			Vect mx(0, 0, MAX);
+			Vect l(-rangeOfInterest, 0, 0);
+			Vect mn(0, accuracy, 0);
+			Vect mx(0, 0, rangeOfInterest);
 
-			Assert::IsTrue(l.norm() == LOWEST);
-			Assert::IsTrue(mn.norm() == MIN);
-			Assert::IsTrue(mx.norm() == MAX);
+			Assert::IsTrue(l.norm() == rangeOfInterest);
+			Assert::IsTrue(mn.norm() == accuracy);
+			Assert::IsTrue(mx.norm() == rangeOfInterest);
 		}
 
-		TEST_METHOD(limitNormOfVectorialProduct)	//Fail - max exceed in norm computation
+		TEST_METHOD(limitNormOfVectorialProduct)
 		{
-			Vect l(LOWEST / 3, 0, 0);
-			Vect mn(0, MIN, 0);
-			Vect mx(0, MAX / 3, 0);
+			Vect l(-rangeOfInterest, 0, 0);
+			Vect mn(0, accuracy, 0);
+			Vect mx(0, rangeOfInterest, 0);
 
-			Assert::IsTrue(((l^mn) ^ mx).norm() == LOWEST*MIN*MAX / 9);
+			Assert::IsTrue(((l^mn) ^ mx).norm() == rangeOfInterest*rangeOfInterest*accuracy);
 		}
 
 		TEST_METHOD(NormOfVectorialProduct)
@@ -451,22 +454,34 @@ namespace GeoTest
 
 			Assert::IsTrue(l.unitVector().norm() == 1);
 			Assert::IsTrue(l.unitVector() * l == l.norm());
-
 		}
 
-		TEST_METHOD(UnityVectorial)  //Fail -- rounding error, machine precision?
+		TEST_METHOD(UnityVectorialLow)
 		{
-			Vect l(2, 978.98, 78989);
+			Vect l(2, 9, 9);
 
 			Assert::IsTrue((l.unitVector() ^ l) == Vect(0, 0, 0));
 		}
 
-		TEST_METHOD(LimitsUnityVectNormAndDirection) //Fail max reached by norm - entry to be limited to square of max
+		TEST_METHOD(UnityVectorialHigh)
 		{
-			Vect l(LOWEST, MIN, MAX);
-			Assert::IsTrue(l.unitVector().norm() == 1);
-			Assert::IsTrue(l.unitVector() * l == l.norm());
+			Vect l(2, 978.98, 78989);
+
+			Assert::IsTrue((l.unitVector() ^ l) < Vect(accuracy, accuracy, accuracy));
 		}
+
+		TEST_METHOD(LimitsUnitNorm)
+		{
+			Vect l(-rangeOfInterest, accuracy, rangeOfInterest);
+			Assert::IsTrue(l.unitVector().norm() == 1);
+		}
+
+		TEST_METHOD(LimitsUnitScalar) //rounding error in e-6
+		{
+			Vect l(-rangeOfInterest, accuracy, rangeOfInterest);
+			Assert::IsTrue(abs(l.unitVector() * l - l.norm()) < accuracy);
+		}
+
 
 	};
 

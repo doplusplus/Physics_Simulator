@@ -33,7 +33,7 @@ namespace SceneTest
 			Vect G(0, 0, mass*earthGravity);
 //			Sc.addMatPoint(Point(0, 0, 0), Vect(0, 0, 0), mass);
 //			Sc.getElement(0)->addExternalAction(G);
-			Sc.update(FallTime);
+//			Sc.forward(FallTime);
 
 //			Assert::IsTrue(Point(0, 0, 0.5*9.81*FallTime*FallTime) == *(Sc.getElement(0)->pointerToPosition()));
 		}

@@ -3,46 +3,51 @@
 #include "Geo.h"
 #include "Torsor.h"
 
- class MechanicalAction
+class MechanicalAction
 {
 public:
 	MechanicalAction() {};
 	virtual ~MechanicalAction() {};
-	virtual void null()=0;
-	virtual void add(MechanicalAction *A, MechanicalAction *result)=0;
+	virtual void null() = 0;
+	virtual void add(MechanicalAction *A, MechanicalAction *result) = 0;
 	virtual void show() = 0;
+	virtual Vect force()=0;
+	virtual MechanicalAction* copy()=0;
 };
 
-class ActionOnPoint:public MechanicalAction
+class ActionOnPoint :public MechanicalAction
 {
 public:
 	ActionOnPoint();
 	ActionOnPoint(double x, double y, double z);
-	ActionOnPoint(Vect V);
+	ActionOnPoint(Vect Action, Vect TimeBase = Vect(0, 0, 0),
+		Vect SpaceBase = Vect(0, 0, 0), Vect(*timeDiff)(Vect, double) = Vect::constant,
+		Vect(*spaceDiff)(Vect, double) = Vect::constant);
 	~ActionOnPoint();
 
-	void null() { Action = Vect(0, 0, 0); };
-	void show() { Action.show(); };
-
-	void add(MechanicalAction *A, MechanicalAction *result)
+	void null();
+	void show();
+	void add(MechanicalAction *A, MechanicalAction *result);
+	void addAction(ActionOnPoint *C, ActionOnPoint *result);
+	MechanicalAction* copy() 
 	{
-		addAction((ActionOnPoint*)A, (ActionOnPoint*)result);
+		MechanicalAction* ptr=new ActionOnPoint(*this);
+		return ptr;
 	}
-	void addAction(ActionOnPoint *C, ActionOnPoint *result)
-	{
-		result->Action = result->Action + C->Action;
-	};
-
-
 	Vect force();
+	Vect differential(double t, double dt,
+				Vect tBase = Vect(0, 0, 0), Vect sBase = Vect(0, 0, 0));
+	void forward(double t, double dt);
 
 private:
 	Vect Action = Vect(0, 0, 0);
-//	Vect TimeDifferential; TBC
-//	Vect SpaceDifferential;
+	Vect TimeBase = Vect(0, 0, 0);
+	Vect SpaceBase = Vect(0, 0, 0);
+	Vect(*TimeDifferential)(Vect, double) = Vect::constant;
+	Vect(*SpaceDifferential)(Vect, double) = Vect::constant;
 };
 
-class ActionOnSolid:public MechanicalAction
+class ActionOnSolid :public MechanicalAction
 {
 public:
 	ActionOnSolid();
@@ -54,11 +59,13 @@ public:
 	Vect force();
 	void null() { Action = Torsor::nullTorsor(); };
 	void show() { Action.show(); };
-
-	void add(ActionOnSolid *A, ActionOnSolid *result)
+	MechanicalAction* copy()
 	{
-		result->Action = A->Action + result->Action;
-	};
+		MechanicalAction* ptr = new ActionOnSolid(*this);
+		return ptr;
+	}
+	void add(MechanicalAction *A, MechanicalAction *result);
+	void addAction(ActionOnSolid *C, ActionOnSolid *result);
 
 private:
 	Torsor Action = Torsor::nullTorsor();

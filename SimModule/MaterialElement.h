@@ -8,21 +8,14 @@
 //=============================== Material element ==============================
 class MaterialElement
 {
-	friend class MaterialPointHandler;
 public:
 	//Constructors & destructor
 	MaterialElement(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
 	virtual ~MaterialElement();
 
-	//Accessors
-//	Point *pointerToPosition();
-
 	//Display
 	virtual void consoleShow();
 
-	//Modifier
-
-	virtual void update(double dt)=0;
 	//Operators
 	bool operator==(const MaterialElement & B);
 
@@ -33,6 +26,11 @@ private:
 	Vect	CenterOfMassVelocity = Vect(0, 0, 0);	// m/s
 	Point	CenterOfMassPosition = Point(0, 0, 0);	// m 
 
+protected:
+	double mass() { return Mass; }
+	Vect centerOfMassPosition() { return CenterOfMassPosition; };
+	Vect centerOfMassVelocity() { return CenterOfMassVelocity; };
+
 	void move(Vect dP);
 	void changeVelocity(Vect dS);
 };
@@ -41,13 +39,11 @@ private:
 class MaterialPoint : public MaterialElement
 {
 	using MaterialElement::MaterialElement;
-	
+	friend class MaterialPointHandler;
 
 public:
 	MaterialPoint();
 	~MaterialPoint();
-
-	void update(double dt);
 };
 
 class Solid : public MaterialElement
@@ -58,11 +54,6 @@ public:
 	Solid();
 	~Solid();
 
-	void addExternalAction(Torsor MechanicalAction);
-	void addExternalAction(Vect F, Torsor T);
-
-	void update(double dt) {};
-
 
 private:
 	double	MomentOfInertia1;
@@ -71,6 +62,8 @@ private:
 	Vect	FirstPrincipalComponent;
 	Vect	SecondPrincipalComponent;
 	Vect	ThirdPrincipalComponent;
+
+	void rotate(Vect dR) {};
 };
 
 

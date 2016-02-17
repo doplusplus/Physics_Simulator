@@ -3,23 +3,37 @@
 
 #include "stdafx.h"
 #include "..\SimModule\Calculator.h"
-
+#include "..\SimModule\Geo.h"
+#include "..\SimModule\Model.h"
 
 int main()
 {
-	Calculator Calc;
-	ActionOnPoint *A = new ActionOnPoint(Vect(1, 1, 1));
-	ActionOnPoint *B = new ActionOnPoint(Vect(1, 1, 1));
-	ActionOnPoint *C = new ActionOnPoint(Vect(1, 1, 1));
-	ActionOnPoint *result = new ActionOnPoint();
+	/*
+	Model M;
+	M.addMatPoint(Point(0, 0, 0));
+	M.addActionOnPoint(0, Vect(1, 2, 4));
+	//M.showHandlers();
+	
+	
+	M.setDomain(0, 0.0001, 123313131);
+	M.simulate(10, 1);
+	M.showScene();
+	/**/
 
-	std::vector<MechanicalAction*> V;
+	const double LOWEST = std::numeric_limits<double>::lowest();
+	const double MIN = std::numeric_limits<double>::min();
+	const double MAX = std::numeric_limits<double>::max();
+	
+	const double accuracy = double(1e-10); //approximately the diameter of an hydrogen atom in meter
+	const double rangeOfInterest = 384467000; //approximately the earth to oon distance
 
-	V.push_back(A);
-	V.push_back(B);
-	V.push_back(C);
-	Calc.resultant(V, result);
 
-	result->show();
+	Vect l(-rangeOfInterest, accuracy, rangeOfInterest);
+	std::cout << (l.unitVector() * l) << '\n';
+	std::cout<< l.norm()<<'\n';
+
+	std::cout << (l.unitVector() * l) - l.norm() << '\n';
+
+
 	return 0;
 }

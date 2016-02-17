@@ -14,11 +14,10 @@ public:
 	Torsor();
 	Torsor(const Torsor &Iv);
 	Torsor(Point P, Vect resultant, Vect moment);
-	//Torsor(Vect resultant, Vect moment);
 	~Torsor();
 
 	//Accessors
-	Vect VectComponent();
+	Vect vectComponent();
 	Vect  moment();
 	Point applicationPoint();
 
@@ -26,7 +25,6 @@ public:
 	void show();
 
 	//Modifiers
-
 	void divideResultant(double d);
 
 	//Transportation
@@ -34,6 +32,7 @@ public:
 
 	//Operators
 	Torsor operator +(Torsor B);
+	bool operator ==(Torsor B);
 
 	static Torsor nullTorsor();
 
@@ -42,7 +41,7 @@ private:
 	Vect	Resultant;
 	Vect	Moment;
 
-	void nullify();  //sets the direction to 0
+	void nullify();  //sets the resultant to 0
 
 };
 

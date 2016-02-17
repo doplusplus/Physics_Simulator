@@ -2,6 +2,13 @@
 
 Calculator::Calculator()
 {}
+
+Calculator::Calculator(double accuracy, double amplitude) 
+{
+	Accuracy = accuracy;
+	Range = amplitude;
+};
+
 Calculator::~Calculator()
 {}
 
@@ -25,13 +32,22 @@ Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)
 	return acc;
 }
 
-Vect  Calculator::velocityVariation(Vect Acceleration, double dt)
+Vect  Calculator::centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass)
+{
+	MechanicalAction* res = extActions.back()->copy();
+	resultant(extActions, res);
+	Vect v = res->force();
+	delete res;
+	return centerOfMassAcceleration(v, mass);
+};
+
+Vect  Calculator::velocityVariationCenterM(Vect Acceleration, double dt)
 {
 	Vect DVel = (CartesianElement)Acceleration*dt;
 	return DVel;
 }
 
-Vect Calculator::positionVariation(Vect Acceleration, Vect currentVelocity, double dt)
+Vect Calculator::positionVariationCenterM(Vect Acceleration, Vect currentVelocity, double dt)
 {
 	Vect DPos = (CartesianElement)Acceleration*0.5*dt*dt + (CartesianElement)currentVelocity*dt;
 	return DPos;

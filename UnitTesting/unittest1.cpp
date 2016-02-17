@@ -3,13 +3,13 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace UnitTesting
-{
-	TEST_CLASS(CalculatorTest)
+namespace UnitTestin
+{		
+	TEST_CLASS(UnitTest1)
 	{
 	public:
 		
-		TEST_METHOD(ZeroMass)
+		TEST_METHOD(TestMethod1)
 		{
 			// TODO: Your test code here
 		}

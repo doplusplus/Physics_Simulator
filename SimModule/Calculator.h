@@ -11,13 +11,19 @@ class Calculator
 {
 public:
 	Calculator();
+	Calculator(double accuracy, double range);
 	~Calculator();
 
 	void resultant(std::vector<MechanicalAction*> setOfT, MechanicalAction* result);
-	
-	Vect centerOfMassAcceleration(Vect Resultant, double mass);
-	Vect centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass) {};
 
-	Vect velocityVariation(Vect Acceleration, double dt);
-	Vect positionVariation(Vect Acceleration, Vect currentVelocity, double dt);
+	Vect centerOfMassAcceleration(Vect resultant, double mass);
+	Vect centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass);
+
+	Vect velocityVariationCenterM(Vect acceleration, double dt);
+	Vect positionVariationCenterM(Vect acceleration, Vect currentVelocity, double dt);
+
+
+private:
+	double Accuracy;
+	double Range;
 };

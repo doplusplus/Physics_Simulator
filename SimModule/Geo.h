@@ -63,9 +63,31 @@ public:
 
 	Vect operator ^(Vect &B);		// Vectorial multiplication
 	double operator *(Vect &B);		// dot product	
+	Vect operator *(double a);
+	bool operator <(Vect C)
+	{
+		return (X < C.X) && (Y < C.Y) && (Z < C.Z);
+	};
+
 	double norm();
 	Vect unitVector();
-	static Vect VectComponent(Vect v);
+	
+	//   member Time functions
+
+	static Vect constant(Vect V, double time) { return V; };
+	static Vect linear(Vect V, double time) { return V*time; };
+	static Vect timeQuadratic(Vect V, double time) { return V*time*time; };
 };
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

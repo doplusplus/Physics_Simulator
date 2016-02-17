@@ -59,54 +59,7 @@ void Scene::consoleShow()
 	else { std::cout << "empty scene " << '\n'; }
 }
 
-void Scene::update(double dt)
-{
-	for (auto it = S.begin(); it != S.end(); it++)
-	{
-	//	(*it)->update(dt);
-	}
-}
-
-void Scene::simulate(double step, double duration)
-{
-	double t = 0;
-	while (t < duration)
-	{
-		update(step);
-		t = t + step;
-	}
-	Time += t;
-}
-
 void Scene::addMatPoint(MaterialPoint *Mp)
 {
 	S.push_back(Mp);
 }
-
-
-//----------Model interface-----------------------
-/*void Scene::addMatPoint()
-{
-	MaterialPoint *Mp = new MaterialPoint;
-	S.push_back(Mp);
-}
-
-void Scene::addMatPoint(Point p, Vect velocity, double mass, double charge_)
-{
-	MaterialElement *Mp = new MaterialPoint(p, velocity, mass, charge_);
-	S.push_back(Mp);
-}
-
-
-void Scene::addSolid()
-{
-	Solid *Sol = new Solid;
-	S.push_back(Sol);
-}
-
-void Scene::addSolid(Point p, Vect velocity, double mass, double charge_)
-{
-	Solid *Sol = new Solid(p, velocity, mass, charge_);
-	S.push_back(Sol);
-}
-*/
