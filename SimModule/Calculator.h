@@ -22,7 +22,6 @@ public:
 	Vect velocityVariationCenterM(Vect acceleration, double dt);
 	Vect positionVariationCenterM(Vect acceleration, Vect currentVelocity, double dt);
 
-
 private:
 	double Accuracy;
 	double Range;

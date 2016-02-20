@@ -35,9 +35,9 @@ void Model::addActionOnPoint(unsigned int elementReference, Vect A)
 	((MaterialPointHandler*)(HandlerRef[elementReference]))->addAction(M);
 };
 
-void Model::setDomain(unsigned int elementReference, double accuracy, double amplitude)
+void Model::setDomain(unsigned int elementReference, double accuracy, double range)
 {
-	Calculator *C = new Calculator(accuracy, amplitude);
+	Calculator *C = new Calculator(accuracy, range);
 	ComputationUnit.push_back(C);
 	HandlerRef[elementReference]->setCalculator(C);
 };
@@ -53,7 +53,6 @@ void Model::simulate(double time, double dt)
 		d += dt;
 		ContentRef.forwardTime(dt);
 	} while (d < time);
-
 }
 
 void Model::showHandlers()

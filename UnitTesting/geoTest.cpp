@@ -9,7 +9,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace GeoTest
 {
 	const double accuracy = double(1e-10); //approximately the diameter of an hydrogen atom in meter
-	const double rangeOfInterest = 384467000; //approximately the earth to oon distance
+	const double rangeOfInterest = 384467000; //approximately the earth to moon distance
 
 	const double LOWEST = std::numeric_limits<double>::lowest();
 	const double MIN = std::numeric_limits<double>::min();

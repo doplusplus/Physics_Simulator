@@ -18,6 +18,9 @@ public:
 	
 	void simulate(double time, double dt);
 	void showHandlers();
+	
+	Point getElementPosition(unsigned int rank) { return HandlerRef[rank]->position(); };
+
 
 private:
 	Scene ContentRef;

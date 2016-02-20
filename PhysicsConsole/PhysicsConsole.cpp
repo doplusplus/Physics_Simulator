@@ -20,19 +20,23 @@ int main()
 	M.showScene();
 	/**/
 
-	const double LOWEST = std::numeric_limits<double>::lowest();
-	const double MIN = std::numeric_limits<double>::min();
-	const double MAX = std::numeric_limits<double>::max();
 	
-	const double accuracy = double(1e-10); //approximately the diameter of an hydrogen atom in meter
-	const double rangeOfInterest = 384467000; //approximately the earth to oon distance
+	double mass = 7;
+	double timeStep = 0.1;
 
+	Point P(0, 0, 0);
+	MaterialPoint M(P, Vect(0, 0, 0), mass), clone = M;
+	Vect F(1, 1, 1);
+	Calculator C;
+	ActionOnPoint *A= new ActionOnPoint(Vect(0,0,0));
 
-	Vect l(-rangeOfInterest, accuracy, rangeOfInterest);
-	std::cout << (l.unitVector() * l) << '\n';
-	std::cout<< l.norm()<<'\n';
+	MaterialPointHandler H(&M, &C);
+	H.addAction(A);
+	H.forward(timeStep);
 
-	std::cout << (l.unitVector() * l) - l.norm() << '\n';
+	H.show();
+	clone.consoleShow();
+
 
 
 	return 0;

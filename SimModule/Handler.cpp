@@ -11,12 +11,12 @@ MaterialElementHandler::~MaterialElementHandler()
 void MaterialElementHandler::show()
 {
 	std::cout << "material element: ";
-};
+}
 
 void MaterialElementHandler::setCalculator(Calculator *C)
 {
 	Calc = C;
-};
+}
 
 
 
@@ -26,11 +26,21 @@ void MaterialElementHandler::setCalculator(Calculator *C)
 MaterialPointHandler::MaterialPointHandler(MaterialPoint *Mp, Calculator *C)
 {
 	Element = Mp; Calc = C;
-};
+	ActionOnPoint *A = new ActionOnPoint(Vect(0, 0, 0));
+	ExternalActions.push_back(A);
+}
+
+MaterialPointHandler::MaterialPointHandler(MaterialPoint *Mp, Calculator *C, std::vector< MechanicalAction* > &A):MaterialPointHandler(Mp,C)
+{
+	ExternalActions = A;
+}
+
 
 MaterialPointHandler::~MaterialPointHandler()
 {
+	std::cout << "handler breaks free" << '\n';
 	for (auto element : ExternalActions) delete element;
+	std::cout << "...without troubles" << '\n';
 }
 
 void MaterialPointHandler::forward(double dt)
@@ -48,7 +58,7 @@ void MaterialPointHandler::forward(double dt)
 void MaterialPointHandler::addAction(ActionOnPoint* action)
 {
 	ExternalActions.push_back(action);
-};
+}
 
 void MaterialPointHandler::show()
 {
@@ -60,4 +70,4 @@ void MaterialPointHandler::show()
 
 	std::cout << "Position" << '\n';
 	Element->consoleShow();
-};
+}

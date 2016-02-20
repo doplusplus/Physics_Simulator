@@ -59,11 +59,13 @@ private:
 	double	MomentOfInertia1;
 	double	MomentOfInertia2;
 	double	MomentOfInertia3;
+
 	Vect	FirstPrincipalComponent;
 	Vect	SecondPrincipalComponent;
 	Vect	ThirdPrincipalComponent;
 
 	void rotate(Vect dR) {};
+	void changeRotationalSpeed(Vect dS) {}; //around instantaneous rotation axis
 };
 
 

@@ -33,7 +33,7 @@ void MaterialElement::consoleShow()
 
 void MaterialElement::move(Vect dP)
 {
-	CenterOfMassPosition = Vect(CenterOfMassPosition, dP);
+	CenterOfMassPosition = CenterOfMassPosition + dP;
 }
 void MaterialElement::changeVelocity(Vect dS)
 {

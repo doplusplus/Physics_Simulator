@@ -50,9 +50,6 @@ void ActionOnPoint::forward(double t, double dt)
 
 
 
-
-
-
 //===================================================================================
 ActionOnSolid::ActionOnSolid()
 {}

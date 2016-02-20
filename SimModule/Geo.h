@@ -24,6 +24,10 @@ public:
 	CartesianElement operator *(double a);			// multiplication by a scalar
 	CartesianElement operator /(double a);			// division by a scalar, exception thrown if null 
 
+	bool operator <(CartesianElement C)
+	{
+		return (X < C.X) && (Y < C.Y) && (Z < C.Z);
+	};
 													//logical operator	
 	bool operator ==(const CartesianElement &B);
 
@@ -64,10 +68,6 @@ public:
 	Vect operator ^(Vect &B);		// Vectorial multiplication
 	double operator *(Vect &B);		// dot product	
 	Vect operator *(double a);
-	bool operator <(Vect C)
-	{
-		return (X < C.X) && (Y < C.Y) && (Z < C.Z);
-	};
 
 	double norm();
 	Vect unitVector();
