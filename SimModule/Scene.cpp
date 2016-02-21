@@ -10,56 +10,53 @@
 Scene::Scene()
 {}
 
-Scene::Scene(std::vector<MaterialElement*> content)
+Scene::Scene(std::unordered_set<MaterialElement*> content)
 {
-	S = content;
+	Content = content;
 }
 
 Scene::~Scene()
 {
-	for (auto it = S.begin(); it != S.end(); it++)
+	for (auto it = Content.begin(); it != Content.end(); it++)
 	{
 		delete *it;
 	}
 }
 
-//Accessors
-
-MaterialElement *Scene::getElement(unsigned int i)
-{
-	MaterialElement *M = nullptr;
-
-	if (i < S.size())
-	{
-		M = S[i];
-	}
-	else
-	{
-		std::cout << "No element" << '\n';
-	}
-	return M;
-}
-
-double Scene::getTime()
-{
-	return Time;
-}
-
 //Display
 void Scene::consoleShow()
 {
-	if (0 < S.size())
+	if (0 < Content.size())
 	{
-		for (unsigned int i = 0; i < S.size(); i++)
+		for (auto element:Content)
 		{
-			std::cout << "element " << i + 1 << ": " << '\n';  //from 1 to number of elements
-			S[i]->consoleShow();
+			element->consoleShow();
 		}
 	}
 	else { std::cout << "empty scene " << '\n'; }
 }
 
+bool Scene::operator==(Scene s)
+{
+	unsigned int n = Content.size();
+
+	if (s.Content.size() != n) { return false; }
+	for (auto element:Content)
+	{
+		if (s.Content.find(element)==s.Content.end()) { return false; }
+	}
+
+	return true;
+}
+
+
 void Scene::addMatPoint(MaterialPoint *Mp)
 {
-	S.push_back(Mp);
+	Content.insert(Mp);
+}
+
+void Scene::forwardTime(double dt)
+{
+	if (dt >= 0) { Time += dt; }
+	else { throw "backward time travel"; }
 }

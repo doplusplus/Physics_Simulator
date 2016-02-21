@@ -1,7 +1,7 @@
 #ifndef SCENE
 #define SCENE
 
-#include <vector>
+#include <unordered_set>
 #include "MaterialElement.h"
 
 
@@ -12,23 +12,24 @@ public:
 
 	//Constructors and destructor
 	Scene();
-	Scene(std::vector<MaterialElement*> content);
+	Scene(std::unordered_set<MaterialElement*> content);
 	~Scene();
-
-	MaterialElement* getElement(unsigned int i);
-	double getTime();
 
 	//Display
 	void consoleShow();
-														
-	//---------- Model interface-----------------------
+
+	//Operators
+	bool operator ==(Scene s);
+
 
 private:
-	std::vector<MaterialElement*> S;
+	std::unordered_set<MaterialElement*> Content;
 	double Time = 0;
+	
 	void addMatPoint(MaterialPoint *Mp);
-//	void addSolid(Solid *S);
-	void forwardTime(double dt) { Time += dt; };
+	//	void addSolid(Solid *Content);
+	
+	void forwardTime(double dt);
 };
 
 

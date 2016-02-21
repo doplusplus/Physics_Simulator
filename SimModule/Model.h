@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include <iostream>
 
+
 class Model
 {
 public:
@@ -26,5 +27,9 @@ private:
 	Scene ContentRef;
 	std::vector<MaterialElementHandler*> HandlerRef;
 	std::vector<Calculator*> ComputationUnit;
+	
+	bool GraphicalOutput = false;
+	bool FileOutput = false;
+	bool DbOutput = false;
 };
 

@@ -15,13 +15,16 @@ Model::~Model()
 
 void Model::showScene()
 {
-	ContentRef.consoleShow();
+	for (auto element : HandlerRef)
+	{
+		element->show();
+	}
 }
 
 void Model::addMatPoint(Point p, Vect velocity, double mass, double charge_)
 {
 	MaterialPoint *Mp = new MaterialPoint(p, velocity, mass, charge_);
-	ContentRef.addMatPoint(Mp);
+	//ContentRef.addMatPoint(Mp);
 
 	Calculator *C = ComputationUnit[0];
 	MaterialPointHandler *MpH = new MaterialPointHandler(Mp, C);
@@ -44,15 +47,20 @@ void Model::setDomain(unsigned int elementReference, double accuracy, double ran
 
 void Model::simulate(double time, double dt)
 {
-	double d = 0;
-	do {
-		for (auto element : HandlerRef)
-		{
-			element->forward(dt);
-		}
-		d += dt;
-		ContentRef.forwardTime(dt);
-	} while (d < time);
+	if (GraphicalOutput&&GraphicalOutput&&DbOutput == false)
+	{
+		double d = 0;
+		do {
+			for (auto element : HandlerRef)
+			{
+				element->forward(dt);
+			}
+			d += dt;
+			ContentRef.forwardTime(dt);
+		} while (d < time);
+	}
+	else{}
+
 }
 
 void Model::showHandlers()
