@@ -17,6 +17,7 @@ public:
 	void addActionOnPoint(unsigned int elementReference, Vect A);
 	void setDomain(unsigned int elementReference, double accuracy, double amplitude);
 	
+	//void printState();
 	void simulate(double time, double dt);
 	void showHandlers();
 	

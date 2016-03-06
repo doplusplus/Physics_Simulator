@@ -27,7 +27,7 @@ private:
 	double Time = 0;
 	
 	void addMatPoint(MaterialPoint *Mp);
-	//	void addSolid(Solid *Content);
+	void addSolid(Solid *Content) {};
 	
 	void forwardTime(double dt);
 };

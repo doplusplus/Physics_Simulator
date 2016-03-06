@@ -24,7 +24,7 @@ void Model::showScene()
 void Model::addMatPoint(Point p, Vect velocity, double mass, double charge_)
 {
 	MaterialPoint *Mp = new MaterialPoint(p, velocity, mass, charge_);
-	//ContentRef.addMatPoint(Mp);
+	ContentRef.addMatPoint(Mp);
 
 	Calculator *C = ComputationUnit[0];
 	MaterialPointHandler *MpH = new MaterialPointHandler(Mp, C);
@@ -45,11 +45,23 @@ void Model::setDomain(unsigned int elementReference, double accuracy, double ran
 	HandlerRef[elementReference]->setCalculator(C);
 };
 
+/*
+void Model::printState()
+{
+	if (GraphicalOutput){}
+
+	if(DbOutput){}
+	
+	if(FileOutput){}
+
+}
+*/
+
 void Model::simulate(double time, double dt)
 {
-	if (GraphicalOutput&&GraphicalOutput&&DbOutput == false)
-	{
+	
 		double d = 0;
+//		printState();
 		do {
 			for (auto element : HandlerRef)
 			{
@@ -57,9 +69,10 @@ void Model::simulate(double time, double dt)
 			}
 			d += dt;
 			ContentRef.forwardTime(dt);
+//			printState();
 		} while (d < time);
-	}
-	else{}
+	
+	
 
 }
 

@@ -72,11 +72,18 @@ public:
 	double norm();
 	Vect unitVector();
 	
-	//   member Time functions
-
-	static Vect constant(Vect V, double time) { return V; };
-	static Vect linear(Vect V, double time) { return V*time; };
-	static Vect timeQuadratic(Vect V, double time) { return V*time*time; };
+	/*
+	static Vect(*add)(Vect(*a)(Vect , double ), Vect(*b)(Vect, double)) 
+	{
+		Vect(*result)(Vect ra, double rb) { return a(ra, rb) + b(ra, rb); }
+		return result;
+	};
+	/**/
+	
+	//   member Time or space functions
+	static Vect constant(Vect V, double var) { return V; };
+	static Vect linear(Vect V, double var) { return V*var; };
+	static Vect timeQuadratic(Vect V, double var) { return V*var*var; };
 };
 
 

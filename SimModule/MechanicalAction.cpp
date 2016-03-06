@@ -15,8 +15,8 @@ ActionOnPoint::ActionOnPoint(Vect action, Vect timeBase, Vect spaceBase,
 	 Action = action;
 	 TimeBase = timeBase;
 	 SpaceBase = spaceBase;
-	TimeDifferential =timeDiff ;
-	SpaceDifferential = spaceDiff;
+	TimeDerivative =timeDiff ;
+	SpaceDerivative = spaceDiff;
 }
 
 ActionOnPoint::~ActionOnPoint()
@@ -39,13 +39,18 @@ void ActionOnPoint::addAction(ActionOnPoint *C, ActionOnPoint *result)
 {
 	result->Action = result->Action + C->Action;
 }
-Vect ActionOnPoint::differential(double t, double dt, Vect tBase, Vect sBase)
+MechanicalAction * ActionOnPoint::copy()
 {
-	return TimeDifferential(tBase, t)*dt + SpaceDifferential(sBase, t)*dt;
+	MechanicalAction* ptr = new ActionOnPoint(*this);
+	return ptr;
+}
+Vect ActionOnPoint::variation(double t, double dt, Vect tBase, Vect sBase)
+{
+	return TimeDerivative(tBase, t)*dt + SpaceDerivative(sBase, t)*dt;
 }
 void ActionOnPoint::forward(double t, double dt)
 {
-	Action = Action + differential(t, dt, TimeBase, SpaceBase);
+	Action = Action + variation(t, dt, TimeBase, SpaceBase);
 }
 
 

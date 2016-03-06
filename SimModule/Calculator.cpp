@@ -1,4 +1,5 @@
 #include "Calculator.h"
+#include <memory>
 
 Calculator::Calculator()
 {}
@@ -12,11 +13,25 @@ Calculator::Calculator(double accuracy, double amplitude)
 Calculator::~Calculator()
 {}
 
+
 void Calculator::resultant(std::vector<MechanicalAction*> setOfActions, MechanicalAction* result)
 {
 	result->null();
 	for (auto element : setOfActions) { result->add(element, result); }
 }
+
+/*
+std::shared_ptr<MechanicalAction> Calculator::resultant(std::vector<std::shared_ptr<MechanicalAction>> setOfActions)
+{
+	auto res = std::make_shared<MechanicalAction>();
+	res->null();
+	for (auto element:setOfActions)
+	{
+		res->add(element); 
+	}
+
+}
+*/
 
 Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)
 {

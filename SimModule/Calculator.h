@@ -15,6 +15,8 @@ public:
 	~Calculator();
 
 	void resultant(std::vector<MechanicalAction*> setOfT, MechanicalAction* result);
+	std::shared_ptr<MechanicalAction> resultant(std::vector<std::shared_ptr<MechanicalAction>> setOfActions);
+
 
 	Vect centerOfMassAcceleration(Vect resultant, double mass);
 	Vect centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass);
