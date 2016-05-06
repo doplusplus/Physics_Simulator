@@ -13,12 +13,22 @@ Model::~Model()
 	for (auto element : HandlerRef) { delete element; }
 }
 
-void Model::showScene()
+void Model::showScene()const
 {
 	for (auto element : HandlerRef)
 	{
 		element->show();
 	}
+}
+
+std::string Model::getDescription()
+{
+	std::string s;
+	for (unsigned int i = 0; i < HandlerRef.size();i++)
+	{
+		s += "element n° "+ std::to_string(i)+"\n"+ HandlerRef[i]->getDescription();
+	}
+	return s;
 }
 
 void Model::addMatPoint(Point p, Vect velocity, double mass, double charge_)
@@ -51,7 +61,7 @@ void Model::printState()
 	if (GraphicalOutput){}
 
 	if(DbOutput){}
-	
+
 	if(FileOutput){}
 
 }
@@ -59,20 +69,20 @@ void Model::printState()
 
 void Model::simulate(double time, double dt)
 {
-	
-		double d = 0;
-//		printState();
-		do {
-			for (auto element : HandlerRef)
-			{
-				element->forward(dt);
-			}
-			d += dt;
-			ContentRef.forwardTime(dt);
-//			printState();
-		} while (d < time);
-	
-	
+
+	double d = 0;
+	//		printState();
+	do {
+		for (auto element : HandlerRef)
+		{
+			element->forward(dt);
+		}
+		d += dt;
+		ContentRef.forwardTime(dt);
+		//			printState();
+	} while (d < time);
+
+
 
 }
 

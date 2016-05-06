@@ -2,7 +2,7 @@
 #define GEO_H
 
 #include <vector>
-
+#include <string>
 //==================================== CartesianElement ====================================
 class CartesianElement
 {
@@ -14,22 +14,36 @@ public:
 
 
 	//Display
-	void show();
+	void show() const;
 
 	//Algebraic operator
-	CartesianElement operator +(const CartesianElement &B);
-	CartesianElement operator-();
-	CartesianElement operator -(CartesianElement B);
+	CartesianElement operator +(const CartesianElement &B) const;
+	CartesianElement operator-() const;
+	CartesianElement operator -(CartesianElement B) const;
 
-	CartesianElement operator *(double a);			// multiplication by a scalar
-	CartesianElement operator /(double a);			// division by a scalar, exception thrown if null 
+	CartesianElement operator *(double a) const;			// multiplication by a scalar
+	CartesianElement operator /(double a) const;			// division by a scalar, exception thrown if null 
 
-	bool operator <(CartesianElement C)
+	bool operator <(CartesianElement C) const
 	{
 		return (X < C.X) && (Y < C.Y) && (Z < C.Z);
 	};
 													//logical operator	
-	bool operator ==(const CartesianElement &B);
+	bool operator ==(const CartesianElement &B) const;
+	
+	std::string getDescription() const
+	{
+		return "x: " + std::to_string(X) + "y: " + std::to_string(Y) +"z: " + std::to_string(Z)+"\n";
+	}
+
+	std::vector<double> coordStream()
+	{
+		std::vector<double> res;
+		res.push_back(X);
+		res.push_back(Y);
+		res.push_back(Z);
+		return res;
+	}
 
 protected:
 	double X;
@@ -65,20 +79,13 @@ public:
 	Vect(Point A, Point B);
 	~Vect();
 
-	Vect operator ^(Vect &B);		// Vectorial multiplication
-	double operator *(Vect &B);		// dot product	
-	Vect operator *(double a);
+	Vect operator ^(const Vect &B) const;		// Vectorial multiplication
+	double operator *(const Vect &B) const;		// dot product	
+	Vect operator *(double a) const;
 
-	double norm();
-	Vect unitVector();
+	double norm() const;
+	Vect unitVector() const;
 	
-	/*
-	static Vect(*add)(Vect(*a)(Vect , double ), Vect(*b)(Vect, double)) 
-	{
-		Vect(*result)(Vect ra, double rb) { return a(ra, rb) + b(ra, rb); }
-		return result;
-	};
-	/**/
 	
 	//   member Time or space functions
 	static Vect constant(Vect V, double var) { return V; };

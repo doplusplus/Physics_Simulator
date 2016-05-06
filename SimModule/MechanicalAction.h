@@ -9,14 +9,15 @@ class MechanicalAction
 public:
 	MechanicalAction() {};
 	virtual ~MechanicalAction() {};
-	virtual void null() = 0;
-	virtual void show() = 0;
 
-	virtual Vect force() = 0;
+	virtual void null() = 0;
+	virtual void show() const= 0;
+
+	virtual Vect force() const= 0;
 	virtual void add(MechanicalAction *A, MechanicalAction *result) = 0;
 	virtual void add(std::shared_ptr<MechanicalAction> A) = 0;
 
-	virtual MechanicalAction* copy() = 0;
+	virtual MechanicalAction* copy() const = 0;
 
 };
 
@@ -30,6 +31,7 @@ public:
 	ActionOnPoint(Vect action, Vect timeBase = Vect(0, 0, 0),
 		Vect spaceBase = Vect(0, 0, 0), Vect(*timeDiff_)(Vect, double) = Vect::constant,
 		Vect(*spaceDiff_)(Vect, double) = Vect::constant);
+
 /*	ActionOnPoint(std::shared_ptr<ActionOnPoint> A)
 	{
 		Action = A->Action;
@@ -42,7 +44,7 @@ public:
 	~ActionOnPoint();
 
 	void null();
-	void show();
+	void show() const;
 
 	void add(MechanicalAction *A, MechanicalAction *result);
 	void add(std::shared_ptr<MechanicalAction> A)
@@ -59,14 +61,14 @@ public:
 
 
 	void addAction(ActionOnPoint *C, ActionOnPoint *result);
-	MechanicalAction* copy();
+	MechanicalAction* copy()const;
 
-	Vect force();
+	Vect force() const;
 	Vect variation(double t, double dt,
-		Vect tBase = Vect(0, 0, 0), Vect sBase = Vect(0, 0, 0));
+		Vect tBase = Vect(0, 0, 0), Vect sBase = Vect(0, 0, 0)) const;
 	void forward(double t, double dt);
 
-	bool operator ==(ActionOnPoint P)
+	bool operator ==(ActionOnPoint P) const
 	{
 		bool b = Action == P.Action&&TimeBase == P.TimeBase&&SpaceBase == P.SpaceBase
 			&&TimeDerivative == P.TimeDerivative&&SpaceDerivative == P.SpaceDerivative;
@@ -90,10 +92,10 @@ public:
 	ActionOnSolid(Torsor T) { Action = T; };
 	~ActionOnSolid();
 
-	Vect force();
+	Vect force() const;
 	void null() { Action = Torsor::nullTorsor(); };
-	void show() { Action.show(); };
-	MechanicalAction* copy()
+	void show() const { Action.show(); };
+	MechanicalAction* copy()const
 	{
 		MechanicalAction* ptr = new ActionOnSolid(*this);
 		return ptr;

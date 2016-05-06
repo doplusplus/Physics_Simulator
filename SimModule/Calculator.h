@@ -15,16 +15,15 @@ public:
 	~Calculator();
 
 	void resultant(std::vector<MechanicalAction*> setOfT, MechanicalAction* result);
-	std::shared_ptr<MechanicalAction> resultant(std::vector<std::shared_ptr<MechanicalAction>> setOfActions);
-
-
-	Vect centerOfMassAcceleration(Vect resultant, double mass);
+	
+	Vect centerOfMassAcceleration(Vect resultant, double mass) const;
 	Vect centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass);
-
-	Vect velocityVariationCenterM(Vect acceleration, double dt);
-	Vect positionVariationCenterM(Vect acceleration, Vect currentVelocity, double dt);
+	
+	Vect positionVariationCoM(Vect acceleration, Vect currentVelocity, double dt)const;
+	Vect velocityVariationCoM(Vect acceleration, double dt)const;
 
 private:
 	double Accuracy;
 	double Range;
+
 };

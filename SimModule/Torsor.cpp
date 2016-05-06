@@ -28,12 +28,12 @@ Torsor::~Torsor()
 }
 
 //Accessors
-Vect Torsor::vectComponent() { return Resultant; }
-Vect Torsor::moment() { return Moment; }
-Point Torsor::applicationPoint() { return Application; }
+Vect Torsor::vectComponent()  const { return Resultant; }
+Vect Torsor::moment() const { return Moment; }
+Point Torsor::applicationPoint()  const { return Application; }
 
 //Display
-void Torsor::show()
+void Torsor::show() const
 {
 	std::cout << "Point" << '\n';
 	Application.show();
@@ -59,13 +59,14 @@ void Torsor::divideResultant(double d)
 }
 
 //Vector transport
-Vect Torsor::momentAt(Point P)
+Vect Torsor::momentAt(Point P) const
 {
-	Vect M = Moment + (Vect(P, Application) ^ Resultant);
+
+	Vect M = Moment + (Vect(P, Application)^Resultant);
 	return M;
 }
 
-Torsor Torsor::operator +(Torsor B)
+Torsor Torsor::operator +(Torsor B) const
 {
 	Torsor I;
 	Point P = I.Application = Application + B.Application;
@@ -81,7 +82,7 @@ Torsor Torsor::nullTorsor()
 	return Torsor();
 }
 
-bool Torsor::operator ==(Torsor B)
+bool Torsor::operator ==(Torsor B) const
 {
 	if (Resultant == B.Resultant)
 	{

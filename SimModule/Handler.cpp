@@ -45,11 +45,11 @@ MaterialPointHandler::~MaterialPointHandler()
 
 void MaterialPointHandler::forward(double dt)
 {
-	Vect acceleration = Calc->centerOfMassAcceleration(ExternalActions, Element->mass());
-	Vect velocity = Element->centerOfMassVelocity();
+	Vect acceleration = Calc->centerOfMassAcceleration(ExternalActions, Element->Mass);
+	Vect velocity = Element->CenterOfMassVelocity;
 
-	Vect diffPosition = Calc->positionVariationCenterM(acceleration, velocity, dt);
-	Vect diffVelocity = Calc->velocityVariationCenterM(acceleration, dt);
+	Vect diffPosition = Calc->positionVariationCoM(acceleration, velocity, dt);
+	Vect diffVelocity = Calc->velocityVariationCoM(acceleration, dt);
 
 	Element->move(diffPosition);
 	Element->changeVelocity(diffVelocity);

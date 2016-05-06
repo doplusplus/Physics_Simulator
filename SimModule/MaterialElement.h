@@ -10,26 +10,22 @@ class MaterialElement
 {
 public:
 	//Constructors & destructor
-	MaterialElement(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
+	MaterialElement(Point G , Vect velocity , double mass, double charge);
 	virtual ~MaterialElement();
 
 	//Display
-	virtual void consoleShow();
+	virtual void consoleShow() const;
 
-	//Operators
-	bool operator==(const MaterialElement & B);
+	
+	std::vector<double> streamCoord() { return CenterOfMassPosition.coordStream(); };
 
 
-private:
+protected:
 	double	Charge = 0; 							// in Coulomb
 	double	Mass = 0;   							// in kg
 	Vect	CenterOfMassVelocity = Vect(0, 0, 0);	// m/s
 	Point	CenterOfMassPosition = Point(0, 0, 0);	// m 
 
-protected:
-	double mass() { return Mass; }
-	Vect centerOfMassPosition() { return CenterOfMassPosition; };
-	Vect centerOfMassVelocity() { return CenterOfMassVelocity; };
 
 	void move(Vect dP);
 	void changeVelocity(Vect dS);
@@ -38,20 +34,17 @@ protected:
 
 class MaterialPoint : public MaterialElement
 {
-	using MaterialElement::MaterialElement;
 	friend class MaterialPointHandler;
-
 public:
-	MaterialPoint();
+	MaterialPoint(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
 	~MaterialPoint();
+
 };
 
 class Solid : public MaterialElement
 {
-	using MaterialElement::MaterialElement;
-
 public:
-	Solid();
+	Solid(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
 	~Solid();
 
 

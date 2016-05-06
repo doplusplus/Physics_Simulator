@@ -22,7 +22,7 @@ MaterialElement::~MaterialElement()
 
 
 //Display-----------------------------------------------
-void MaterialElement::consoleShow()
+void MaterialElement::consoleShow() const
 {
 	CenterOfMassPosition.show();
 	std::cout << "mass: " << Mass << '\n';
@@ -40,20 +40,14 @@ void MaterialElement::changeVelocity(Vect dS)
 	CenterOfMassVelocity = CenterOfMassVelocity + dS;
 }
 
-bool MaterialElement::operator ==(const MaterialElement &B)
-{
-	return B.Charge == Charge && B.Mass == Mass
-		&& CenterOfMassPosition == B.CenterOfMassPosition
-		&& CenterOfMassVelocity == B.CenterOfMassVelocity;
-}
-
 // ================================== Material Point==================================================================== 
-MaterialPoint::MaterialPoint() :MaterialElement()
+MaterialPoint::MaterialPoint(Point G, Vect velocity, double mass, double charge):MaterialElement(G,velocity,mass,charge)
 {}
 MaterialPoint::~MaterialPoint() {}
 
 
 // ================================== Solids Point ==================================================================== 
-Solid::Solid() :MaterialElement()
-{}
+Solid::Solid(Point G, Vect velocity, double mass, double charge):MaterialElement(G,velocity,mass,charge)
+{
+}
 Solid::~Solid() {}

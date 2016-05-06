@@ -29,7 +29,7 @@ namespace SimulationTool
             }
             else
             {
-                _action("Hello world");
+                _action("Whatever");
             }
         }
 

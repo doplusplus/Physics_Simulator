@@ -54,7 +54,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DisplayVM.cs" />
+    <Compile Include="ElemDefVM.cs" />
+    <Compile Include="OutputPanelVM.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="SimManager.cs" />
+    <Compile Include="SimSettingsVM.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,6 +101,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ManagedClasses\ManagedClasses.vcxproj">
+      <Project>{74f0bce2-2fbf-4860-b2a5-f149b2925d9b}</Project>
+      <Name>ManagedClasses</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

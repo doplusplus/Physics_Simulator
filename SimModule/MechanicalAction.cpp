@@ -23,14 +23,14 @@ ActionOnPoint::~ActionOnPoint()
 {}
 
 
-Vect ActionOnPoint::force()
+Vect ActionOnPoint::force()const
 {
 	return Action;
 }
 
 
 void ActionOnPoint::null() { Action = Vect(0, 0, 0); }
-void ActionOnPoint::show() { Action.show(); }
+void ActionOnPoint::show() const { Action.show(); }
 void ActionOnPoint::add(MechanicalAction *A, MechanicalAction *result)
 {
 	addAction((ActionOnPoint*)A, (ActionOnPoint*)result);
@@ -39,12 +39,12 @@ void ActionOnPoint::addAction(ActionOnPoint *C, ActionOnPoint *result)
 {
 	result->Action = result->Action + C->Action;
 }
-MechanicalAction * ActionOnPoint::copy()
+MechanicalAction * ActionOnPoint::copy()const
 {
 	MechanicalAction* ptr = new ActionOnPoint(*this);
 	return ptr;
 }
-Vect ActionOnPoint::variation(double t, double dt, Vect tBase, Vect sBase)
+Vect ActionOnPoint::variation(double t, double dt, Vect tBase, Vect sBase)const
 {
 	return TimeDerivative(tBase, t)*dt + SpaceDerivative(sBase, t)*dt;
 }
@@ -72,7 +72,7 @@ ActionOnSolid::ActionOnSolid(Vect Res, Vect Moment, Point A)
 ActionOnSolid::~ActionOnSolid()
 {}
 
-Vect ActionOnSolid::force()
+Vect ActionOnSolid::force()const
 {
 	return Action.vectComponent();
 }

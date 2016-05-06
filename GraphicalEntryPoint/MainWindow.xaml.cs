@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using ManagedClasses;
 
 namespace SimulationTool
 {
@@ -23,22 +23,66 @@ namespace SimulationTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowModel MainVM = new MainWindowModel();
+        private ManagedModel M = new ManagedModel();
+        private MainWindowModel MainVM;
+        private DisplayVM display;
+        private ElemDefVM elemDef;
+        private OutputPanelVM outPan;
+        private SimManager SManager;
+        private SimSettingsVM SimSett;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            MainVM = new MainWindowModel(M);
+            display = new DisplayVM(M);
+            elemDef = new ElemDefVM(M, display);
+            outPan = new OutputPanelVM();
+            SManager = new SimManager(M, display, outPan);
+            SimSett = new SimSettingsVM();
+
+            Loaded += MyWindow_Loaded;
+            SizeChanged += OnResize;
+
+
             this.DataContext = MainVM;
+            this.ElemDefTools.DataContext = elemDef;
+            this.SceneDisplay.DataContext = display;
+            this.OutputPanel.DataContext = outPan;
+            this.SimSetTools.DataContext = SimSett;
+
+            //  this.LaunchBtn.DataContext = display;
         }
 
+        private void OnResize(object sender, RoutedEventArgs e)
+        {
+            display.DisplayHeight = SceneDisplay.ActualHeight;
+            display.DisplayWidth = SceneDisplay.ActualWidth;
+            display.RefreshView();
+        }
 
-        
+        private void MyWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            const double ratio = 0.1;
+            this.Xstroke.DataContext = display;
+            display.DisplayHeight = SceneDisplay.ActualHeight;
+            display.DisplayWidth = SceneDisplay.ActualWidth;
+            display.XUnit = ratio * display.DisplayWidth + display.CenterX;
+            display.YUnit = -ratio * display.DisplayHeight + display.CenterY;
+        }
+
         private void DefSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox cBox = sender as ComboBox;
             ComboBoxItem Selection = cBox.SelectedItem as ComboBoxItem;
             DefToolsPres.Visibility = Visibility.Collapsed;
+            selectTool(Selection.Name);
+        }
 
-            switch (Selection.Name)
+        private void selectTool(string s)
+        {
+            switch (s)
             {
                 case "Elmnt":
                     ElemDefTools.Visibility = Visibility.Visible;
@@ -57,57 +101,59 @@ namespace SimulationTool
                     EnvDefTools.Visibility = Visibility.Collapsed;
                     SimSetTools.Visibility = Visibility.Visible;
                     break;
-            }
-        }
 
+                default:
+                    break;
+            }
+
+        }
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("nah joking!...it's a placehoder", "Launching the simulation");
+            //  MessageBox.Show(M.description());
+            Run();
         }
-/*
-        private void MaterialPoint_Click(object sender, RoutedEventArgs e)
+
+        private void Run()
         {
-            double mass; bool b;
-            double InputCx, InputCy, InputCz;
-            string message = String.Empty;
+            double duration = Double.Parse(SimSett.Duration, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+            double compStep = Double.Parse(SimSett.ComputStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+            double dispStep = Double.Parse(outPan.DisplayStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
 
-            b = Double.TryParse(massInput.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out mass);
-            if (b) { message += "mass: " + mass.ToString() + Environment.NewLine; }
-            else { message += "not going anywhere without mass" + Environment.NewLine; }
-
-            message += "Position of the center of mass: " + Environment.NewLine;
-            //Cx
-            if (Cx.Text.Equals("x")) { message += " Cx = 0 "; }
-            else
-            {
-                b = Double.TryParse(Cx.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out InputCx);
-                if (b) { message += " Cx = " + InputCx.ToString(); }
-                else { MessageBox.Show("numerical value required for Cx", " bad result"); }
-            }
-            //Cy
-            if (Cy.Text.Equals("y")) { message += " Cy = 0 "; }
-            else
-            {
-                b = Double.TryParse(Cy.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out InputCy);
-                if (b) { message += " Cy = " + InputCy.ToString(); }
-                else { MessageBox.Show("this is text", " bad result"); }
-            }
-            //Cz
-            if (Cz.Text.Equals("z")) { message += " Cz = 0 "; }
-            else
-            {
-                b = Double.TryParse(Cz.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out InputCz);
-                if (b) { message += " Cz= " + InputCz.ToString(); }
-                else { MessageBox.Show("this is text", " bad result"); }
-            }
-            MessageBox.Show("Proceed with: " + Environment.NewLine + message, "data check", MessageBoxButton.OKCancel);
+            SManager.startSimulation(compStep, dispStep, duration);
         }
 
-        */
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            DefSelector.SelectedIndex++;
+        }
+
+        private void prevButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DefSelector.SelectedIndex > 0) DefSelector.SelectedIndex--;
+        }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
+        { }
 
+        private void elmntNmbr_TextChanged(object sender, RoutedEventArgs e) { }
+
+        static double testCoord = 0;
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            elemDef.massInput = "2";
+            this.elemDef.Xinput = this.elemDef.Yinput = this.elemDef.Zinput = testCoord.ToString(CultureInfo.InvariantCulture); testCoord += 2;
+            this.elemDef.FXinput = this.elemDef.FYinput = this.elemDef.FZinput = "10.0";
+            MaterialPoint.Command.Execute(null);
+            AddAction.Command.Execute(null);
         }
+
+        private void SimTestButton_Click(object sender, RoutedEventArgs e)
+        {
+            SimSett.Duration = "12";
+            SimSett.ComputStep = "0.01";
+            outPan.DisplayStep = "0.3";
+        }
+
     }
 }

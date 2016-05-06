@@ -27,5 +27,6 @@ namespace SimulationTool
         {
             (sender as TextBox).SelectAll();
         }
+
     }
 }

@@ -17,22 +17,22 @@ public:
 	~Torsor();
 
 	//Accessors
-	Vect vectComponent();
-	Vect  moment();
-	Point applicationPoint();
+	Vect vectComponent() const;
+	Vect  moment() const;
+	Point applicationPoint() const;
 
 	//Display
-	void show();
+	void show() const;
 
 	//Modifiers
 	void divideResultant(double d);
 
 	//Transportation
-	Vect momentAt(Point P);
+	Vect momentAt(Point P) const;
 
 	//Operators
-	Torsor operator +(Torsor B);
-	bool operator ==(Torsor B);
+	Torsor operator +(Torsor B) const;
+	bool operator ==(Torsor B) const;
 
 	static Torsor nullTorsor();
 

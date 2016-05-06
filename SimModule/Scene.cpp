@@ -24,7 +24,7 @@ Scene::~Scene()
 }
 
 //Display
-void Scene::consoleShow()
+void Scene::consoleShow()  const
 {
 	if (0 < Content.size())
 	{
@@ -36,7 +36,7 @@ void Scene::consoleShow()
 	else { std::cout << "empty scene " << '\n'; }
 }
 
-bool Scene::operator==(Scene s)
+bool Scene::operator==(Scene s)  const
 {
 	unsigned int n = Content.size();
 

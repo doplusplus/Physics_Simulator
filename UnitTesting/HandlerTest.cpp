@@ -23,10 +23,8 @@ namespace UnitTesting
 			H.forward(timeStep);
 
 			Assert::IsTrue(H.contentEquals(clone));
-
-
 		}
-
+	
 
 
 		TEST_METHOD(Position_at_10kg_10sec_underGravity)
