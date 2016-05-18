@@ -3,14 +3,15 @@
 #include "..\SimModule\Geo.h"
 #include <limits>
 #include <iostream> 
+//#include <functional>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace GeoTest
+namespace UnitTesting
 {
 	const double accuracy = double(1e-10); //approximately the diameter of an hydrogen atom in meter
-	const double rangeOfInterest = 384467000; //approximately the earth to moon distance
-
+	const double rangeOfInterest = 12742000; //earth diameter
+	         
 	const double LOWEST = std::numeric_limits<double>::lowest();
 	const double MIN = std::numeric_limits<double>::min();
 	const double MAX = std::numeric_limits<double>::max();
@@ -389,8 +390,8 @@ namespace GeoTest
 
 		TEST_METHOD(LimitsVectorialProducts)
 		{
-			Vect v(LOWEST, MIN, MAX), u(1, 1, 1);
-			Assert::IsTrue((v^u) == Vect(MIN - MAX, MAX - LOWEST, LOWEST - MIN));
+			Vect v(-rangeOfInterest, accuracy, rangeOfInterest), u(1, 1, 1);
+			Assert::IsTrue((v^u) == Vect(accuracy-rangeOfInterest, 2*rangeOfInterest, -accuracy - rangeOfInterest));
 		}
 
 		TEST_METHOD(ScalarProductLimits)
@@ -482,7 +483,15 @@ namespace GeoTest
 			Assert::IsTrue(abs(l.unitVector() * l - l.norm()) < accuracy);
 		}
 
+		TEST_METHOD(VectFunctionAddition_Null)
+		{
+			std::function<Vect(Vect, double)> a = Vect::constant;
+			std::function<Vect(Vect, double)> b = Vect::linear;
 
+			std::function<Vect(Vect, double)> s = a +b;
+			Assert::IsTrue(s(Vect(0,0,0),0)== Vect(0, 0, 0));
+		}
+	
 	};
 
 }

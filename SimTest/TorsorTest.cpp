@@ -46,7 +46,7 @@ namespace UnitTesting
 			Assert::IsTrue(Tst.momentAt(Point(0, 0, 0)) == Momnt + Vect(0, 0, 80));
 		}
 
-		TEST_METHOD(addition)
+		TEST_METHOD(TorsorAddition)
 		{
 			Point P(10, 0, 0);
 			Vect Res(0, 8, 0);

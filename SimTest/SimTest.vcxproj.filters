@@ -26,25 +26,25 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unittest1.cpp">
+    <ClCompile Include="CalculatorTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="geoTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HandlerTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelTest.cpp">
+    <ClCompile Include="MaterialElementTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MechanicalActionTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TorsorTest.cpp">
+    <ClCompile Include="ModelTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CalculatorTest.cpp">
+    <ClCompile Include="ObserverTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TorsorTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

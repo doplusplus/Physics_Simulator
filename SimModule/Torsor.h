@@ -34,6 +34,7 @@ public:
 	Torsor operator +(Torsor B) const;
 	bool operator ==(Torsor B) const;
 
+	Torsor null() { return nullTorsor(); }
 	static Torsor nullTorsor();
 
 private:

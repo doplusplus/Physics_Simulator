@@ -155,5 +155,11 @@ namespace SimulationTool
             outPan.DisplayStep = "0.3";
         }
 
+        private void SimModeSelect_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+    
     }
 }

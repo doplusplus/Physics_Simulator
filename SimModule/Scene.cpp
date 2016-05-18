@@ -54,7 +54,7 @@ void Scene::addMatPoint(MaterialPoint *Mp)
 	Content.insert(Mp);
 }
 
-void Scene::forwardTime(double dt)
+void Scene::incrementTime(double dt)
 {
 	if (dt >= 0) { Time += dt; }
 	else { throw "backward time travel"; }

@@ -36,17 +36,17 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="31*"/>
-            <RowDefinition Height="80*"/>
-            <RowDefinition Height="106*"/>
-            <RowDefinition Height="93*"/>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="87*"/>
+            <RowDefinition Height="114.667"/>
+            <RowDefinition Height="101*"/>
         </Grid.RowDefinitions>
 
         <!-- .........................TOOLS SELECTOR ......................... -->
         <ComboBox Name="DefSelector" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" 
                   HorizontalAlignment="Stretch" Padding="2" Margin="1"
                   IsEditable="True" IsReadOnly="True" Text="Tools"  HorizontalContentAlignment="Center" 
-                  SelectionChanged="DefSelector_SelectionChanged">
+  >
             <ComboBoxItem Name="Elmnt" HorizontalAlignment="Left" Content="Elements Def."/>
             <ComboBoxItem Name="Env"   HorizontalAlignment="Left" Content="Env. Def"/>
             <ComboBoxItem Name="Sim"   HorizontalAlignment="Left" Content="Sim. Settings"/>
@@ -188,7 +188,7 @@
             <Rectangle Fill="Black" Height="1"/>
             <Line Name="Xstroke" X1="{Binding XUnit}" Y1="{Binding CY}" X2="{Binding XUnit}" Y2="{Binding CY}" Stroke="Red"  StrokeThickness="1" />
             <Line Name="Ystroke" X1="{Binding CY}" Y1="{Binding YUnit}" X2="{Binding CY}" Y2="{Binding YUnit}" Stroke="Red"  StrokeThickness="1" />
-       
+
         </Grid>
 
         <Button x:Name="LaunchBtn"  Template="{StaticResource LaunchButtonTemplate}" Content="Launch"
@@ -210,6 +210,13 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                
+                <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display enabled" IsChecked="True" Margin="5"/>
+                <Button      Name="dbFetch"         Grid.Row="1" Content="Fetch from DataBase" Margin="5"/>
+                <Button      Name="zoomBtn"         Grid.Row="2" Content="Zoom" Margin="5"/>
+
+                <RadioButton   Name="RTModeSelect" Grid.Row="0" Grid.Column="1" Content="Real Time Mode" IsChecked="True" Margin="5" Checked="SimModeSelect_Checked"/>
+                <RadioButton    Name="PrecisionModeSelect" Grid.Row="1" Grid.Column="1" Content="Precision Mode" IsChecked="True" Margin="5" Checked="SimModeSelect_Checked"/>
 
                 <TextBox   x:Name="timeBox"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
@@ -219,9 +226,8 @@
                 <TextBox   x:Name="displayBox" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
                            Text="{Binding DisplayStep}" />
-                <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display enabled" IsChecked="True" Margin="5"/>
-                <Button      Name="dbFetch"         Grid.Row="1" Content="Fetch from DataBase" Margin="5"/>
-                <Button      Name="zoomBtn"         Grid.Row="2" Content="Zoom" Margin="5"/>
+              
+                
             </Grid>
 
         </GroupBox>

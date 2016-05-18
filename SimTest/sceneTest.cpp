@@ -10,7 +10,7 @@ namespace SceneTest
 	TEST_CLASS(TestOfScene)
 	{
 	public:
-		TEST_METHOD(SceneConstructors)
+/*		TEST_METHOD(SceneConstructors)
 		{
 			Point P(0, 0, 0);
 			MaterialPoint M(P);
@@ -23,6 +23,6 @@ namespace SceneTest
 		
 			Assert::IsTrue(M == N);
 		}
-
+*/
 	};
 }

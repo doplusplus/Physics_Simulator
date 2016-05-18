@@ -27,7 +27,7 @@ public:
 		std::vector<double> temp;
 		for (auto elmt : Content)
 		{
-			temp = elmt->streamCoord();
+		//	temp = elmt->streamCoord();
 			res.insert(res.begin(), temp.begin(), temp.end());
 		}
 		return res;
@@ -38,9 +38,9 @@ private:
 	double Time = 0;
 	
 	void addMatPoint(MaterialPoint *Mp);
-	void addSolid(Solid *Content) {};
+	void addSolid(RigidSolid *Content) {};
 	
-	void forwardTime(double dt);
+	void incrementTime(double dt);
 };
 
 

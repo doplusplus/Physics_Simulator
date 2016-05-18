@@ -14,7 +14,7 @@ namespace UnitTesting
 	{
 	public:
 		
-		TEST_METHOD(FreeFallOnEarth_at_1kg)
+/*		TEST_METHOD(FreeFallOnEarth_at_1kg)
 		{
 			Model M;
 			double FallTime = 10;	//seconds
@@ -29,6 +29,6 @@ namespace UnitTesting
 
 			Assert::IsTrue((M.getElementPosition(0) - Point(0, 0, 0.5*earthGravity*FallTime*FallTime))<Point(accuracy,accuracy,accuracy));
 		}
-
+*/
 	};
 }

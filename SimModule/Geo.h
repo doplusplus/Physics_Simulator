@@ -1,6 +1,7 @@
 #ifndef GEO_H
 #define GEO_H
 
+#include <functional>
 #include <vector>
 #include <string>
 //==================================== CartesianElement ====================================
@@ -17,26 +18,27 @@ public:
 	void show() const;
 
 	//Algebraic operator
-	CartesianElement operator +(const CartesianElement &B) const;
-	CartesianElement operator-() const;
-	CartesianElement operator -(CartesianElement B) const;
 
+	CartesianElement operator-() const;
 	CartesianElement operator *(double a) const;			// multiplication by a scalar
 	CartesianElement operator /(double a) const;			// division by a scalar, exception thrown if null 
 
-	bool operator <(CartesianElement C) const
-	{
-		return (X < C.X) && (Y < C.Y) && (Z < C.Z);
-	};
-													//logical operator	
-	bool operator ==(const CartesianElement &B) const;
-	
+	friend CartesianElement operator +(const CartesianElement &A, const CartesianElement &B);
+	friend CartesianElement operator -(const CartesianElement &A, const CartesianElement &B);
+	friend bool operator <(const CartesianElement &left, const CartesianElement &right);
+
+	//logical operator	
+	friend bool operator ==(const CartesianElement &left, const CartesianElement &right);
+
+
+
+
 	std::string getDescription() const
 	{
-		return "x: " + std::to_string(X) + "y: " + std::to_string(Y) +"z: " + std::to_string(Z)+"\n";
+		return "x: " + std::to_string(X) + "y: " + std::to_string(Y) + "z: " + std::to_string(Z) + "\n";
 	}
 
-	std::vector<double> coordStream()
+	std::vector<double> coordStream() const
 	{
 		std::vector<double> res;
 		res.push_back(X);
@@ -72,6 +74,9 @@ private:
 
 class Vect : public CartesianElement
 {
+	friend	std::function<Vect(Vect, double)> operator+ (std::function<Vect(Vect, double)>, std::function<Vect(Vect, double)>);
+	friend	std::function<Vect(Vect, Vect)> operator+ (std::function<Vect(Vect, Vect)> a, std::function<Vect(Vect, Vect)> b);
+
 public:
 	Vect();
 	Vect(double x, double y, double z);
@@ -79,21 +84,25 @@ public:
 	Vect(Point A, Point B);
 	~Vect();
 
-	Vect operator ^(const Vect &B) const;		// Vectorial multiplication
-	double operator *(const Vect &B) const;		// dot product	
+	Vect operator ^(const Vect &B) const;			// Vectorial multiplication
+	double operator *(const Vect &B) const;			// dot product	
+	Vect multiplyMemberwise(const Vect &B) const;
+	Vect absMultiplyMemberwise(const Vect &B) const;
 	Vect operator *(double a) const;
 
 	double norm() const;
 	Vect unitVector() const;
-	
-	
+	Vect null() { return Vect(0, 0, 0); }
+
 	//   member Time or space functions
-	static Vect constant(Vect V, double var) { return V; };
+	static Vect constant(Vect V, double var) { return Vect(0,0,0); };
 	static Vect linear(Vect V, double var) { return V*var; };
-	static Vect timeQuadratic(Vect V, double var) { return V*var*var; };
+	static Vect Quadratic(Vect V, double var) { return V*var*var; };
+
+	static double Vconstant(Vect V, Vect var) { return 0.0; };
+	static double Vlinear(Vect V, Vect var) { return V*var; };
+	static double VQuadratic(Vect V, Vect var) { return V*var.absMultiplyMemberwise(var); };
 };
-
-
 
 
 

@@ -21,9 +21,6 @@
     <ClCompile Include="Geo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Handler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MaterialElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,15 +39,15 @@
     <ClCompile Include="SimSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Geo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MaterialElement.h">
@@ -62,13 +59,13 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Torsor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

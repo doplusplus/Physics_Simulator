@@ -6,37 +6,37 @@
 #include "..\SimModule\Geo.h"
 #include "..\SimModule\Model.h"
 
+
+
 int main()
 {
-	/*
-	Model M;
-	M.addMatPoint(Point(0, 0, 0));
-	M.addActionOnPoint(0, Vect(1, 2, 4));
-	//M.showHandlers();
+	double expectedZ = 490.5;
+	double mass = 10;
+	double duration = 10; //s
+	double accuracy = 1;
+	double accuracy2 = 1E-2;
+	double accuracy3 = 1E-5;
+	double accuracy4 = 1E-7;
+	double accuracy5 = 1E-10;
+
+	Vect F(0, 0, 98.1);
+	MaterialPoint M(mass, 0, { std::shared_ptr<ActionOnPoint>(new ActionOnPoint(F)) });
+	MaterialPointObserver Obs(M, Calculator(), Point(0, 0, 0), Vect(0, 0, 0));
+	//MaterialPointObserver Obs2=Obs, Obs3 = Obs, Obs4 = Obs, Obs5 = Obs;
+
+	Obs.increment(duration, accuracy5);
 	
-	
-	M.setDomain(0, 0.0001, 123313131);
-	M.simulate(10, 1);
-	M.showScene();
-	/**/
-
-	
-	double mass = 7;
-	double timeStep = 0.1;
-
-	Point P(0, 0, 0);
-	MaterialPoint M(P, Vect(0, 0, 0), mass), clone = M;
-	Vect F(1, 1, 1);
-	Calculator C;
-	ActionOnPoint *A= new ActionOnPoint(Vect(0,0,0));
-
-	MaterialPointHandler H(&M, &C);
-	H.addAction(A);
-	H.forward(timeStep);
-
-	H.show();
-	clone.consoleShow();
-
+	/*Obs2.increment(duration, accuracy2);
+	Obs3.increment(duration, accuracy3);
+	Obs4.increment(duration, accuracy4);
+	Obs5.increment(duration, accuracy5);
+	*/
+	double e = abs(Obs.position().coordStream()[2] - expectedZ);
+	/*double e2 = abs(Obs2.position().coordStream()[2] - expectedZ);
+	double e3 = abs(Obs3.position().coordStream()[2] - expectedZ);
+	double e4 = abs(Obs4.position().coordStream()[2] - expectedZ);
+	double e5 = abs(Obs5.position().coordStream()[2] - expectedZ);
+	*/
 
 
 	return 0;

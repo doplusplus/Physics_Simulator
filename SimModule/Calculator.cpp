@@ -13,12 +13,12 @@ Calculator::Calculator(double accuracy, double amplitude)
 Calculator::~Calculator()
 {}
 
-
+/*
 void Calculator::resultant(std::vector<MechanicalAction*> setOfActions, MechanicalAction* result)
 {
 	result->null();
 	for (auto element : setOfActions) { result->add(element, result); }
-}
+}*/
 
 Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)const
 {
@@ -33,7 +33,7 @@ Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)const
 	}
 	return acc;
 }
-
+/*
 Vect  Calculator::centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass)
 {
 	MechanicalAction* res = extActions.back()->copy();
@@ -41,7 +41,7 @@ Vect  Calculator::centerOfMassAcceleration(std::vector<MechanicalAction* > extAc
 	Vect v = res->force();
 	delete res;
 	return centerOfMassAcceleration(v, mass);
-};
+};*/
 
 Vect Calculator::velocityVariationCoM(Vect acceleration, double dt) const
 { return acceleration*dt; }

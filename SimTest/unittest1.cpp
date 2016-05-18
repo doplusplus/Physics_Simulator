@@ -3,7 +3,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace UnitTestin
+namespace SimTest
 {		
 	TEST_CLASS(UnitTest1)
 	{

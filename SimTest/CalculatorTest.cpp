@@ -10,7 +10,7 @@ namespace UnitTesting
 	{
 	public:
 
-		TEST_METHOD(ZeroMass)
+	/*	TEST_METHOD(ZeroMass)
 		{
 			Calculator C;
 
@@ -38,7 +38,7 @@ namespace UnitTesting
 			double dt = 10;
 			Assert::IsTrue(C.velocityVariationCoM(C.centerOfMassAcceleration(Vect(0, 0, -9.81*mass), mass),dt)== Vect(0, 0, -9.81)*10);
 		}
-
+*/
 
 	};
 }

@@ -37,10 +37,10 @@ namespace ManagedClasses {
 			SimModel->addActionOnPoint(elementReference, Vect(Ax, Ay, Az));
 		}
 
-		void addMaterialSolid(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_)
+		void addMaterialRigidSolid(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_)
 		{}
 
-		void addActionSolid(unsigned int elementReference, double Ax, double Ay, double Az)
+		void addActionRigidSolid(unsigned int elementReference, double Ax, double Ay, double Az)
 		{}
 
 		String^ description()

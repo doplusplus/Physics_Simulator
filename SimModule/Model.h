@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Handler.h"
+#include "Observer.h"
 #include "Scene.h"
 #include <iostream>
 #include <string>
@@ -11,7 +11,9 @@ public:
 	Model();
 	~Model();
 
-	void showScene() const;
+
+
+/*	void showScene() const;
 
 	void addMatPoint(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_)
 	{
@@ -23,20 +25,23 @@ public:
 	void setDomain(unsigned int elementReference, double accuracy, double amplitude);
 	
 	//void printState();
-	void simulate(double time, double dt);
-	void showHandlers();
+*/
+	void simulate(double time, double dt, double accuracy = 0.01);
+	void simulateRT(double time, double dt);
+
+/*	void showObservers();
 	
-	Point getElementPosition(unsigned int rank) const { return HandlerRef[rank]->position(); };
+	Point getElementPosition(unsigned int rank) const { return ObserverRef[rank]->position(); };
 	std::string getDescription();
 
 	std::vector<double> getCoordinate()
 	{
 		return ContentRef.streamCoordinate();
 	}
-
+	*/
 private:
 	Scene ContentRef;
-	std::vector<MaterialElementHandler*> HandlerRef;
+	std::vector<Observer*> ObserverRef;
 	std::vector<Calculator*> ComputationUnit;
 	
 	bool GraphicalOutput = false;

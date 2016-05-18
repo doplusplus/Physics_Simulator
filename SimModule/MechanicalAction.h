@@ -3,6 +3,7 @@
 #include "Geo.h"
 #include "Torsor.h"
 #include <memory>
+#include <functional>
 
 class MechanicalAction
 {
@@ -11,102 +12,79 @@ public:
 	virtual ~MechanicalAction() {};
 
 	virtual void null() = 0;
-	virtual void show() const= 0;
-
-	virtual Vect force() const= 0;
-	virtual void add(MechanicalAction *A, MechanicalAction *result) = 0;
-	virtual void add(std::shared_ptr<MechanicalAction> A) = 0;
-
-	virtual MechanicalAction* copy() const = 0;
-
+	virtual void show() const = 0;
 };
 
 
 
 class ActionOnPoint :public MechanicalAction
 {
-public:
-	ActionOnPoint();
-	ActionOnPoint(double x, double y, double z);
-	ActionOnPoint(Vect action, Vect timeBase = Vect(0, 0, 0),
-		Vect spaceBase = Vect(0, 0, 0), Vect(*timeDiff_)(Vect, double) = Vect::constant,
-		Vect(*spaceDiff_)(Vect, double) = Vect::constant);
+	friend struct customLess_ActionOnPoint;
 
-/*	ActionOnPoint(std::shared_ptr<ActionOnPoint> A)
-	{
-		Action = A->Action;
-		TimeBase = A->TimeBase;
-		SpaceBase = A->SpaceBase;
-		TimeDerivative = A->TimeDerivative;
-		SpaceDerivative = A->SpaceDerivative;
-	};
-*/
+public:
+	ActionOnPoint(const Vect &action , const Vect &timeBase ,
+		const Vect &xBase , const Vect &yBase, const Vect &zBase , Vect(*timeDiff_)(Vect, double) ,
+		double(*xDiff_)(Vect, Vect), double(*yDiff_)(Vect, Vect) , double(*zDiff_)(Vect, Vect));
+
+	ActionOnPoint(const Vect &action = Vect(0, 0, 0), const Vect &timeBase = Vect(0, 0, 0),
+		const Vect &spaceBase = Vect(0, 0, 0), Vect(*timeDiff_)(Vect, double) = Vect::constant,
+		double(*spaceDiff_)(Vect, Vect) = Vect::Vconstant);
+
+	ActionOnPoint(const ActionOnPoint & toCopy);
+	ActionOnPoint& operator=(const ActionOnPoint &toAssign);
 	~ActionOnPoint();
 
-	void null();
+	std::tuple<Vect, Vect, Vect, Vect, Vect> base() const ;
+	Vect force(Vect Position, double t) const;
+	Vect variation(Vect Position, double t, Vect tBase, Vect xBase, Vect yBase, Vect zBase)const;	
 	void show() const;
+	void null();
 
-	void add(MechanicalAction *A, MechanicalAction *result);
-	void add(std::shared_ptr<MechanicalAction> A)
-	{
-		ActionOnPoint a= * std::static_pointer_cast<ActionOnPoint>(A);
-
-		Action = Action + a.Action;
-		TimeBase = TimeBase + a.TimeBase;
-		SpaceBase = SpaceBase + a.SpaceBase;
-
-		//TimeDerivative = 
-
-	};
-
-
-	void addAction(ActionOnPoint *C, ActionOnPoint *result);
-	MechanicalAction* copy()const;
-
-	Vect force() const;
-	Vect variation(double t, double dt,
-		Vect tBase = Vect(0, 0, 0), Vect sBase = Vect(0, 0, 0)) const;
-	void forward(double t, double dt);
-
-	bool operator ==(ActionOnPoint P) const
-	{
-		bool b = Action == P.Action&&TimeBase == P.TimeBase&&SpaceBase == P.SpaceBase
-			&&TimeDerivative == P.TimeDerivative&&SpaceDerivative == P.SpaceDerivative;
-		return b;
-	};
+	bool operator ==(const ActionOnPoint &P) const;
 
 private:
-	Vect Action = Vect(0, 0, 0);
-	Vect TimeBase = Vect(0, 0, 0);
-	Vect SpaceBase = Vect(0, 0, 0);
-	Vect(*TimeDerivative)(Vect, double) = Vect::constant;
-	Vect(*SpaceDerivative)(Vect, double) = Vect::constant;
+	// Force at t=x=y=z=0
+	Vect ActionOrigin;  
+							
+	//Time dependency
+	Vect TimeBase;		
+	std::function<Vect(Vect, double)> TimeVariation;
+
+	//Space dependencies
+	Vect XBase;     
+	std::function<double(Vect, Vect)> XVariation;
+
+	Vect YBase;
+	std::function<double(Vect, Vect)> YVariation;
+
+	Vect ZBase;
+	std::function<double(Vect, Vect)> ZVariation;
 };
 
-class ActionOnSolid :public MechanicalAction
+struct customLess_ActionOnPoint {
+	bool operator()(std::shared_ptr<ActionOnPoint> A, std::shared_ptr<ActionOnPoint> B);
+};
+
+class ActionOnRigidSolid :public MechanicalAction
 {
 public:
-	ActionOnSolid();
-	ActionOnSolid(Vect V, Point A);
-	ActionOnSolid(Vect V, Vect M, Point A);
-	ActionOnSolid(Torsor T) { Action = T; };
-	~ActionOnSolid();
+	ActionOnRigidSolid();
+	ActionOnRigidSolid(Vect V, Point A);
+	ActionOnRigidSolid(Vect V, Vect M, Point A);
+	ActionOnRigidSolid(Torsor T) { ActionOrigin = T; };
+	~ActionOnRigidSolid();
 
 	Vect force() const;
-	void null() { Action = Torsor::nullTorsor(); };
-	void show() const { Action.show(); };
-	MechanicalAction* copy()const
-	{
-		MechanicalAction* ptr = new ActionOnSolid(*this);
-		return ptr;
-	}
-	void add(MechanicalAction *A, MechanicalAction *result);
+	void show() const { ActionOrigin.show(); };
+
+	void null();
+	
+	/*void add(MechanicalAction *A, MechanicalAction *result);
 	void add(std::shared_ptr<MechanicalAction> A) {};
-
-	void addAction(ActionOnSolid *C, ActionOnSolid *result);
-
+	void addAction(ActionOnRigidSolid *C, ActionOnRigidSolid *result);
+	*/
 private:
-	Torsor Action = Torsor::nullTorsor();
+	Torsor ActionOrigin = Torsor::nullTorsor();
 };
 
 

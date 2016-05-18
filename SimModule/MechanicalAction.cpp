@@ -2,86 +2,110 @@
 
 //===================================================================================
 
-ActionOnPoint::ActionOnPoint()
+
+
+ActionOnPoint::ActionOnPoint(const Vect & action, const Vect & timeBase, const Vect & xBase, const Vect & yBase, const Vect & zBase, Vect(*timeDiff_)(Vect, double), double(*xDiff_)(Vect, Vect), double(*yDiff_)(Vect, Vect), double(*zDiff_)(Vect, Vect))
+	:ActionOrigin(action), TimeBase(timeBase), XBase(xBase), YBase(xBase), ZBase(xBase), TimeVariation(timeDiff_), XVariation(xDiff_), YVariation(yDiff_), ZVariation(zDiff_)
 {}
 
-ActionOnPoint::ActionOnPoint(double x, double y, double z)
-{
-	Action = Vect(x, y, z);
-}
-ActionOnPoint::ActionOnPoint(Vect action, Vect timeBase, Vect spaceBase,
-	Vect(*timeDiff)(Vect, double), Vect(*spaceDiff)(Vect, double))
-{
-	 Action = action;
-	 TimeBase = timeBase;
-	 SpaceBase = spaceBase;
-	TimeDerivative =timeDiff ;
-	SpaceDerivative = spaceDiff;
-}
-
-ActionOnPoint::~ActionOnPoint()
+ActionOnPoint::ActionOnPoint(const Vect & action, const Vect & timeBase, const Vect & spaceBase, Vect(*timeDiff_)(Vect, double), double(*spaceDiff_)(Vect, Vect))
+	: ActionOnPoint(action, timeBase, spaceBase, spaceBase, spaceBase, timeDiff_, spaceDiff_, spaceDiff_, spaceDiff_)
 {}
 
+ActionOnPoint::ActionOnPoint(const ActionOnPoint & toCopy)
+	: ActionOrigin(toCopy.ActionOrigin), TimeBase(toCopy.TimeBase), XBase(toCopy.XBase), YBase(toCopy.YBase), ZBase(toCopy.ZBase), TimeVariation(toCopy.TimeVariation), XVariation(toCopy.XVariation), YVariation(toCopy.YVariation), ZVariation(toCopy.ZVariation)
+{}
 
-Vect ActionOnPoint::force()const
+ActionOnPoint & ActionOnPoint::operator=(const ActionOnPoint & toAssign)
 {
-	return Action;
-}
-
-
-void ActionOnPoint::null() { Action = Vect(0, 0, 0); }
-void ActionOnPoint::show() const { Action.show(); }
-void ActionOnPoint::add(MechanicalAction *A, MechanicalAction *result)
-{
-	addAction((ActionOnPoint*)A, (ActionOnPoint*)result);
-}
-void ActionOnPoint::addAction(ActionOnPoint *C, ActionOnPoint *result)
-{
-	result->Action = result->Action + C->Action;
-}
-MechanicalAction * ActionOnPoint::copy()const
-{
-	MechanicalAction* ptr = new ActionOnPoint(*this);
-	return ptr;
-}
-Vect ActionOnPoint::variation(double t, double dt, Vect tBase, Vect sBase)const
-{
-	return TimeDerivative(tBase, t)*dt + SpaceDerivative(sBase, t)*dt;
-}
-void ActionOnPoint::forward(double t, double dt)
-{
-	Action = Action + variation(t, dt, TimeBase, SpaceBase);
+	ActionOrigin = toAssign.ActionOrigin;
+	TimeBase = toAssign.TimeBase;
+	XBase = toAssign.XBase;
+	TimeVariation = toAssign.TimeVariation;
+	XVariation = toAssign.XVariation;
+	return *this;
 }
 
+ActionOnPoint::~ActionOnPoint() {}
+
+Vect ActionOnPoint::force(Vect Position, double t)const
+{
+	return ActionOrigin + variation(Position, t, TimeBase, XBase, YBase, ZBase);
+}
+
+Vect ActionOnPoint::variation(Vect Position, double t, Vect tBase, Vect xBase, Vect yBase, Vect zBase)const
+{
+	return TimeVariation(tBase, t) + Vect(XVariation(xBase, Position), YVariation(yBase, Position), ZVariation(zBase, Position));
+}
+
+bool ActionOnPoint::operator==(const ActionOnPoint &P) const
+{
+	bool b = ActionOrigin == P.ActionOrigin&&TimeBase == P.TimeBase&&XBase == P.XBase
+		&& *TimeVariation.target<Vect(*)(Vect, double)>() == *P.TimeVariation.target<Vect(*)(Vect, double)>()
+		&& *XVariation.target<double(*)(Vect, Vect)>() == *P.XVariation.target<double(*)(Vect, Vect)>()
+		&& *YVariation.target<double(*)(Vect, Vect)>() == *P.YVariation.target<double(*)(Vect, Vect)>()
+		&& *ZVariation.target<double(*)(Vect, Vect)>() == *P.ZVariation.target<double(*)(Vect, Vect)>();
+	return b;
+}
+
+std::tuple<Vect, Vect, Vect, Vect, Vect> ActionOnPoint::base() const
+{
+	return std::tuple<Vect, Vect, Vect, Vect, Vect>(ActionOrigin, TimeBase, XBase, YBase, ZBase);
+}
+
+void ActionOnPoint::null()
+{
+	ActionOrigin = Vect(0, 0, 0);
+	TimeBase = Vect(0, 0, 0);
+	XBase = Vect(0, 0, 0);
+	YBase = Vect(0, 0, 0);
+	ZBase = Vect(0, 0, 0);
+	TimeVariation = Vect::constant;
+	XVariation = Vect::Vconstant;
+	YVariation = Vect::Vconstant;
+	ZVariation = Vect::Vconstant;
+}
+
+void ActionOnPoint::show() const { ActionOrigin.show(); }
+
+bool customLess_ActionOnPoint::operator()(std::shared_ptr<ActionOnPoint> A, std::shared_ptr<ActionOnPoint> B)
+{
+	return *(A->TimeVariation.target<Vect(*)(Vect, double)>()) > *(B->TimeVariation.target<Vect(*)(Vect, double)>());
+}
 
 
 //===================================================================================
-ActionOnSolid::ActionOnSolid()
+ActionOnRigidSolid::ActionOnRigidSolid()
 {}
 
-ActionOnSolid::ActionOnSolid(Vect V, Point A)
+ActionOnRigidSolid::ActionOnRigidSolid(Vect V, Point A)
 {
-	Action = Torsor(A, V, Vect(0, 0, 0));
+	ActionOrigin = Torsor(A, V, Vect(0, 0, 0));
 }
 
-ActionOnSolid::ActionOnSolid(Vect Res, Vect Moment, Point A)
+ActionOnRigidSolid::ActionOnRigidSolid(Vect Res, Vect Moment, Point A)
 {
-	Action = Torsor(A, Res, Moment);
+	ActionOrigin = Torsor(A, Res, Moment);
 }
 
-ActionOnSolid::~ActionOnSolid()
+ActionOnRigidSolid::~ActionOnRigidSolid()
 {}
 
-Vect ActionOnSolid::force()const
+Vect ActionOnRigidSolid::force()const
 {
-	return Action.vectComponent();
+	return ActionOrigin.vectComponent();
 }
 
-void ActionOnSolid::add(MechanicalAction *A, MechanicalAction *result)
+void ActionOnRigidSolid::null() {ActionOrigin = Torsor::nullTorsor();}
+/*
+void ActionOnRigidSolid::add(MechanicalAction *A, MechanicalAction *result)
 {
-	addAction((ActionOnSolid*)A, (ActionOnSolid*)result);
+	addAction((ActionOnRigidSolid*)A, (ActionOnRigidSolid*)result);
 }
-void ActionOnSolid::addAction(ActionOnSolid *C, ActionOnSolid *result)
+void ActionOnRigidSolid::addAction(ActionOnRigidSolid *C, ActionOnRigidSolid *result)
 {
-	result->Action = result->Action + C->Action;
+	result->ActionOrigin = result->ActionOrigin + C->ActionOrigin;
 }
+*/
+
+

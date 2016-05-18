@@ -123,7 +123,7 @@
   <ItemGroup>
     <ClCompile Include="Calculator.cpp" />
     <ClCompile Include="Geo.cpp" />
-    <ClCompile Include="Handler.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="MaterialElement.cpp" />
     <ClCompile Include="MechanicalAction.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -134,11 +134,10 @@
   <ItemGroup>
     <ClInclude Include="Calculator.h" />
     <ClInclude Include="Geo.h" />
-    <ClInclude Include="Handler.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="MaterialElement.h" />
     <ClInclude Include="MechanicalAction.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="SimSettings.h" />
     <ClInclude Include="Torsor.h" />
   </ItemGroup>
