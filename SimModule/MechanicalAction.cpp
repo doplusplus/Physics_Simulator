@@ -5,7 +5,7 @@
 
 
 ActionOnPoint::ActionOnPoint(const Vect & action, const Vect & timeBase, const Vect & xBase, const Vect & yBase, const Vect & zBase, Vect(*timeDiff_)(Vect, double), double(*xDiff_)(Vect, Vect), double(*yDiff_)(Vect, Vect), double(*zDiff_)(Vect, Vect))
-	:ActionOrigin(action), TimeBase(timeBase), XBase(xBase), YBase(xBase), ZBase(xBase), TimeVariation(timeDiff_), XVariation(xDiff_), YVariation(yDiff_), ZVariation(zDiff_)
+	:ActionOrigin(action), TimeBase(timeBase), XBase(xBase), YBase(yBase), ZBase(zBase), TimeVariation(timeDiff_), XVariation(xDiff_), YVariation(yDiff_), ZVariation(zDiff_)
 {}
 
 ActionOnPoint::ActionOnPoint(const Vect & action, const Vect & timeBase, const Vect & spaceBase, Vect(*timeDiff_)(Vect, double), double(*spaceDiff_)(Vect, Vect))
