@@ -37,7 +37,7 @@ public:
 	int samplesNb(double accuracy, double duration) 
 	{
 		int n= (int)(duration/std::sqrt(accuracy));
-		return (n*1E-14) < accuracy ? n : accuracy * 1E14;
+		return (n*1E-14) < accuracy ? n : static_cast<int>(accuracy * 1E14);
 	}
 
 private:

@@ -43,11 +43,11 @@ namespace ManagedClasses {
 		void addActionRigidSolid(unsigned int elementReference, double Ax, double Ay, double Az)
 		{}
 
-		String^ description()
+		/*String^ description()
 		{
 			String^ result=gcnew String(SimModel->getDescription().c_str());
 			return result;
-		}
+		}*/
 	
 		array<double>^ getCoordinates()
 		{
@@ -61,10 +61,19 @@ namespace ManagedClasses {
 			return tempArr;
 		}
 
-		void stepSim(double compStep, double displayStep)
+		/*void stepSim(double displayStep)
 		{
-			SimModel->simulate(displayStep, compStep);
+			SimModel->simulate(displayStep);
+		}*/
+
+		void simulate(double step, std::string target)
+		{
+			SimModel->simulate(10,step,target);//to change
 		}
 
+		void directIncrement(double RTStep)
+		{
+			SimModel->directIncrement(RTStep);
+		}
 	};
 }

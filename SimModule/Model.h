@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include <iostream>
 #include <string>
+#include <fstream>
 
 class Model
 {
@@ -11,41 +12,50 @@ public:
 	Model();
 	~Model();
 
+	//	void showScene() const;
 
-
-/*	void showScene() const;
-
-	void addMatPoint(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_)
-	{
-		addMatPoint(Point(x, y, z), Vect(Vx, Vy, Vz), mass, charge_);
-	}
-
+	void addMatPoint(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_);
 	void addMatPoint(Point p, Vect velocity = Vect(0, 0, 0), double mass = 1, double charge_ = 1);
-	void addActionOnPoint(unsigned int elementReference, Vect A);
-	void setDomain(unsigned int elementReference, double accuracy, double amplitude);
-	
+
+	void addActionOnPoint(unsigned int elementReference, Vect A); //starting from 0
+
+
+/*	void setDomain(unsigned int elementReference, double accuracy, double amplitude);
+
 	//void printState();
 */
-	void simulate(double time, double dt, double accuracy = 0.01);
-	void simulateRT(double time, double dt);
+//void simulate(double dt, double accuracy = 0.1);
+	void increment(double dt, double accuracy);
+	void simulate(double duration, double step, std::string target, double accuracy = 0.001);
 
-/*	void showObservers();
+
+	void writeDescription(std::ofstream &Result);
 	
-	Point getElementPosition(unsigned int rank) const { return ObserverRef[rank]->position(); };
+	
+
+
+
+
+	void directIncrement(double dt) {};
 	std::string getDescription();
 
-	std::vector<double> getCoordinate()
-	{
-		return ContentRef.streamCoordinate();
-	}
+	/*	void showObservers();
+
+		Point getElementPosition(unsigned int rank) const { return ObserverRef[rank]->position(); };
+		std::string getDescription();
 	*/
+	std::vector<double> getCoordinate();
+
 private:
 	Scene ContentRef;
 	std::vector<Observer*> ObserverRef;
 	std::vector<Calculator*> ComputationUnit;
-	
+
 	bool GraphicalOutput = false;
 	bool FileOutput = false;
 	bool DbOutput = false;
+
+	static void incrementTime(double dt);
+	static double time;
 };
 

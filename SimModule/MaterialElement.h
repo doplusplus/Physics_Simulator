@@ -36,6 +36,7 @@ public:
 protected:
 	std::vector< std::shared_ptr<ActionOnPoint> >	ExternalActions;
 	void addAction(std::shared_ptr<ActionOnPoint> A);
+	void sortActions();
 };
 
 class RigidSolid : public MaterialElement

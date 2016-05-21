@@ -31,7 +31,7 @@ MaterialPoint::MaterialPoint(double mass, double charge) :MaterialElement(mass, 
 
 MaterialPoint::MaterialPoint(double mass, double charge, std::vector<std::shared_ptr<ActionOnPoint>> ExtActions) : MaterialElement(mass, charge), ExternalActions(std::move(ExtActions))
 {
-	std::sort(ExternalActions.begin(), ExternalActions.end(), customLess_ActionOnPoint());
+	sortActions();
 }
 
 MaterialPoint::~MaterialPoint() {}
@@ -44,9 +44,13 @@ bool MaterialPoint::operator==(const MaterialPoint & B)
 void MaterialPoint::addAction(std::shared_ptr<ActionOnPoint> A)
 {
 	ExternalActions.push_back(std::move(A));
+	sortActions();
 }
 
-
+void MaterialPoint::sortActions()
+{
+	std::sort(ExternalActions.begin(), ExternalActions.end(), customLess_ActionOnPoint()); 
+}
 
 
 
