@@ -8,6 +8,7 @@ using System.Timers;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace SimulationTool
 {
@@ -21,7 +22,10 @@ namespace SimulationTool
         double compStep_ = 0;
         double dispstep_ = 0;
         double duration_ = 0;
+        double accuracy_ = 0.00001;
+        string target = string.Empty;
         string testResult = string.Empty;
+
 
 
         public SimManager(ManagedModel Mod, DisplayVM disp, OutputPanelVM outPanl)
@@ -31,8 +35,12 @@ namespace SimulationTool
             outPanel = outPanl;
             time.Tick += new EventHandler(dispatcherTimer_Tick);
             time.Tick += new EventHandler(checkStep);
+            SimToFile = new RelayCommand(new Action<object>(sim2file));
+
         }
 
+        public ICommand SimToFile { get; set; }
+        public void sim2file(object obj) { M.SimulateToFileOnly(duration_, compStep_, accuracy_, target); }
 
         public void startSimulation(double comStep, double dispStep, double duration)
         {
@@ -49,8 +57,8 @@ namespace SimulationTool
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-           dVM.RefreshView();
-          //  M.stepSim(dispstep_);
+            dVM.RefreshView();
+            //  M.stepSim(dispstep_);
             //  testResult+= M.description();
             simTime += dispstep_;
             outPanel.SimTime = simTime.ToString(CultureInfo.InvariantCulture);
@@ -96,6 +104,9 @@ namespace SimulationTool
 
 
         }
+
+
+
 
 
     }

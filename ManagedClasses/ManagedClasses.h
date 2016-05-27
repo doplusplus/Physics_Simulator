@@ -13,7 +13,7 @@ namespace ManagedClasses {
 	public ref class ManagedModel
 	{
 		Model *SimModel;
-		
+
 
 		// TODO: Add your methods for this class here.
 	public:
@@ -48,16 +48,16 @@ namespace ManagedClasses {
 			String^ result=gcnew String(SimModel->getDescription().c_str());
 			return result;
 		}*/
-	
+
 		array<double>^ getCoordinates()
 		{
 			std::vector<double> tempVec = SimModel->getCoordinate();
 			const int SIZE = tempVec.size();
-			array<double> ^tempArr = gcnew array<double>(SIZE);			
+			array<double> ^tempArr = gcnew array<double>(SIZE);
 			for (int i = 0; i < SIZE; i++)
 			{
 				tempArr[i] = tempVec[i];
-			}			
+			}
 			return tempArr;
 		}
 
@@ -66,9 +66,14 @@ namespace ManagedClasses {
 			SimModel->simulate(displayStep);
 		}*/
 
-		void simulate(double step, std::string target)
+		void SimulateToFileOnly(double duration, double outputStep, double accuracy, String^ target)
 		{
-			SimModel->simulate(10,step,target);//to change
+			using namespace Runtime::InteropServices;
+			const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(target)).ToPointer();
+			std::string targ = chars;
+			Marshal::FreeHGlobal(IntPtr((void*)chars));
+
+			SimModel->simulate(duration, outputStep, targ, accuracy);
 		}
 
 		void directIncrement(double RTStep)
