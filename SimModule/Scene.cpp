@@ -8,110 +8,55 @@
 
 //Constructors and destructor
 Scene::Scene()
+{}
+
+Scene::Scene(std::unordered_set<MaterialElement*> content)
 {
+	Content = content;
 }
 
 Scene::~Scene()
 {
-	for (auto it = S.begin(); it != S.end(); it++)
+	for (auto it = Content.begin(); it != Content.end(); it++)
 	{
 		delete *it;
 	}
 }
 
-
-//Accessors
-
-MaterialElement *Scene::getElement(unsigned int i)
-{
-	MaterialElement *M = nullptr;
-
-	if (i < S.size())
-	{
-		M = S[i];
-	}
-	else
-	{
-		std::cout << "No element" << '\n';
-	}
-	return M;
-}
-
-double Scene::getTime()
-{
-	return Time;
-}
-
 //Display
-void Scene::consoleShow()
+void Scene::consoleShow()  const
 {
-	if (0 < S.size())
+	if (0 < Content.size())
 	{
-		for (unsigned int i = 0; i < S.size(); i++)
+		for (auto element:Content)
 		{
-			std::cout << "element " << i + 1 << ": " << '\n';  //from 1 to number of elements
-			S[i]->consoleShow();
+			element->consoleShow();
 		}
 	}
 	else { std::cout << "empty scene " << '\n'; }
 }
 
-
-//Modifier
-
-void Scene::addExternalAction(unsigned int place, Vect F, Torsor T)	// adds force to element i starting from 0
+bool Scene::operator==(Scene s)  const
 {
-	S[place]->addExternalAction(F, T);
-}
+	unsigned int n = Content.size();
 
-void Scene::addExternalAction(unsigned int place, Torsor T)
-{
-	addExternalAction(place, Vect(0, 0, 0), T);
-}
-
-void Scene::update(double dt)
-{
-	for (auto it = S.begin(); it != S.end(); it++)
+	if (s.Content.size() != n) { return false; }
+	for (auto element:Content)
 	{
-		(*it)->update(dt);
+		if (s.Content.find(element)==s.Content.end()) { return false; }
 	}
+
+	return true;
 }
 
-void Scene::simulate(double step, double duration)
+void Scene::addMatPoint(MaterialPoint *Mp)
 {
-	double t = 0;
-	while (t < duration)
-	{
-		update(step);
-		t = t + step;
-	}
-	Time += t;
+	Content.insert(Mp);
 }
 
-
-//----------Model interface-----------------------
-
-void Scene::addMatPoint()
+void Scene::incrementTime(double dt)
 {
-	MaterialPoint *Mp = new MaterialPoint;
-	S.push_back(Mp);
+	if (dt >= 0) { Time += dt; }
+	else { throw "backward time travel"; }
 }
 
-void Scene::addMatPoint(Point p, Vect velocity, double mass, double charge_)
-{
-	MaterialElement *Mp = new MaterialPoint(p, velocity, mass, charge_);
-	S.push_back(Mp);
-}
-
-
-void Scene::addSolid()
-{
-	Solid *Sol = new Solid;
-	S.push_back(Sol);
-}
-
-void Scene::addSolid(Point p, Vect velocity, double mass, double charge_)
-{
-	Solid *Sol = new Solid(p, velocity, mass, charge_);
-	S.push_back(Sol);
-}

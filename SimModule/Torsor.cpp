@@ -16,16 +16,10 @@ Torsor::Torsor(const Torsor &Iv)
 	Moment = Iv.Moment;
 }
 
-Torsor::Torsor(Point P, Vect resultant, Vect moment)
+Torsor::Torsor(Point P, Vect force, Vect moment)
 {
 	Application = P;
-	Resultant = resultant;
-	Moment = moment;
-}
-
-Torsor::Torsor(Vect resultant, Vect moment)
-{
-	Resultant = resultant;
+	Resultant = force;
 	Moment = moment;
 }
 
@@ -34,12 +28,12 @@ Torsor::~Torsor()
 }
 
 //Accessors
-Vect Torsor::resultant() { return Resultant; }
-Vect Torsor::moment() { return Moment; }
-Point Torsor::applicationPoint() { return Application; }
+Vect Torsor::vectComponent()  const { return Resultant; }
+Vect Torsor::moment() const { return Moment; }
+Point Torsor::applicationPoint()  const { return Application; }
 
 //Display
-void Torsor::show()
+void Torsor::show() const
 {
 	std::cout << "Point" << '\n';
 	Application.show();
@@ -65,13 +59,14 @@ void Torsor::divideResultant(double d)
 }
 
 //Vector transport
-Vect Torsor::momentAt(Point P)
+Vect Torsor::momentAt(Point P) const
 {
-	Vect M = Moment + (Vect(P, Application) ^ Resultant);
+
+	Vect M = Moment + (Vect(P, Application)^Resultant);
 	return M;
 }
 
-Torsor Torsor::operator +(Torsor B)
+Torsor Torsor::operator +(Torsor B) const
 {
 	Torsor I;
 	Point P = I.Application = Application + B.Application;
@@ -80,4 +75,21 @@ Torsor Torsor::operator +(Torsor B)
 	I.Moment = momentAt(P) + B.momentAt(P);
 
 	return I;
+}
+
+Torsor Torsor::nullTorsor()
+{
+	return Torsor();
+}
+
+bool Torsor::operator ==(Torsor B) const
+{
+	if (Resultant == B.Resultant)
+	{
+		Point P(0, 0, 0);
+		bool b = (momentAt(P) == B.momentAt(P));
+		return b;
+	}
+
+	return false;
 }

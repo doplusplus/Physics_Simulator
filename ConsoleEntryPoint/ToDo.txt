@@ -1,0 +1,7 @@
+- Create and test New Observer and Model classes.
+- New model class requires less data members
+- Observer contains only the material element class with specified 
+functions for each elements
+- Review all constructors
+- make scene a singleton
+- minimize the model design by using a single vector of elementObserver

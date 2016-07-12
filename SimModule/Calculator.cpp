@@ -1,37 +1,26 @@
 #include "Calculator.h"
+#include <memory>
 
 Calculator::Calculator()
 {}
 
+Calculator::Calculator(double accuracy, double amplitude) 
+{
+	Accuracy = accuracy;
+	Range = amplitude;
+};
 
 Calculator::~Calculator()
 {}
 
-
-Vect Calculator::resultant(std::vector<Vect> extActions)
+/*
+void Calculator::resultant(std::vector<MechanicalAction*> setOfActions, MechanicalAction* result)
 {
-	Vect resultant;
+	result->null();
+	for (auto element : setOfActions) { result->add(element, result); }
+}*/
 
-	for (auto it = extActions.begin(); it != extActions.end(); it++)
-	{
-		resultant = resultant + *it;
-	}
-
-	return resultant;
-}
-
-Vect Calculator::resultant(std::vector<Torsor> extActions)
-{
-	Vect res;
-	for (auto it = extActions.begin(); it != extActions.end(); it++)
-	{
-		res = res + it->resultant();
-	}
-	return res;
-}
-
-
-Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)
+Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)const
 {
 	Vect acc = Vect(0, 0, 0);
 	if (mass > 0)
@@ -44,47 +33,21 @@ Vect Calculator::centerOfMassAcceleration(Vect resultant, double mass)
 	}
 	return acc;
 }
-
-Vect Calculator::centerOfMassAcceleration(Torsor resultantTorsor, double mass)
+/*
+Vect  Calculator::centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass)
 {
-	return centerOfMassAcceleration(resultantTorsor.resultant(), mass);
-}
+	MechanicalAction* res = extActions.back()->copy();
+	resultant(extActions, res);
+	Vect v = res->force();
+	delete res;
+	return centerOfMassAcceleration(v, mass);
+};*/
 
-Vect Calculator::centerOfMassAcceleration(std::vector<Vect> extActions, double mass)
+Vect Calculator::velocityVariationCoM(Vect acceleration, double dt) const
+{ return acceleration*dt; }
+
+Vect Calculator::positionVariationCoM(Vect acceleration, Vect currentVelocity, double dt)const
 {
-	return centerOfMassAcceleration(resultant(extActions), mass);
-}
-
-Vect Calculator::centerOfMassAcceleration(std::vector<Torsor> extActions, double mass)
-{
-	return centerOfMassAcceleration(resultant(extActions), mass);
-}
-
-
-
-Vect  Calculator::velocity(Vect Acceleration, Vect currentVelocity, double dt)
-{
-	//integration of the acceleration gives final speeds
-	Vect Velocity = currentVelocity + (CartesianElement)Acceleration*dt;
-	return Velocity;
-}
-
-Point Calculator::position(Vect Acceleration, Vect currentVelocity, Point currentPosition, double dt)
-{
-	//double integration of the acceleration gives final position
-	Point position = (CartesianElement)Acceleration*0.5*dt*dt + (CartesianElement)currentVelocity*dt + currentPosition;
-	return position;
-}
-
-Vect  Calculator::velocityVariation(Vect Acceleration, double dt)
-{
-	Vect DVel = (CartesianElement)Acceleration*dt;
-	return DVel;
-}
-
-Point Calculator::positionVariation(Vect Acceleration, Vect currentVelocity, double dt)
-{
-	Point DPos = (CartesianElement)Acceleration*0.5*dt*dt + (CartesianElement)currentVelocity*dt;
+	Vect DPos = (CartesianElement)acceleration*0.5*dt*dt + (CartesianElement)currentVelocity*dt;
 	return DPos;
 }
-
