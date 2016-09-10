@@ -14,7 +14,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ManagedClasses;
+using System.Windows.Media.Animation;
+using System.Threading;
+using System.Windows.Threading;
+using System.Windows.Media.Media3D;
 
 namespace SimulationTool
 {
@@ -23,37 +26,53 @@ namespace SimulationTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ManagedModel M = new ManagedModel();
-        private MainWindowModel MainVM;
-        private DisplayVM display;
         private ElemDefVM elemDef;
+        private EnvironmentDefVM envDef;
+        private SimSettingsVM simSett;
+
         private OutputPanelVM outPan;
-        private SimManager SManager;
-        private SimSettingsVM SimSett;
+
+        private SimManager sManager;
+        private OutputManager outManager;
+
+        private DisplayVM display;
+        private FileModel fileVM_;
+
+        private DispatcherTimer dispTimer = new DispatcherTimer();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            MainVM = new MainWindowModel(M);
-            display = new DisplayVM(M);
-            elemDef = new ElemDefVM(M, display);
+            display = new DisplayVM();
             outPan = new OutputPanelVM();
-            SManager = new SimManager(M, display, outPan);
-            SimSett = new SimSettingsVM();
 
-            Loaded += MyWindow_Loaded;
-            SizeChanged += OnResize;
+            outManager = new OutputManager();
+            fileVM_ = new FileModel(outManager);
+            sManager = new SimManager(outManager);
+            outManager.link(display, fileVM_, outPan, sManager);
+
+            elemDef = new ElemDefVM(sManager, outManager);
+            envDef = new EnvironmentDefVM(sManager);
+            simSett = new SimSettingsVM(sManager);
 
 
-            this.DataContext = MainVM;
             this.ElemDefTools.DataContext = elemDef;
+            this.EnvDefTools.DataContext = envDef;
+            this.SimSetTools.DataContext = simSett;
             this.SceneDisplay.DataContext = display;
             this.OutputPanel.DataContext = outPan;
-            this.SimSetTools.DataContext = SimSett;
 
-            //  this.LaunchBtn.DataContext = display;
+            // display.CollectionChanged += onElementsChanged;
+            Loaded += MyWindow_Loaded;
+            SizeChanged += OnResize;
+            dispTimer.Tick += onDispStep;
         }
+        /*
+        private void onElementsChanged(object sender, EventArgs e)
+        {
+            SceneDisplay.UpdateLayout();
+        }*/
 
         private void OnResize(object sender, RoutedEventArgs e)
         {
@@ -107,24 +126,26 @@ namespace SimulationTool
             }
 
         }
+
+
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            //  MessageBox.Show(M.description());
-            Run();
+            outManager.launch();
+            // sManager.startSimulation(compStep, dispStep, duration, true, "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt");
+            if (outPan.DisplayEnbld)
+            {
+                //              double dStp = double.Parse(outPan.DisplayStep);
+                outPan.switchTimeTracker();
+                dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
+                dispTimer.Start();
+            }
         }
 
-        private void Run()
-        {
-            double duration = Double.Parse(SimSett.Duration, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
-            double compStep = Double.Parse(SimSett.ComputStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
-            double dispStep = Double.Parse(outPan.DisplayStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
 
-            SManager.startSimulation(compStep, dispStep, duration);
-        }
+
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-
             DefSelector.SelectedIndex++;
         }
 
@@ -133,11 +154,34 @@ namespace SimulationTool
             if (DefSelector.SelectedIndex > 0) DefSelector.SelectedIndex--;
         }
 
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        { }
-
         private void elmntNmbr_TextChanged(object sender, RoutedEventArgs e) { }
 
+
+        //Canvas redraw routine
+        void onDispStep(object sender, EventArgs e)
+        {
+            if (!fileVM_.Read)
+            { dispTimer.Stop(); return; }
+
+            List<Point3D> pointList = fileVM_.CurrentLoc;
+            fileVM_.next();
+            display.circleItems.Clear();
+
+            foreach (var crcle in pointList)
+            {
+                display.circleItems.Add(new circle(crcle.X, crcle.Y, crcle.Z, 4));
+
+            }
+            //            circle c = new circle(p.X, p.Y, p.Z, 4);
+            outPan.increment();
+            //            display.circleItems.Add(c);
+            //    display.circleItems.Remove(c);
+            //SceneDisplay.UpdateLayout();
+        }
+
+
+
+        //TEST-TOOLS-------------------------------------------------------------
         static double testCoord = 0;
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
@@ -150,14 +194,12 @@ namespace SimulationTool
 
         private void SimTestButton_Click(object sender, RoutedEventArgs e)
         {
-            SimSett.Duration = "12";
-            SimSett.ComputStep = "0.01";
+            simSett.Duration = "12";
+            simSett.ComputStep = "0.01";
             outPan.DisplayStep = "0.3";
         }
 
-        private void SimModeSelect_Checked(object sender, RoutedEventArgs e)
-        {
 
-        }
+
     }
 }

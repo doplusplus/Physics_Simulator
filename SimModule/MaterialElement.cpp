@@ -2,7 +2,7 @@
 #include "MaterialElement.h"
 #include "Calculator.h"
 #include <iostream>
-
+#include <stdexcept>
 
 //Constructors & destructor-------------------------------
 
@@ -20,6 +20,12 @@ void MaterialElement::consoleShow() const
 {
 	std::cout << "mass: " << Mass << '\n';
 	std::cout << "charge: " << Charge << '\n';
+}
+
+double MaterialElement::mass() const
+{
+	if (Mass <= 0) { throw std::domain_error("negative or null mass"); }
+	return Mass;
 }
 
 

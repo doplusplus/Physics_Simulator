@@ -21,14 +21,15 @@ namespace SimulationTool
         private double? InputCx, InputCy, InputCz;
         private double? InputFx, InputFy, InputFz;
         private uint selected = 0; //element 0 is selected as 1
-        private ManagedModel M=null;
-        private DisplayVM Display = null;
 
-       public ElemDefVM( ManagedModel Mod, DisplayVM disp)
+        private SimManager simMgr;
+        private OutputManager outMan;
+
+       public ElemDefVM(SimManager SManager_,OutputManager outMngr)
         {
             mass = InputCx = InputCy = InputCz = InputFx = InputFy = InputFz = null;
-            M = Mod;
-            Display = disp;
+            simMgr = SManager_;
+            outMan = outMngr;
 
             MPointCreation = new RelayCommand(new Action<object>(addMPoint));
             ActionAdd = new RelayCommand(new Action<object>(addAction));
@@ -48,7 +49,7 @@ namespace SimulationTool
             set
             {
                 double d = 0;
-                bool b = Double.TryParse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d);
+                bool b = Double.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d);
                 if (d >= 0) { mass = d; }
                 else { MessageBox.Show("We don't deal with negative masses"); }
                 Notify("massInput");
@@ -61,7 +62,7 @@ namespace SimulationTool
             set
             {
                 double result = 0;
-                bool b = Double.TryParse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out result);
+                bool b = Double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
                 InputCx = b ? (double?)result : null;
                 Notify("Xinput");              
             }
@@ -72,7 +73,7 @@ namespace SimulationTool
             get { return (InputCy != null) ? InputCy.ToString() : "Y"; }
             set
             {
-                InputCy = Double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                InputCy = Double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
                 Notify("Yinput");
             }
         }
@@ -82,7 +83,7 @@ namespace SimulationTool
             get { return (InputCz != null) ? InputCz.ToString() : "Z"; }
             set
             {
-                InputCz = Double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                InputCz = Double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
                 Notify("Zinput");
             }
         }
@@ -93,7 +94,7 @@ namespace SimulationTool
             set
             {
                 double result = 0;
-                bool b = Double.TryParse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out result);
+                bool b = Double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
                 InputFx = b ? (double?)result : null;
                 Notify("FXinput");
             }
@@ -104,7 +105,10 @@ namespace SimulationTool
             get { return (InputFy != null) ? InputFy.ToString() : "Y"; }
             set
             {
-                InputFy = Double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                var fmt = new NumberFormatInfo();
+                fmt.NegativeSign = "−";
+                
+                InputFy = Double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
                 Notify("FYinput");
             }
         }
@@ -114,7 +118,7 @@ namespace SimulationTool
             get { return (InputFz != null) ? InputFz.ToString() : "Z"; }
             set
             {
-                InputFz = Double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                InputFz = Double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
                 Notify("FZinput");
             }
         }
@@ -124,7 +128,7 @@ namespace SimulationTool
             get { return selected != 0 ? selected.ToString() : "N/A"; }
             set
             {
-                selected = UInt32.Parse(value, System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture);
+                selected = UInt32.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
                 Notify("SelectedItem");
             }
         }
@@ -151,7 +155,7 @@ namespace SimulationTool
                 if (InputFx == 0 && InputFy == 0 && InputFz == 0) { MessageBox.Show("Null actions are useless, ignoring it"); }
                 else
                 {
-                    M.addActionPoint(selected - 1, InputFx.Value, InputFy.Value, InputFz.Value);
+                    simMgr.addActionPoint(selected - 1, InputFx.Value, InputFy.Value, InputFz.Value);
                 }
             }
             else { MessageBox.Show("invalid input or no element created"); }
@@ -231,10 +235,10 @@ namespace SimulationTool
                     "Position of the center of mass: " + Environment.NewLine +
                     positionMessage;
                 MessageBox.Show(message, "Confirmation");
-                M.addMaterialPoint((double)InputCx, (double)InputCy, (double)InputCz, 0, 0, 0, (double)mass, 0);
+                simMgr.addMaterialPoint((double)InputCx, (double)InputCy, (double)InputCz, 0, 0, 0, (double)mass, 0);
                 selected++;
                 Notify("SelectedItem");
-                Display.displayElements();
+                outMan.displayElements();
             }
             else
             {

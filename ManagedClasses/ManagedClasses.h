@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../SimModule/Model.h"
+#include <msclr\marshal_cppstd.h>
 
 //#include <string>
 
@@ -32,6 +33,7 @@ namespace ManagedClasses {
 		{
 			SimModel->addMatPoint(Point(x, y, z), Vect(Vx, Vy, Vz), mass, charge_);
 		}
+
 		void addActionPoint(unsigned int elementReference, double Ax, double Ay, double Az)
 		{
 			SimModel->addActionOnPoint(elementReference, Vect(Ax, Ay, Az));
@@ -68,17 +70,22 @@ namespace ManagedClasses {
 
 		void SimulateToFileOnly(double duration, double outputStep, double accuracy, String^ target)
 		{
-			using namespace Runtime::InteropServices;
+		/*	using namespace Runtime::InteropServices;
 			const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(target)).ToPointer();
 			std::string targ = chars;
-			Marshal::FreeHGlobal(IntPtr((void*)chars));
+			Marshal::FreeHGlobal(IntPtr((void*)chars));*/
 
-			SimModel->simulate(duration, outputStep, targ, accuracy);
+			std::string *filelocation = new std::string("C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt");
+		//	targ.append( msclr::interop::marshal_as<std::string>(target));
+			SimModel->simulate(duration, outputStep, *filelocation, accuracy);
+			int a = 4;
+			a = 3;
+
 		}
-
-		void directIncrement(double RTStep)
+	
+		bool RTIncrement(double dt, int SampSize)
 		{
-			SimModel->directIncrement(RTStep);
+			return SimModel->RTIncrement(dt, SampSize);
 		}
 	};
 }

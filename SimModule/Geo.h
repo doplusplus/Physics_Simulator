@@ -13,12 +13,10 @@ public:
 	CartesianElement(const CartesianElement &C);
 	virtual ~CartesianElement();
 
-
 	//Display
 	void show() const;
 
 	//Algebraic operator
-
 	CartesianElement operator-() const;
 	CartesianElement operator *(double a) const;			// multiplication by a scalar
 	CartesianElement operator /(double a) const;			// division by a scalar, exception thrown if null 
@@ -29,23 +27,8 @@ public:
 
 	//logical operator	
 	friend bool operator ==(const CartesianElement &left, const CartesianElement &right);
-
-
-
-
-	std::string getDescription() const
-	{
-		return "x: " + std::to_string(X) + "y: " + std::to_string(Y) + "z: " + std::to_string(Z) + "\n";
-	}
-
-	std::vector<double> coordStream() const
-	{
-		std::vector<double> res;
-		res.push_back(X);
-		res.push_back(Y);
-		res.push_back(Z);
-		return res;
-	}
+	std::string getDescription() const;
+	std::vector<double> coordStream() const;
 
 protected:
 	double X;

@@ -102,13 +102,13 @@
                 <StackPanel>
                     <Label Content="Fluid friction" HorizontalAlignment="Stretch"/>
                     <RadioButton  Content="None"/>
-                    <RadioButton Content="Fluid linear (kv)" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Fluid linear (kv)"/>
                     <RadioButton Content="Fluid quadratic (kv²)"/>
                     <TextBox x:Name="kv" TextWrapping="Wrap" Text="k" Margin="2"/>
 
                     <Label Content="Dry friction" HorizontalAlignment="Stretch"/>
                     <RadioButton  Content="None"/>
-                    <RadioButton Checked="RadioButton_Checked">
+                    <RadioButton >
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                             <TextBox x:Name="k_stat" TextWrapping="Wrap" Text="k stat" Margin="5"/>
                             <TextBox x:Name="k_dyn"  TextWrapping="Wrap" Text="k dyn"  Margin="5"/>
@@ -117,7 +117,7 @@
 
                     <Label Content="Gravity field" HorizontalAlignment="Stretch"/>
                     <RadioButton Content="None"/>
-                    <RadioButton Content="Uniform along:" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Uniform along:" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBox x:Name="gX" TextWrapping="Wrap" Text="x" Margin="5"/>
                         <TextBox x:Name="gY" TextWrapping="Wrap" Text="y" Margin="5"/>
@@ -126,7 +126,7 @@
 
                     <Label Content="Electric field" HorizontalAlignment="Stretch"/>
                     <RadioButton Content="None"/>
-                    <RadioButton Content="Electrostatic along:" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Electrostatic along:"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <TextBox x:Name="eX" TextWrapping="Wrap" Text="x" Margin="5"/>
                         <TextBox x:Name="eY" TextWrapping="Wrap" Text="y" Margin="5"/>
@@ -137,7 +137,7 @@
             </Grid>
         </GroupBox>
         <!-- .........................Simulation settings......................... -->
-        <GroupBox Name="SimSetTools"   Grid.Row="1" Visibility="Collapsed"  Header="Sim. Settings" Grid.Column="0" Grid.RowSpan="4"
+        <GroupBox Name="SimSetTools"   Grid.Row="1" Visibility="Visible"  Header="Sim. Settings" Grid.Column="0" Grid.RowSpan="4"
                   Padding="2" Background="#FF3ED647">
             <Grid  Margin="5" ShowGridLines="True">
                 <Grid.RowDefinitions>
@@ -148,15 +148,9 @@
                 <StackPanel Name="timePanel" Grid.Row="0">
                     <TextBox Name="duration" Text="{Binding Duration}"/>
                     <TextBox Name="compStep" Text="{Binding ComputStep}"/>
-                    <Label Content="Results log"/>
-                    <StackPanel Orientation="Horizontal">
-                        <RadioButton Content="Yes"/>
-                        <RadioButton Content="No"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox Text="Log file path" Width="100"/>
-                        <Button Content="..."/>
-                    </StackPanel>
+                    <RadioButton   Name="RTModeSelect" Command="{Binding RTMode}"  Grid.Row="0" Grid.Column="1" Content="Real Time Mode"  Margin="5" />
+                    <RadioButton    Name="PrecisionModeSelect" Command="{Binding precisionMode}" Grid.Row="1" Grid.Column="1" Content="Precision Mode"  IsChecked="true" Margin="5"/>
+
                     <Separator VerticalAlignment="Stretch" />
                 </StackPanel>
             </Grid>
@@ -174,15 +168,13 @@
                         </Canvas >
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding Xcoord}" />
-                        <Setter Property="Canvas.Bottom" Value="{Binding Ycoord}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="Black"/>
+                    <DataTemplate >
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Margin="{Binding Position}" Fill="Black">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding Xcoord}" Y="{Binding Ycoord}"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -190,15 +182,13 @@
             <Rectangle Fill="Black" Height="1"/>
             <Line Name="Xstroke" X1="{Binding XUnit}" Y1="{Binding CY}" X2="{Binding XUnit}" Y2="{Binding CY}" Stroke="Red"  StrokeThickness="1" />
             <Line Name="Ystroke" X1="{Binding CY}" Y1="{Binding YUnit}" X2="{Binding CY}" Y2="{Binding YUnit}" Stroke="Red"  StrokeThickness="1" />
-
         </Grid>
 
         <Button x:Name="LaunchBtn"  Template="{StaticResource LaunchButtonTemplate}" Content="Launch"
         Click="LaunchButton_Click" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 
         <!-- ......................... OUTPUT PANEL ......................... -->
-        <GroupBox Name="OutputPanel" Grid.Column="1" Grid.Row="3" Background="Gainsboro"
-                  Margin="2" Grid.RowSpan="2">
+        <GroupBox Name="OutputPanel" Grid.Column="1" Grid.Row="3" Background="Gainsboro">
 
             <Grid ShowGridLines="True">
                 <Grid.RowDefinitions>
@@ -213,14 +203,23 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display enabled" IsChecked="True" Margin="5"/>
-                <Button      Name="dbFetch"         Grid.Row="1" Content="Fetch from DataBase" Margin="5"/>
-                <Button      Name="zoomBtn"         Grid.Row="2" Content="Zoom" Margin="5"/>
+                <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display" IsChecked="{Binding DisplayEnbld}" Margin="5"/>
+                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from DataBase/File" Margin="5" />
+                <Button  Name="zoomBtn"        Grid.Row="2" Content="Adjust Zoom" Margin="5"/>
+                <StackPanel Orientation="vertical" Grid.Column="1" Grid.RowSpan="3">
 
-                <RadioButton   Name="RTModeSelect" Grid.Row="0" Grid.Column="1" Content="Real Time Mode" IsChecked="True" Margin="5" Checked="SimModeSelect_Checked"/>
-                <RadioButton    Name="PrecisionModeSelect" Grid.Row="1" Grid.Column="1" Content="Precision Mode" IsChecked="True" Margin="5" Checked="SimModeSelect_Checked"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="log result?" VerticalAlignment="Center"/>
+                        <RadioButton Content="Yes" IsChecked="{Binding EnableLog}" VerticalAlignment="Center" />
+                        <RadioButton Content="No"  IsChecked="False" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="{Binding TargetFile}" Width="100"/>
+                        <Button Content="..."/>
+                    </StackPanel>
+                </StackPanel>
 
-                <TextBox   x:Name="timeBox"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
+                <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
                            Text="{Binding SimTime, Mode=OneWay}" IsEnabled="False"/>
                 <ProgressBar Name="Progress"   Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" 
@@ -228,14 +227,12 @@
                 <TextBox   x:Name="displayBox" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
                            Text="{Binding DisplayStep}" />
-
-
             </Grid>
-
         </GroupBox>
+
         <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="auto">
-            <Button  Name="TestButton"  Content="Test Element"   Margin="2" Width="auto" Click="TestButton_Click"/>
-            <Button  Name="simTestButton"  Content="SimSettTest"   Margin="2" Width="auto" Click="SimTestButton_Click"/>
+            <Button  Name="TestButton"     Content="Test Element"   Margin="2" Width="auto" Click="TestButton_Click" Background="Orange"/>
+            <Button  Name="simTestButton"  Content="SimSettTest"   Margin="2" Width="auto" Click="SimTestButton_Click" Background="Orange"/>
         </StackPanel>
 
     </Grid>

@@ -13,6 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ManagedClasses", "..\Manage
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0549354D-CFD6-466F-9DB1-8E0E2FCAED2A}"
 	ProjectSection(SolutionItems) = preProject
+		ErrorLog.txt = ErrorLog.txt
 		IOTestFile.txt = IOTestFile.txt
 		Requirements.txt = Requirements.txt
 		ToDo.txt = ToDo.txt

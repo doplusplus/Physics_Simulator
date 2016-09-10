@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace SimulationTool
 {
-    class DataFlowObserver
+    class EnvironmentDefVM
     {
+        SimManager SMan;
+
+        public EnvironmentDefVM(SimManager SManager_)
+        {
+            SMan = SManager_;
+        }
+
     }
 }
