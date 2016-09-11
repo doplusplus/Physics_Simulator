@@ -9,9 +9,8 @@
 
     <Window.Resources>
         <!-- Launch button template -->
-
-        <ControlTemplate x:Key="LaunchButtonTemplate" TargetType="Button">
-            <Path Fill="LightGray">
+        <ControlTemplate   x:Key="LaunchButtonTemplate" TargetType="Button">
+            <Path Name="buttnColor" Fill="LightGray">
                 <Path.Data>
                     <CombinedGeometry GeometryCombineMode="Exclude">
                         <CombinedGeometry.Geometry1>
@@ -27,7 +26,6 @@
         </ControlTemplate>
     </Window.Resources>
 
-
     <!-- .........................GENERAL LAYOUT ......................... -->
     <Grid  Margin="5" ShowGridLines="False">
         <Grid.ColumnDefinitions>
@@ -38,8 +36,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="33*"/>
             <RowDefinition Height="87*"/>
-            <RowDefinition Height="114.667"/>
-            <RowDefinition Height="101*"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="100*" MaxHeight="130"/>
         </Grid.RowDefinitions>
 
         <!-- .........................TOOLS SELECTOR ......................... -->
@@ -54,14 +52,17 @@
 
         <!-- .........................TOOLS BOXES......................... -->
         <!-- ......................... Intro......................... -->
-        <GroupBox Name="DefToolsPres"  Grid.Row="1" Visibility="Visible" Grid.Column="0" Grid.RowSpan="4" Padding="15"
-                  Background="#FFFFB6ED" >
-            <TextBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Text="Welcome to the Physics simulation tools" TextAlignment="Center" VerticalContentAlignment="Center" TextWrapping="WrapWithOverflow"/>
+        <GroupBox Name="DefToolsPres"  Grid.Row="1" Visibility="Visible" Grid.Column="0" Grid.RowSpan="4" Padding="2"
+                  Background="BlanchedAlmond" >
+            <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin ="0,30" Background="BlanchedAlmond" 
+                     BorderThickness="0" FontFamily="Candara"
+                     Text="Welcome to the Physics simulator.  &#10;Here, you can set a simulation.&#10; Use the scroll-down menu." FontSize="15"
+                     TextAlignment="Center" VerticalContentAlignment="Top" TextWrapping="WrapWithOverflow" />
         </GroupBox>
 
         <!-- .........................Elements definition......................... -->
-        <GroupBox Name="ElemDefTools"  Grid.Row="1" Visibility="Collapsed" Header="Elements Def." Grid.Column="0" Grid.RowSpan="4"
-                  Background="#FFEAEAEA">
+        <GroupBox Name="ElemDefTools"  Grid.Row="1" Visibility="Collapsed" Grid.Column="0" Grid.RowSpan="4"
+               Padding="2"   Background="SkyBlue">
             <StackPanel>
                 <Label x:Name="CenterOfMasslabel" Content="Center of mass"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,0">
@@ -91,8 +92,8 @@
         </GroupBox>
 
         <!-- .........................Physical environment definition......................... -->
-        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Collapsed"  Grid.Column="0" Grid.RowSpan="4" 
-                  Padding="2" Background="#FFDCF071">
+        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Visible"  Grid.Column="0" Grid.RowSpan="4" 
+                  Padding="2" Background="Turquoise">
             <Grid  Margin="5" ShowGridLines="False">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="10*"/>
@@ -102,9 +103,17 @@
                 <StackPanel>
                     <Label Content="Fluid friction" HorizontalAlignment="Stretch"/>
                     <RadioButton  Content="None"/>
-                    <RadioButton Content="Fluid linear (kv)"/>
-                    <RadioButton Content="Fluid quadratic (kv²)"/>
-                    <TextBox x:Name="kv" TextWrapping="Wrap" Text="k" Margin="2"/>
+                    <RadioButton Content="linear (kv)"/>
+                    <RadioButton Content="quadratic (kv²)"/>
+                    <RadioButton Content="lin. -> quad. v>Vc">
+                    </RadioButton>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <TextBox x:Name="klDef" TextWrapping="Wrap" Text="kLin" Margin="5"/>
+                        <TextBox x:Name="kQDef" TextWrapping="Wrap" Text="kQuad" Margin="5"/>
+                        <TextBox x:Name="VcDef"  TextWrapping="Wrap" Text="Vc"  Margin="5"/>
+                        <Label Content="m/s"/>
+
+                    </StackPanel>
 
                     <Label Content="Dry friction" HorizontalAlignment="Stretch"/>
                     <RadioButton  Content="None"/>
@@ -137,8 +146,9 @@
             </Grid>
         </GroupBox>
         <!-- .........................Simulation settings......................... -->
-        <GroupBox Name="SimSetTools"   Grid.Row="1" Visibility="Visible"  Header="Sim. Settings" Grid.Column="0" Grid.RowSpan="4"
+        <GroupBox Name="SimSetTools"   Grid.Row="1" Visibility="Collapsed" Grid.Column="0" Grid.RowSpan="4"
                   Padding="2" Background="#FF3ED647">
+
             <Grid  Margin="5" ShowGridLines="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="10*"/>
@@ -148,8 +158,8 @@
                 <StackPanel Name="timePanel" Grid.Row="0">
                     <TextBox Name="duration" Text="{Binding Duration}"/>
                     <TextBox Name="compStep" Text="{Binding ComputStep}"/>
-                    <RadioButton   Name="RTModeSelect" Command="{Binding RTMode}"  Grid.Row="0" Grid.Column="1" Content="Real Time Mode"  Margin="5" />
-                    <RadioButton    Name="PrecisionModeSelect" Command="{Binding precisionMode}" Grid.Row="1" Grid.Column="1" Content="Precision Mode"  IsChecked="true" Margin="5"/>
+                    <RadioButton   Name="RTModeSelect" Checked="onRTModeSelected" IsChecked="{Binding RTMode}"  Grid.Row="0" Grid.Column="1" Content="Real Time Mode &#10;(no log allowed)"  Margin="5" />
+                    <RadioButton   Name="PrecsnMdSlct" Checked="onPrecsnMdSelected" IsChecked="{Binding PrecisionMode}" Grid.Row="1" Grid.Column="1" Content="Precision Mode" Margin="5"/>
 
                     <Separator VerticalAlignment="Stretch" />
                 </StackPanel>
@@ -190,7 +200,7 @@
         <!-- ......................... OUTPUT PANEL ......................... -->
         <GroupBox Name="OutputPanel" Grid.Column="1" Grid.Row="3" Background="Gainsboro">
 
-            <Grid ShowGridLines="True">
+            <Grid ShowGridLines="False">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -204,20 +214,20 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display" IsChecked="{Binding DisplayEnbld}" Margin="5"/>
-                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from DataBase/File" Margin="5" />
+                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from file" Margin="5" />
                 <Button  Name="zoomBtn"        Grid.Row="2" Content="Adjust Zoom" Margin="5"/>
-                <StackPanel Orientation="vertical" Grid.Column="1" Grid.RowSpan="3">
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="log result?" VerticalAlignment="Center"/>
-                        <RadioButton Content="Yes" IsChecked="{Binding EnableLog}" VerticalAlignment="Center" />
-                        <RadioButton Content="No"  IsChecked="False" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox Text="{Binding TargetFile}" Width="100"/>
-                        <Button Content="..."/>
-                    </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
+                    <Label Content="log result?" VerticalAlignment="Center"/>
+                    <RadioButton Name="proLog" Content="Yes" IsChecked="{Binding EnableLog}" VerticalAlignment="Center" />
+                    <RadioButton Name="noLog" Content="No"   VerticalAlignment="Center" />
                 </StackPanel>
+                <DockPanel  Grid.Column="1" Grid.Row="1" Margin="5" >
+                    <Button Content="..."  Click="OpenBrowser" Width="20"/>
+                    <TextBox Text="{Binding TargetFile}" />
+                </DockPanel>
+
 
                 <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 

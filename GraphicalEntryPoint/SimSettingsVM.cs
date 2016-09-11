@@ -15,36 +15,26 @@ namespace SimulationTool
 
         private double duration_ = -1;
         private double computationalStep = -1;
-        private string targetFile_ = "file path";
-        private bool fileAllowed_ = true;
 
-        private ICommand allowLog_;
-        private ICommand disableLog_;
-
-        public ICommand precisionMode { get; set; }
-        public ICommand RTMode { get; set; }
+        bool precisionMde = true;
+        public bool PrecisionMode
+        {
+            get { return precisionMde; }
+            set { precisionMde = value;/* Notify("PrecisionMode"); Notify("RTMode")*/; }
+        }
+        public bool RTMode
+        {
+            get { return !precisionMde; }
+            set { precisionMde = !value;/* Notify("PrecisionMode"); Notify("RTMode")*/; }
+        }
 
         SimManager SMan;
 
-        public SimSettingsVM(SimManager SManager_)
-        {
-            AllowLog = new RelayCommand(new Action<object>(enableLog));
-            ForbidLog = new RelayCommand(new Action<object>(forbidLog));
+        public SimSettingsVM(SimManager SManager_) { SMan = SManager_; }
 
-            precisionMode = new RelayCommand(new Action<object>(setToPrecision));
-            RTMode = new RelayCommand(new Action<object>(setToRT));
-            SMan = SManager_;
-        }
+        private void setToRT(object obj) { SMan.accuracyMode = false; }
 
-        private void setToRT(object obj)
-        {
-            SMan.SimMode = false;
-        }
-
-        private void setToPrecision(object obj)
-        {
-            SMan.SimMode = true;
-        }
+        private void setToPrecision(object obj) { SMan.accuracyMode = true; }
 
         public string Duration
         {
@@ -78,49 +68,6 @@ namespace SimulationTool
             }
         }
 
-        public string TargetFile
-        {
-            get { return targetFile_; }
-            set
-            {
-                targetFile_ = value;
-                Notify("TargetFile");
-            }
-        }
-
-        public bool FileAllowed
-        {
-            get { return fileAllowed_; }
-            set
-            {
-                fileAllowed_ = value;
-                Notify("FileAllowed");
-            }
-        }
-
-        public ICommand AllowLog
-        {
-            get { return allowLog_; }
-            set { allowLog_ = value; }
-        }
-
-        public void enableLog(object obj)
-        {
-            FileAllowed = true;
-        }
-
-        public ICommand ForbidLog
-        {
-            get { return disableLog_; }
-            set { disableLog_ = value; }
-        }
-
-        public void forbidLog(object obj)
-        {
-            FileAllowed = false;
-        }
-
-
         void Notify(string propName)
         {
             if (PropertyChanged != null)
@@ -128,7 +75,6 @@ namespace SimulationTool
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-
 
     }
 }

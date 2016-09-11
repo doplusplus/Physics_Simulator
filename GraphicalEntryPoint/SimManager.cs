@@ -16,28 +16,22 @@ namespace SimulationTool
     {
         ManagedModel M;
         OutputManager outMan;
-
         DispatcherTimer time = new DispatcherTimer();
-
     
-        double accuracy_ = 0.00001;
-    
+        double accuracy_ = 0.00001;    
         string testResult = string.Empty;
 
         public double CompStep_ { get; set; }
         public double DispStep_ { get; set; }
         public double Duration_ { get; set; }
-        public bool SimMode { get; set; } //accuracy true, RT false
+        public bool accuracyMode { get; set; } //accuracy true, RT false
         public   List<double> sceneElems_ { get { return M.getCoordinates().ToList<double>(); } }
 
         public SimManager(OutputManager OutManager)
         {
             M = new ManagedModel();
             outMan = OutManager;
-
-            //        time.Tick += new EventHandler(dispatcherTimer_Tick); //for the output manager?
-            //        time.Tick += new EventHandler(checkStep);
-
+            accuracyMode = true;
         }
 
         internal void simulate(string targetFile)
@@ -45,11 +39,6 @@ namespace SimulationTool
             M.SimulateToFileOnly(Duration_, DispStep_, accuracy_, targetFile);
             outMan.PlayRequest(targetFile);
         }
-
-
-      //  public void sim2file(object obj) { M.SimulateToFileOnly(duration_, compStep_, accuracy_, target); }
-
-
 
         internal void addActionPoint(uint v, double value1, double value2, double value3)
         {

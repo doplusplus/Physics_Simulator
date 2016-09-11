@@ -18,6 +18,7 @@ using System.Windows.Media.Animation;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Media.Media3D;
+using System.Diagnostics;
 
 namespace SimulationTool
 {
@@ -56,23 +57,16 @@ namespace SimulationTool
             envDef = new EnvironmentDefVM(sManager);
             simSett = new SimSettingsVM(sManager);
 
-
             this.ElemDefTools.DataContext = elemDef;
             this.EnvDefTools.DataContext = envDef;
             this.SimSetTools.DataContext = simSett;
             this.SceneDisplay.DataContext = display;
             this.OutputPanel.DataContext = outPan;
 
-            // display.CollectionChanged += onElementsChanged;
             Loaded += MyWindow_Loaded;
             SizeChanged += OnResize;
             dispTimer.Tick += onDispStep;
         }
-        /*
-        private void onElementsChanged(object sender, EventArgs e)
-        {
-            SceneDisplay.UpdateLayout();
-        }*/
 
         private void OnResize(object sender, RoutedEventArgs e)
         {
@@ -127,22 +121,19 @@ namespace SimulationTool
 
         }
 
-
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
+            if (outPan.DisplayStep == "disp. step in s" && outPan.DisplayEnbld) { MessageBox.Show("please specify the refresh period"); }
+
             outManager.launch();
-            // sManager.startSimulation(compStep, dispStep, duration, true, "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt");
+            (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.DeepPink;
             if (outPan.DisplayEnbld)
             {
-                //              double dStp = double.Parse(outPan.DisplayStep);
                 outPan.switchTimeTracker();
                 dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
                 dispTimer.Start();
             }
         }
-
-
-
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
@@ -156,12 +147,15 @@ namespace SimulationTool
 
         private void elmntNmbr_TextChanged(object sender, RoutedEventArgs e) { }
 
-
-        //Canvas redraw routine
+        //Canvas display routine-------------------------------------------------------------------------
         void onDispStep(object sender, EventArgs e)
         {
             if (!fileVM_.Read)
-            { dispTimer.Stop(); return; }
+            {
+                dispTimer.Stop();
+                (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.LightGray;
+                return;
+            }
 
             List<Point3D> pointList = fileVM_.CurrentLoc;
             fileVM_.next();
@@ -178,7 +172,7 @@ namespace SimulationTool
             //    display.circleItems.Remove(c);
             //SceneDisplay.UpdateLayout();
         }
-
+        //-------------------------------------------------------------------------------------------------------------
 
 
         //TEST-TOOLS-------------------------------------------------------------
@@ -198,8 +192,23 @@ namespace SimulationTool
             simSett.ComputStep = "0.01";
             outPan.DisplayStep = "0.3";
         }
+        //-----------------------------------------------------------------------------------
 
+        private void onRTModeSelected(object sender, RoutedEventArgs e)
+        {
+            noLog.IsChecked = true;
+            proLog.IsEnabled = false;
+        }
 
+        private void onPrecsnMdSelected(object sender, RoutedEventArgs e) { proLog.IsEnabled = true; }
 
+        private void OpenBrowser(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openF = new Microsoft.Win32.OpenFileDialog();
+            openF.InitialDirectory = System.IO.Path.GetDirectoryName(outPan.TargetFile);
+            openF.ShowDialog();
+
+            outPan.TargetFile = openF.FileName;
+        }
     }
 }

@@ -13,33 +13,26 @@ namespace SimulationTool
     class OutputPanelVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        //   OutputManager OutMan;
 
-        public OutputPanelVM(/*OutputManager OutManager_*/)
+        public OutputPanelVM()
         {
-            //     OutMan = OutManager_;
             ToggleSource = new RelayCommand(new Action<object>(toggleSource_));
-            // EnableLog = new RelayCommand(new Action<object>(enableLog_));
-
             EnableLog = true;
             DisplayEnbld = true;
             fromSim = true;
             srcColor = "Gray";
-            TargetFile = "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";
         }
 
-        /* private void enableLog_(object obj)
-         {
-             OutMan.logOn(TargetFile);
-         }*/
         public bool DisplayEnbld { get; set; }
-        public bool EnableLog { get; set; }
-        //  public bool DisableLog       { get; set; }
+
+        bool enbleLog = true;
+        public bool EnableLog { get { return enbleLog; } set { enbleLog = value; } }
+        public bool DisableLog { get { return !enbleLog; } set { enbleLog = !value; } }
 
         public bool fromSim { get; set; }
         public string srcColor { get; set; }
-        public ICommand ToggleSource { get; set; }
 
+        public ICommand ToggleSource { get; set; }
         private void toggleSource_(object obj)
         {
             fromSim = !fromSim;
@@ -49,7 +42,8 @@ namespace SimulationTool
             { srcColor = "Orange"; Notify("srcColor"); }
         }
 
-        public string TargetFile { get; set; }
+        string targFile = "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";
+        public string TargetFile { get { return targFile; } set { targFile = value; Notify("TargetFile"); } }
 
         private double simTime_ = -1;
         public string SimTime
@@ -68,11 +62,7 @@ namespace SimulationTool
             get { return simTime_; }
         }
 
-        public void switchTimeTracker()
-        {
-           Time = 0;
-//            endTime = end;
-        }
+        public void switchTimeTracker() { Time = 0; }
 
         public double endTime { get; set; }
 
@@ -93,10 +83,7 @@ namespace SimulationTool
             }
         }
 
-        public void increment()
-        {
-            Time += dispStep;
-        }
+        public void increment() { Time += dispStep; }
 
         void Notify(string propName)
         {

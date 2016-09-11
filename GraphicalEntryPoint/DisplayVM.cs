@@ -15,9 +15,8 @@ using System.Windows.Media.Animation;
 
 namespace SimulationTool
 {
-    public class circle :DependencyObject // INotifyPropertyChanged
+    public class circle : DependencyObject
     {
-        //      public event PropertyChangedEventHandler PropertyChanged;
         public circle(double x_, double y_, double z_, double radius_)
         {
             Xcoord = x_;
@@ -27,28 +26,17 @@ namespace SimulationTool
         }
 
         public static DependencyProperty XcoordProperty = DependencyProperty.Register("Xcoord", typeof(Double), typeof(circle));
-        
-        public double Xcoord { get { return (double)GetValue(XcoordProperty); } set { SetValue(XcoordProperty,value); } }
+
+        public double Xcoord { get { return (double)GetValue(XcoordProperty); } set { SetValue(XcoordProperty, value); } }
         public double Ycoord { get; set; }
         public double Zcoord { get; set; }
         public double Radius { get; set; }
-
-        /*
-                public void Notify(string propName)
-                {
-                    if (PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    }
-                }
-                */
     }
 
 
     public class DisplayVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-   //     public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         private const int radius = 10;
 
@@ -74,24 +62,21 @@ namespace SimulationTool
         public double YUnit { get { return dY; } set { dY = value; Notify("YUnit"); } }
         public double CenterY { get { return CY; } set { CY = value; Notify("CenterY"); } }
 
-        public void displayElements(List<double> toDisp)
+        public void displayElement(List<double> toDisp)
         {
             coordTodisplay = toDisp;
-            //     Items.Clear();
             int i = 0;
-            //for (int i = 0; i < toDisp.Count - 2; i = i + 3)
-            //{
             if (toDisp.Count > 0)
             {
                 circleItems.Add(new circle(toDisp[i] + DisplayWidth / 2 - radius, toDisp[i + 1] + DisplayHeight / 2 - radius, toDisp[i + 2], 2 * radius));
             }
-            //}
+
         }
 
         public void RefreshView()
         {
             Items.Clear();
-            displayElements(coordTodisplay);
+            displayElement(coordTodisplay);
         }
 
         void Notify(string propName)
@@ -102,27 +87,6 @@ namespace SimulationTool
             }
         }
 
-  /*      public void LaunchAnimations(List<DoubleAnimation> XAnim, List<DoubleAnimation> YAnim)
-        {
-            Storyboard sb = new Storyboard();
-            //temporaire
-            Items.Clear();
-            var c = new circle(5, 5, 0, 3);       
-            circleItems.Add(c);
-            
-            foreach (var xa in XAnim)
-            {
-                sb.Children.Add(xa); Storyboard.SetTarget(xa, circleItems[0]);
-                var prop = new PropertyPath(circle.XcoordProperty);
-                Storyboard.SetTargetProperty(xa,prop);
-            }
-    //later        foreach (var ya in YAnim) { sb.Children.Add(ya); }
-
-            sb.Begin();
-            
-        }
-
-    */
     }
 
 
