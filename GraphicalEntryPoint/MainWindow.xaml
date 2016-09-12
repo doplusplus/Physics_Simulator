@@ -22,7 +22,36 @@
                     </CombinedGeometry>
                 </Path.Data>
             </Path>
+        </ControlTemplate>
 
+        <ControlTemplate   x:Key="PrevButtonTemplate" TargetType="Button">
+            <Path Name="lftbuttnColor" Fill="Yellow" Opacity="90">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="0,40" IsClosed="True">
+                                <LineSegment Point="10,0"/>
+                                <LineSegment Point="10,80"/>
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+        </ControlTemplate>
+
+        <ControlTemplate   x:Key="NextButtonTemplate" TargetType="Button">
+            <Path Name="rghtbuttnColor" Fill="Yellow" Opacity="10">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="0,0" IsClosed="True">
+                                <LineSegment Point="10,40"/>
+                                <LineSegment Point="0,80"/>
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
         </ControlTemplate>
     </Window.Resources>
 
@@ -92,7 +121,7 @@
         </GroupBox>
 
         <!-- .........................Physical environment definition......................... -->
-        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Visible"  Grid.Column="0" Grid.RowSpan="4" 
+        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Collapsed"  Grid.Column="0" Grid.RowSpan="4" 
                   Padding="2" Background="Turquoise">
             <Grid  Margin="5" ShowGridLines="False">
                 <Grid.RowDefinitions>
@@ -124,7 +153,7 @@
                         </StackPanel>
                     </RadioButton>
 
-                    <Label Content="Gravity field" HorizontalAlignment="Stretch"/>
+                    <Label Content="Gravity field" HorizontalAlignment="Stretch" Height="23"/>
                     <RadioButton Content="None"/>
                     <RadioButton Content="Uniform along:" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -142,7 +171,7 @@
                         <TextBox x:Name="eZ" TextWrapping="Wrap" Text="z" Margin="5"/>
                     </StackPanel>
                 </StackPanel>
-                <Button Grid.Row="1"  Content="Update" Padding="1"/>
+                <Button Grid.Row="1"  Content="Update" Padding="1" Margin="0,7,0,0.333"/>
             </Grid>
         </GroupBox>
         <!-- .........................Simulation settings......................... -->
@@ -166,8 +195,12 @@
             </Grid>
         </GroupBox>
 
-        <Button Name="nextButton" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="55" Content="N" Margin="0,0,5,100.333" Click="NextButton_Click" Grid.RowSpan="2" />
-        <Button Name="prevButton" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="55" Content="P" Margin="5,0,0,100.333" Click="prevButton_Click" Grid.RowSpan="2"  />
+        <Button Name="nextButton" Grid.Row="2" Template="{StaticResource NextButtonTemplate}" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="15" Content="N"
+                Click="NextButton_Click"  Height="78" />
+        <Button Name="prevButton" Grid.Row="2" Template="{StaticResource PrevButtonTemplate}" 
+                HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="15" Content="P"
+                Click="prevButton_Click"  Height="78"  />
 
         <!-- .........................SIMULATION GRAPHICAL DISPLAY ......................... -->
         <Grid Name="SceneGrid"  Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" >
