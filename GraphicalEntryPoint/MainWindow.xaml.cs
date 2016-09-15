@@ -15,10 +15,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
-using System.Threading;
+//using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Media.Media3D;
 using System.Diagnostics;
+using System.Timers;
 
 namespace SimulationTool
 {
@@ -40,6 +41,7 @@ namespace SimulationTool
         private FileModel fileVM_;
 
         private DispatcherTimer dispTimer = new DispatcherTimer();
+
 
         public MainWindow()
         {
@@ -63,10 +65,15 @@ namespace SimulationTool
             this.SceneDisplay.DataContext = display;
             this.OutputPanel.DataContext = outPan;
 
+
+
             Loaded += MyWindow_Loaded;
             SizeChanged += OnResize;
             dispTimer.Tick += onDispStep;
+
+
         }
+
 
         private void OnResize(object sender, RoutedEventArgs e)
         {
@@ -129,9 +136,10 @@ namespace SimulationTool
             (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.DeepPink;
             if (outPan.DisplayEnbld)
             {
-                outPan.switchTimeTracker();
+                outPan.resetTimeTracker();
                 dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
-                dispTimer.Start();
+                stopButton.Visibility = Visibility.Visible;
+                dispTimer.Start();              
             }
         }
 
@@ -150,28 +158,42 @@ namespace SimulationTool
         //Canvas display routine-------------------------------------------------------------------------
         void onDispStep(object sender, EventArgs e)
         {
-            if (!fileVM_.Read)
+            List<Point3D> pointList;
+            if (simSett.RTMode)
             {
-                dispTimer.Stop();
-                (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.LightGray;
-                return;
+                pointList = new List<Point3D>();
+                var elemList = sManager.sceneElems_;
+                string s = "";
+                for (int i = 0; i < elemList.Count - 2; i = i + 3)
+                {
+                    pointList.Add(new Point3D(elemList[i] , elemList[i] , 0));
+                    s = s + pointList.Last().X.ToString() + " " + pointList.Last().Y.ToString();
+                }
+                CoordTracker.Text = s;
+                display.circleItems.Clear();
             }
+            else
+            {
+                if (!fileVM_.Read)
+                {
+                    dispTimer.Stop();
+                    (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.LightGray;
+                    return;
+                }
 
-            List<Point3D> pointList = fileVM_.CurrentLoc;
-            fileVM_.next();
-            display.circleItems.Clear();
+                pointList = fileVM_.CurrentLoc;
+                fileVM_.next();
+                display.circleItems.Clear();
+            }
 
             foreach (var crcle in pointList)
             {
-                display.circleItems.Add(new circle(crcle.X, crcle.Y, crcle.Z, 4));
-
+                //display.circleItems.Add(new circle(crcle.X, crcle.Y, crcle.Z, 4));
+                display.addToDisplay(crcle);
             }
-            //            circle c = new circle(p.X, p.Y, p.Z, 4);
             outPan.increment();
-            //            display.circleItems.Add(c);
-            //    display.circleItems.Remove(c);
-            //SceneDisplay.UpdateLayout();
         }
+
         //-------------------------------------------------------------------------------------------------------------
 
 
@@ -179,9 +201,9 @@ namespace SimulationTool
         static double testCoord = 0;
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            elemDef.massInput = "2";
+            elemDef.massInput = "1.0";
             this.elemDef.Xinput = this.elemDef.Yinput = this.elemDef.Zinput = testCoord.ToString(CultureInfo.InvariantCulture); testCoord += 2;
-            this.elemDef.FXinput = this.elemDef.FYinput = this.elemDef.FZinput = "10.0";
+            this.elemDef.FXinput = this.elemDef.FZinput =  this.elemDef.FYinput = "1.0";
             MaterialPoint.Command.Execute(null);
             AddAction.Command.Execute(null);
         }
@@ -189,9 +211,26 @@ namespace SimulationTool
         private void SimTestButton_Click(object sender, RoutedEventArgs e)
         {
             simSett.Duration = "12";
-            simSett.ComputStep = "0.01";
-            outPan.DisplayStep = "0.3";
+            simSett.ComputStep = "0.5";
+            simSett.RTMode = true;
+            outPan.DisplayStep = "1";
         }
+
+        private void RTtimer_Clicked(object sender, RoutedEventArgs e)
+        {
+            // outManager.startTimer();
+            //sManager.increment();
+            var elemList = sManager.sceneElems_;
+            string s = "";
+            for (int i = 0; i < elemList.Count - 2; i = i + 3)
+            {
+                s = s + elemList[0].ToString() + " " + elemList[1].ToString() + " " + elemList[2].ToString();
+            }
+            CoordTracker.Text = s;
+
+            Tmeasure.Text = outManager.tmeasure.ToString();
+        }
+
         //-----------------------------------------------------------------------------------
 
         private void onRTModeSelected(object sender, RoutedEventArgs e)
@@ -210,5 +249,12 @@ namespace SimulationTool
 
             outPan.TargetFile = openF.FileName;
         }
+
+        private void stpButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (dispTimer.IsEnabled) { dispTimer.Stop(); }
+            else { dispTimer.Start(); }
+        }
+
     }
 }

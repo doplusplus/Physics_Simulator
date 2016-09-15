@@ -9,7 +9,7 @@ using System.Windows.Media.Media3D;
 
 namespace SimulationTool
 {
-    class FileModel
+    public class FileModel
     {
         OutputManager outManger;
         public FileModel(OutputManager outMan)
@@ -107,7 +107,6 @@ namespace SimulationTool
             double xdiff = Wdth * 0.5 - radius;
             double ydiff = Hght * 0.5 - radius;
 
-            //            List<Point3D> newLocList = new List<Point3D>();
             for (int index = 0; index < data.Count; index++)
             {
                 var dat = data[index];

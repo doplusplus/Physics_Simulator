@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Collections.Specialized;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Media3D;
 
 namespace SimulationTool
 {
@@ -25,9 +26,10 @@ namespace SimulationTool
             Radius = radius_;
         }
 
-        public static DependencyProperty XcoordProperty = DependencyProperty.Register("Xcoord", typeof(Double), typeof(circle));
+        //public static DependencyProperty XcoordProperty = DependencyProperty.Register("Xcoord", typeof(Double), typeof(circle));
 
-        public double Xcoord { get { return (double)GetValue(XcoordProperty); } set { SetValue(XcoordProperty, value); } }
+        //public double Xcoord { get { return (double)GetValue(XcoordProperty); } set { SetValue(XcoordProperty, value); } }
+        public double Xcoord { get; set; }
         public double Ycoord { get; set; }
         public double Zcoord { get; set; }
         public double Radius { get; set; }
@@ -45,6 +47,8 @@ namespace SimulationTool
         public ObservableCollection<circle> circleItems { get { return Items; } set { Items = value; } }
 
         private List<double> coordTodisplay = new List<double>();
+       
+
 
         public DisplayVM()
         { }
@@ -62,21 +66,26 @@ namespace SimulationTool
         public double YUnit { get { return dY; } set { dY = value; Notify("YUnit"); } }
         public double CenterY { get { return CY; } set { CY = value; Notify("CenterY"); } }
 
-        public void displayElement(List<double> toDisp)
+        public void displayElements(List<double> toDisp)
         {
+            //Items.Clear();
             coordTodisplay = toDisp;
-            int i = 0;
-            if (toDisp.Count > 0)
+            for (int i = 0; i < toDisp.Count - 2; i = i + 3)
             {
                 circleItems.Add(new circle(toDisp[i] + DisplayWidth / 2 - radius, toDisp[i + 1] + DisplayHeight / 2 - radius, toDisp[i + 2], 2 * radius));
             }
-
         }
+
+        public void addToDisplay(Point3D P)
+        {
+            circleItems.Add(new circle(P.X+ DisplayWidth *0.5 - radius, P.Y + DisplayHeight*0.5  - radius, P.Z, 2 * radius));
+        }
+
 
         public void RefreshView()
         {
             Items.Clear();
-            displayElement(coordTodisplay);
+            displayElements(coordTodisplay);
         }
 
         void Notify(string propName)

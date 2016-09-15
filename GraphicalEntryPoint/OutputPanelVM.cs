@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace SimulationTool
 {
-    class OutputPanelVM : INotifyPropertyChanged
+    public class OutputPanelVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,7 +62,7 @@ namespace SimulationTool
             get { return simTime_; }
         }
 
-        public void switchTimeTracker() { Time = 0; }
+        public void resetTimeTracker() { Time = 0; }
 
         public double endTime { get; set; }
 

@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace SimulationTool
 {
-    class SimSettingsVM : INotifyPropertyChanged
+    public class SimSettingsVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -20,12 +20,12 @@ namespace SimulationTool
         public bool PrecisionMode
         {
             get { return precisionMde; }
-            set { precisionMde = value;/* Notify("PrecisionMode"); Notify("RTMode")*/; }
+            set { SMan.accuracyMode = precisionMde = value; Notify("RTMode"); Notify("PrecisionMode"); }
         }
         public bool RTMode
         {
             get { return !precisionMde; }
-            set { precisionMde = !value;/* Notify("PrecisionMode"); Notify("RTMode")*/; }
+            set { SMan.accuracyMode = precisionMde = !value; Notify("RTMode"); Notify("PrecisionMode"); }
         }
 
         SimManager SMan;

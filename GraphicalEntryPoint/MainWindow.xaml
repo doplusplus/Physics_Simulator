@@ -213,7 +213,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate >
-                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Margin="{Binding Position}" Fill="Black">
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="Black">
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding Xcoord}" Y="{Binding Ycoord}"/>
                             </Ellipse.RenderTransform>
@@ -260,9 +260,10 @@
                     <Button Content="..."  Click="OpenBrowser" Width="20"/>
                     <TextBox Text="{Binding TargetFile}" />
                 </DockPanel>
+                <Button Name="stopButton"  Grid.Column="1" Grid.Row="2" Margin="5" Content="Stop/Resume" Visibility="Hidden" Click="stpButtonClicked"/>
+                    
 
-
-                <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
+                        <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
                            Text="{Binding SimTime, Mode=OneWay}" IsEnabled="False"/>
                 <ProgressBar Name="Progress"   Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" 
@@ -276,6 +277,9 @@
         <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="auto">
             <Button  Name="TestButton"     Content="Test Element"   Margin="2" Width="auto" Click="TestButton_Click" Background="Orange"/>
             <Button  Name="simTestButton"  Content="SimSettTest"   Margin="2" Width="auto" Click="SimTestButton_Click" Background="Orange"/>
+            <Button  Name="sequencialiser"     Content="startRTtimer"   Margin="2" Width="auto" Click="RTtimer_Clicked" Background="Orange"/>
+            <TextBox Name="CoordTracker"      />
+            <TextBox Name="Tmeasure"      />
         </StackPanel>
 
     </Grid>

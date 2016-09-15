@@ -70,22 +70,19 @@ namespace ManagedClasses {
 
 		void SimulateToFileOnly(double duration, double outputStep, double accuracy, String^ target)
 		{
-		/*	using namespace Runtime::InteropServices;
-			const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(target)).ToPointer();
-			std::string targ = chars;
-			Marshal::FreeHGlobal(IntPtr((void*)chars));*/
-
 			std::string *filelocation = new std::string("C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt");
-		//	targ.append( msclr::interop::marshal_as<std::string>(target));
+
 			SimModel->simulate(duration, outputStep, *filelocation, accuracy);
 			int a = 4;
 			a = 3;
 
 		}
-	
-		bool RTIncrement(double dt, int SampSize)
+
+
+
+		void simpleIncrement(double dt)
 		{
-			return SimModel->RTIncrement(dt, SampSize);
+			SimModel->increment(dt, 0.1);
 		}
 	};
 }

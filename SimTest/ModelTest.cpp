@@ -119,6 +119,21 @@ namespace UnitTesting
  			Assert::IsTrue(g ==strs.str());//t elem X Y Z Vx Vy Vz m C
 		}
 
+		TEST_METHOD(CoordExportation_DoubleVector)
+		{
+			double FallTime = 10;	//seconds
+			double mass = 1;		//kg
+			const double earthGravity = 9.81;
+			Vect G(0, 0, 0);
+
+			Model M;
+			M.addMatPoint(Point(0, 1, 0), Vect(0, 0, 0), mass);
+			M.addActionOnPoint(0, G);	
+
+			M.increment(0.1,0.001);
+			std::vector<double > V = { 0,1,0};
+			Assert::IsTrue(M.getCoordinate() == V);
+		}
 
 	};
 }
