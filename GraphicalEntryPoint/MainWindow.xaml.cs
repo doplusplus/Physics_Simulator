@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
-//using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Media.Media3D;
 using System.Diagnostics;
@@ -65,13 +64,9 @@ namespace SimulationTool
             this.SceneDisplay.DataContext = display;
             this.OutputPanel.DataContext = outPan;
 
-
-
             Loaded += MyWindow_Loaded;
             SizeChanged += OnResize;
             dispTimer.Tick += onDispStep;
-
-
         }
 
 
@@ -125,7 +120,6 @@ namespace SimulationTool
                 default:
                     break;
             }
-
         }
 
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
@@ -188,7 +182,6 @@ namespace SimulationTool
 
             foreach (var crcle in pointList)
             {
-                //display.circleItems.Add(new circle(crcle.X, crcle.Y, crcle.Z, 4));
                 display.addToDisplay(crcle);
             }
             outPan.increment();
@@ -227,8 +220,6 @@ namespace SimulationTool
                 s = s + elemList[0].ToString() + " " + elemList[1].ToString() + " " + elemList[2].ToString();
             }
             CoordTracker.Text = s;
-
-            Tmeasure.Text = outManager.tmeasure.ToString();
         }
 
         //-----------------------------------------------------------------------------------
@@ -237,6 +228,7 @@ namespace SimulationTool
         {
             noLog.IsChecked = true;
             proLog.IsEnabled = false;
+            enableDisplay.IsChecked = true;
         }
 
         private void onPrecsnMdSelected(object sender, RoutedEventArgs e) { proLog.IsEnabled = true; }

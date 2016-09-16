@@ -26,9 +26,7 @@ namespace SimulationTool
             Radius = radius_;
         }
 
-        //public static DependencyProperty XcoordProperty = DependencyProperty.Register("Xcoord", typeof(Double), typeof(circle));
-
-        //public double Xcoord { get { return (double)GetValue(XcoordProperty); } set { SetValue(XcoordProperty, value); } }
+     
         public double Xcoord { get; set; }
         public double Ycoord { get; set; }
         public double Zcoord { get; set; }

@@ -13,50 +13,39 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
-            SimManager S = new SimManager(new OutputManager());
-            S.accuracyMode = false;
-            S.CompStep_ = 0.5;
-            S.DispStep_ = 0.3;
-            S.Duration_ = 12;
+            OutputManager outMan = new OutputManager();
+            SimManager simMan = new SimManager(outMan);
+            OutputPanelVM outpan = new OutputPanelVM();
 
+            outMan.link(new DisplayVM(), new FileModel(outMan), outpan, simMan);
+            double precision = 0.0001;
 
+            simMan.CompStep_ = 2;
+            simMan.Duration_ = 5;
+            simMan.accuracyMode = true;
 
+            outpan.fromSim = true;
+            outpan.EnableLog = true;
+            outpan.DisplayEnbld = false;
+            outpan.DisplayStep = "1";
+            outpan.TargetFile = "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\UnitTestOutputFile.txt";
 
-            S.addMaterialPoint(0, 0, 0, 0, 0, 0, 1, 0);
-            S.addActionPoint(0, 1, 1, 1);
-            //-----------------------------------------------------------------
+            bool temp = false;
+            if (!System.IO.File.Exists(outpan.TargetFile)) { temp = true; System.IO.File.Create(outpan.TargetFile); }
 
-
-
-            //-----------------------------------------------------------------
-
-            S.increment();
-            foreach (var c in S.sceneElems_)
-            { Console.Write(c.ToString() + " "); }
-            Console.WriteLine();
-
-            S.increment();
-            foreach (var c in S.sceneElems_)
-            { Console.Write(c.ToString() + " "); }
-            Console.WriteLine();
-
-            S.increment();
-            foreach (var c in S.sceneElems_)
-            { Console.Write(c.ToString() + " "); }
-            Console.WriteLine();
-
-            S.increment();
-            foreach (var c in S.sceneElems_)
-            { Console.Write(c.ToString() + " "); }
-            Console.WriteLine();
-
-
-            Console.ReadKey();
+            simMan.addMaterialPoint(0, 0, 0, 0, 0, 0, 1, 0);
+            simMan.addActionPoint(0, 0.5, 1, 10.5);
+            outMan.launch();
+        
+            string content = System.IO.File.ReadLines(outpan.TargetFile).Last();
+            var sp = content.Split();
+            double t = Double.Parse(sp[0]);
+            double x = Double.Parse(sp[2]);
+            double y = Double.Parse(sp[3]);
+            double z = Double.Parse(sp[4]);
+            if (temp == true) { System.IO.File.Delete(outpan.TargetFile); }
         }
 
-        private static void incrmnt(object sender, ElapsedEventArgs e)
-        {
 
-        }
     }
 }

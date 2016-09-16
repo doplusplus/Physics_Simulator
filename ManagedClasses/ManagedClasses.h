@@ -70,15 +70,11 @@ namespace ManagedClasses {
 
 		void SimulateToFileOnly(double duration, double outputStep, double accuracy, String^ target)
 		{
-			std::string *filelocation = new std::string("C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt");
-
+			std::string *filelocation = new std::string();
+			std::string unmanaged = msclr::interop::marshal_as<std::string>(target);
+			filelocation->append(unmanaged);
 			SimModel->simulate(duration, outputStep, *filelocation, accuracy);
-			int a = 4;
-			a = 3;
-
 		}
-
-
 
 		void simpleIncrement(double dt)
 		{

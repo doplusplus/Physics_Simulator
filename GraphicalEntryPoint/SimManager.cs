@@ -44,7 +44,7 @@ namespace SimulationTool
         internal void simulate(string targetFile)
         {
             M.SimulateToFileOnly(Duration_, DispStep_, accuracy_, targetFile);
-            outMan.PlayRequest(targetFile);
+         //   outMan.PlayRequest(targetFile);
         }
 
         public void addActionPoint(uint v, double value1, double value2, double value3)
@@ -52,20 +52,16 @@ namespace SimulationTool
             M.addActionPoint(v, value1, value2, value3);
         }
 
-        public void addMaterialPoint(double inputCx, double inputCy, double inputCz, int v1, int v2, int v3, double mass, int v4)
+        public void addMaterialPoint(double inputCx, double inputCy, double inputCz, double no1, double no2, double no3, double mass, double no4)
         {
-            M.addMaterialPoint(inputCx, inputCy, inputCz, (double)v1, (double)v2, (double)v3, mass, v4);
+            M.addMaterialPoint(inputCx, inputCy, inputCz, no1, no2, no3, mass, no4);
             sElem = M.getCoordinates().ToList<double>();
         }
 
         public void increment()
         {
-            M.simpleIncrement(CompStep_);
-       
-                
+            M.simpleIncrement(CompStep_);     
             sElem = M.getCoordinates().ToList<double>();
-
-            //   coordString = sceneElems_[0].ToString() +" "+ sceneElems_[1].ToString() + " " + sceneElems_[2].ToString();//test
         }
     }
 }
