@@ -133,7 +133,7 @@ namespace SimulationTool
                 outPan.resetTimeTracker();
                 dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
                 stopButton.Visibility = Visibility.Visible;
-                dispTimer.Start();              
+                dispTimer.Start();
             }
         }
 
@@ -160,7 +160,7 @@ namespace SimulationTool
                 string s = "";
                 for (int i = 0; i < elemList.Count - 2; i = i + 3)
                 {
-                    pointList.Add(new Point3D(elemList[i] , elemList[i] , 0));
+                    pointList.Add(new Point3D(elemList[i], elemList[i], 0));
                     s = s + pointList.Last().X.ToString() + " " + pointList.Last().Y.ToString();
                 }
                 CoordTracker.Text = s;
@@ -196,7 +196,7 @@ namespace SimulationTool
         {
             elemDef.massInput = "1.0";
             this.elemDef.Xinput = this.elemDef.Yinput = this.elemDef.Zinput = testCoord.ToString(CultureInfo.InvariantCulture); testCoord += 2;
-            this.elemDef.FXinput = this.elemDef.FZinput =  this.elemDef.FYinput = "1.0";
+            this.elemDef.FXinput = this.elemDef.FZinput = this.elemDef.FYinput = "1.0";
             MaterialPoint.Command.Execute(null);
             AddAction.Command.Execute(null);
         }
@@ -224,14 +224,10 @@ namespace SimulationTool
 
         //-----------------------------------------------------------------------------------
 
-        private void onRTModeSelected(object sender, RoutedEventArgs e)
-        {
-            noLog.IsChecked = true;
-            proLog.IsEnabled = false;
-            enableDisplay.IsChecked = true;
-        }
 
-        private void onPrecsnMdSelected(object sender, RoutedEventArgs e) { proLog.IsEnabled = true; }
+
+
+
 
         private void OpenBrowser(object sender, RoutedEventArgs e)
         {
@@ -248,5 +244,31 @@ namespace SimulationTool
             else { dispTimer.Start(); }
         }
 
+        private void onRTModeSelected(object sender, RoutedEventArgs e)
+        {
+            enableDisplay.IsChecked = true;
+            enableDisplay.IsEnabled = false;
+            proLog.IsEnabled = false;
+            proLog.IsChecked = false;
+            noLog.IsChecked = true;
+        }
+
+        private void onPrecsnMdSelected(object sender, RoutedEventArgs e)
+        {
+            if (outPan.fromSim) { proLog.IsEnabled = true; enableDisplay.IsEnabled = true; }
+        }
+
+        private void onClick(object sender, RoutedEventArgs e)
+        {
+            if (outPan.fromSim)
+            {
+                proLog.IsEnabled = false;
+                proLog.IsChecked = false;
+                noLog.IsChecked = true;
+                enableDisplay.IsEnabled = false;
+                enableDisplay.IsChecked = true;
+            }
+            else { if (sManager.accuracyMode) { proLog.IsEnabled = true; enableDisplay.IsEnabled = true; } }
+        }
     }
 }

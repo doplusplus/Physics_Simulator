@@ -23,12 +23,13 @@ namespace SimulationTool
             srcColor = "Gray";
         }
 
-        public bool DisplayEnbld { get; set; }
-
+        bool dispEnbl = true;
+        public bool DisplayEnbld { get { return dispEnbl; } set { dispEnbl = value; Notify("DisplayEnbld"); } }
+  
         bool enbleLog = true;
-        public bool EnableLog { get { return enbleLog; } set { enbleLog = value; } }
+        public bool EnableLog { get { return enbleLog; } set { enbleLog = value; Notify("EnableLog"); Notify("DisableLog"); } }
         public bool DisableLog { get { return !enbleLog; } set { enbleLog = !value; } }
-
+        
         public bool fromSim { get; set; }
         public string srcColor { get; set; }
 
@@ -39,7 +40,9 @@ namespace SimulationTool
             if (fromSim)
             { srcColor = "Gray"; Notify("srcColor"); }
             else
-            { srcColor = "Orange"; Notify("srcColor"); }
+            {
+                srcColor = "Orange"; Notify("srcColor");               
+            }
         }
 
         string targFile = "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";

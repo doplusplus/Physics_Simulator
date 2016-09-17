@@ -246,15 +246,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox    Name="enableDisplay" Grid.Row="0" Content="Display" IsChecked="{Binding DisplayEnbld}" Margin="5"/>
-                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from file" Margin="5" />
+                <CheckBox  Name="enableDisplay" Grid.Row="0" Content="Display" IsChecked="{Binding DisplayEnbld}"   Margin="5"/>
+                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from file" Click="onClick" Margin="5" />
                 <Button  Name="zoomBtn"        Grid.Row="2" Content="Adjust Zoom" Margin="5"/>
 
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
                     <Label Content="log result?" VerticalAlignment="Center"/>
                     <RadioButton Name="proLog" Content="Yes" IsChecked="{Binding EnableLog}" VerticalAlignment="Center" />
-                    <RadioButton Name="noLog" Content="No"   VerticalAlignment="Center" />
+                    <RadioButton Name="noLog" Content="No"   IsChecked="{Binding DisableLog}" VerticalAlignment="Center" />
                 </StackPanel>
                 <DockPanel  Grid.Column="1" Grid.Row="1" Margin="5" >
                     <Button Content="..."  Click="OpenBrowser" Width="20"/>
