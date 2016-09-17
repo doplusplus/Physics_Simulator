@@ -11,12 +11,13 @@ using System.Windows;
 using System.Windows.Data;
 using System.Globalization;
 using System.Collections.Specialized;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Media3D;
 
 namespace SimulationTool
 {
-    public class circle : INotifyPropertyChanged
+    public class circle : DependencyObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public circle(double x_, double y_, double z_, double radius_)
         {
             Xcoord = x_;
@@ -25,37 +26,30 @@ namespace SimulationTool
             Radius = radius_;
         }
 
+     
         public double Xcoord { get; set; }
         public double Ycoord { get; set; }
         public double Zcoord { get; set; }
         public double Radius { get; set; }
-
-
-        public void Notify(string propName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
     }
 
 
     public class DisplayVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         private const int radius = 10;
 
-        private ManagedModel M = null;
+
         private ObservableCollection<circle> Items = new ObservableCollection<circle>();
         public ObservableCollection<circle> circleItems { get { return Items; } set { Items = value; } }
 
-        public DisplayVM(ManagedModel Mod)
-        {
-            M = Mod;
-        }
+        private List<double> coordTodisplay = new List<double>();
+       
+
+
+        public DisplayVM()
+        { }
 
         private double dX;
         private double dY;
@@ -64,28 +58,33 @@ namespace SimulationTool
 
         public double DisplayWidth { get; set; }
         public double XUnit { get { return dX; } set { dX = value; Notify("XUnit"); } }
-        public double CenterX { get { return CX; } set {CX=value; Notify("CenterX"); } }
+        public double CenterX { get { return CX; } set { CX = value; Notify("CenterX"); } }
 
         public double DisplayHeight { get; set; }
         public double YUnit { get { return dY; } set { dY = value; Notify("YUnit"); } }
         public double CenterY { get { return CY; } set { CY = value; Notify("CenterY"); } }
 
-        public void displayElements()
+        public void displayElements(List<double> toDisp)
         {
-            List<double> a = M.getCoordinates().ToList<double>();
-            for (int i = 0; i < a.Count - 2; i = i + 3)
+            //Items.Clear();
+            coordTodisplay = toDisp;
+            for (int i = 0; i < toDisp.Count - 2; i = i + 3)
             {
-                Items.Add(new circle(a[i] + DisplayWidth / 2 - radius, a[i + 1] + DisplayHeight / 2 - radius, a[i + 2], 2 * radius));
+                circleItems.Add(new circle(toDisp[i] + DisplayWidth / 2 - radius, toDisp[i + 1] + DisplayHeight / 2 - radius, toDisp[i + 2], 2 * radius));
             }
         }
+
+        public void addToDisplay(Point3D P)
+        {
+            circleItems.Add(new circle(P.X+ DisplayWidth *0.5 - radius, P.Y + DisplayHeight*0.5  - radius, P.Z, 2 * radius));
+        }
+
 
         public void RefreshView()
         {
             Items.Clear();
-            displayElements();
+            displayElements(coordTodisplay);
         }
-
-
 
         void Notify(string propName)
         {
@@ -94,7 +93,6 @@ namespace SimulationTool
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-
 
     }
 

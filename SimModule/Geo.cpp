@@ -58,6 +58,20 @@ CartesianElement::CartesianElement(const CartesianElement &C)
 
 CartesianElement::~CartesianElement() {}
 
+std::string CartesianElement::getDescription() const
+{
+	return "x: " + std::to_string(X) + "y: " + std::to_string(Y) + "z: " + std::to_string(Z) + "\n";
+}
+
+std::vector<double> CartesianElement::coordStream() const
+{
+	std::vector<double> res;
+	res.push_back(X);
+	res.push_back(Y);
+	res.push_back(Z);
+	return res;
+}
+
 //Displays
 void CartesianElement::show() const
 {
@@ -65,9 +79,6 @@ void CartesianElement::show() const
 }
 
 //Algebraic operators
-
-
-
 CartesianElement CartesianElement ::operator -()const
 {
 	CartesianElement C;
@@ -76,8 +87,6 @@ CartesianElement CartesianElement ::operator -()const
 	C.Z = -Z;
 	return C;
 }
-
-
 
 CartesianElement CartesianElement ::operator *(double a)const	//multiplication by a scalar
 {
@@ -88,7 +97,6 @@ CartesianElement CartesianElement ::operator *(double a)const	//multiplication b
 CartesianElement CartesianElement ::operator /(double a)const
 {
 	if (a == 0)	throw "divideByZero";
-
 	return CartesianElement(X / a, Y / a, Z / a);
 }
 

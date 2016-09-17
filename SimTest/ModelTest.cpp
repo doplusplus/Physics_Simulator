@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 #include "..\SimModule\Model.h"
 #include <fstream>
+#include <sstream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -76,23 +77,63 @@ namespace UnitTesting
 			Assert::IsTrue(b);
 		}
 
-		TEST_METHOD(simToFile)
+		TEST_METHOD(simToFileStill)
 		{
 			Model M;
-			std::string target="C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";
+			std::string target = "C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";
 			M.addMatPoint(Point(0, 0, 0));
-			M.simulate(10, 0.1, target,accuracy);
+			M.simulate(10, 0.1, target, accuracy);
 			std::string s;
 			std::fstream reader(target);
-			
+
 			std::getline(reader, s); //skip first line
 			std::getline(reader, s);
 
 			Assert::IsTrue(s == "0 0 0 0 0 0 0 0 1 1");//t elem X Y Z Vx Vy Vz m C
-
 		}
 
+		TEST_METHOD(FreeFall_ToFile)
+		{
+			std::string target="C:\\Users\\Doz\\Source\\Repos\\Physics_Simulator\\ConsoleEntryPoint\\IOTestFile.txt";
+			
+			double FallTime = 10;	//seconds
+			double mass = 1;		//kg
+			const double earthGravity = 9.81;
+			Vect G(0, 0, mass*earthGravity);
 
+			Model M;
+			M.addMatPoint(Point(0, 0, 0), Vect(0, 0, 0), mass);
+			M.addActionOnPoint(0, G);			
+			M.addMatPoint(Point(0, 0, 0));
+			M.simulate(10, 0.1, target,accuracy);
+			
+			std::ostringstream strs;
+			strs << 10<<" "<<0<<" "<<0 <<" "<<0<<" "<< 0.5*earthGravity*FallTime*FallTime
+				 <<" "<< 0 <<" "<<0<<" "<<earthGravity*FallTime<<" "<< mass<<" " <<1;
+
+			std::string s,v,g;
+			std::fstream reader(target);
+			
+			while (std::getline(reader, s)) { g = v; v = s; };
+
+ 			Assert::IsTrue(g ==strs.str());//t elem X Y Z Vx Vy Vz m C
+		}
+
+		TEST_METHOD(CoordExportation_DoubleVector)
+		{
+			double FallTime = 10;	//seconds
+			double mass = 1;		//kg
+			const double earthGravity = 9.81;
+			Vect G(0, 0, 0);
+
+			Model M;
+			M.addMatPoint(Point(0, 1, 0), Vect(0, 0, 0), mass);
+			M.addActionOnPoint(0, G);	
+
+			M.increment(0.1,0.001);
+			std::vector<double > V = { 0,1,0};
+			Assert::IsTrue(M.getCoordinate() == V);
+		}
 
 	};
 }

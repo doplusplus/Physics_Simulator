@@ -14,7 +14,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ManagedClasses;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using System.Windows.Media.Media3D;
+using System.Diagnostics;
+using System.Timers;
 
 namespace SimulationTool
 {
@@ -23,37 +27,48 @@ namespace SimulationTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ManagedModel M = new ManagedModel();
-        private MainWindowModel MainVM;
-        private DisplayVM display;
         private ElemDefVM elemDef;
+        private EnvironmentDefVM envDef;
+        private SimSettingsVM simSett;
+
         private OutputPanelVM outPan;
-        private SimManager SManager;
-        private SimSettingsVM SimSett;
+
+        private SimManager sManager;
+        private OutputManager outManager;
+
+        private DisplayVM display;
+        private FileModel fileVM_;
+
+        private DispatcherTimer dispTimer = new DispatcherTimer();
+
 
         public MainWindow()
         {
             InitializeComponent();
 
-            MainVM = new MainWindowModel(M);
-            display = new DisplayVM(M);
-            elemDef = new ElemDefVM(M, display);
+            display = new DisplayVM();
             outPan = new OutputPanelVM();
-            SManager = new SimManager(M, display, outPan);
-            SimSett = new SimSettingsVM();
+
+            outManager = new OutputManager();
+            fileVM_ = new FileModel(outManager);
+            sManager = new SimManager(outManager);
+            outManager.link(display, fileVM_, outPan, sManager);
+
+            elemDef = new ElemDefVM(sManager, outManager);
+            envDef = new EnvironmentDefVM(sManager);
+            simSett = new SimSettingsVM(sManager);
+
+            this.ElemDefTools.DataContext = elemDef;
+            this.EnvDefTools.DataContext = envDef;
+            this.SimSetTools.DataContext = simSett;
+            this.SceneDisplay.DataContext = display;
+            this.OutputPanel.DataContext = outPan;
 
             Loaded += MyWindow_Loaded;
             SizeChanged += OnResize;
-
-
-            this.DataContext = MainVM;
-            this.ElemDefTools.DataContext = elemDef;
-            this.SceneDisplay.DataContext = display;
-            this.OutputPanel.DataContext = outPan;
-            this.SimSetTools.DataContext = SimSett;
-
-            //  this.LaunchBtn.DataContext = display;
+            dispTimer.Tick += onDispStep;
         }
+
 
         private void OnResize(object sender, RoutedEventArgs e)
         {
@@ -105,26 +120,25 @@ namespace SimulationTool
                 default:
                     break;
             }
-
         }
+
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            //  MessageBox.Show(M.description());
-            Run();
-        }
+            if (outPan.DisplayStep == "disp. step in s" && outPan.DisplayEnbld) { MessageBox.Show("please specify the refresh period"); }
 
-        private void Run()
-        {
-            double duration = Double.Parse(SimSett.Duration, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
-            double compStep = Double.Parse(SimSett.ComputStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
-            double dispStep = Double.Parse(outPan.DisplayStep, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
-
-            SManager.startSimulation(compStep, dispStep, duration);
+            outManager.launch();
+            (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.DeepPink;
+            if (outPan.DisplayEnbld)
+            {
+                outPan.resetTimeTracker();
+                dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
+                stopButton.Visibility = Visibility.Visible;
+                dispTimer.Start();
+            }
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-
             DefSelector.SelectedIndex++;
         }
 
@@ -133,31 +147,128 @@ namespace SimulationTool
             if (DefSelector.SelectedIndex > 0) DefSelector.SelectedIndex--;
         }
 
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        { }
-
         private void elmntNmbr_TextChanged(object sender, RoutedEventArgs e) { }
 
+        //Canvas display routine-------------------------------------------------------------------------
+        void onDispStep(object sender, EventArgs e)
+        {
+            List<Point3D> pointList;
+            if (simSett.RTMode)
+            {
+                pointList = new List<Point3D>();
+                var elemList = sManager.sceneElems_;
+                string s = "";
+                for (int i = 0; i < elemList.Count - 2; i = i + 3)
+                {
+                    pointList.Add(new Point3D(elemList[i], elemList[i], 0));
+                    s = s + pointList.Last().X.ToString() + " " + pointList.Last().Y.ToString();
+                }
+                CoordTracker.Text = s;
+                display.circleItems.Clear();
+            }
+            else
+            {
+                if (!fileVM_.Read)
+                {
+                    dispTimer.Stop();
+                    (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.LightGray;
+                    return;
+                }
+
+                pointList = fileVM_.CurrentLoc;
+                fileVM_.next();
+                display.circleItems.Clear();
+            }
+
+            foreach (var crcle in pointList)
+            {
+                display.addToDisplay(crcle);
+            }
+            outPan.increment();
+        }
+
+        //-------------------------------------------------------------------------------------------------------------
+
+
+        //TEST-TOOLS-------------------------------------------------------------
         static double testCoord = 0;
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            elemDef.massInput = "2";
+            elemDef.massInput = "1.0";
             this.elemDef.Xinput = this.elemDef.Yinput = this.elemDef.Zinput = testCoord.ToString(CultureInfo.InvariantCulture); testCoord += 2;
-            this.elemDef.FXinput = this.elemDef.FYinput = this.elemDef.FZinput = "10.0";
+            this.elemDef.FXinput = this.elemDef.FZinput = this.elemDef.FYinput = "1.0";
             MaterialPoint.Command.Execute(null);
             AddAction.Command.Execute(null);
         }
 
         private void SimTestButton_Click(object sender, RoutedEventArgs e)
         {
-            SimSett.Duration = "12";
-            SimSett.ComputStep = "0.01";
-            outPan.DisplayStep = "0.3";
+            simSett.Duration = "12";
+            simSett.ComputStep = "0.5";
+            simSett.RTMode = true;
+            outPan.DisplayStep = "1";
         }
 
-        private void SimModeSelect_Checked(object sender, RoutedEventArgs e)
+        private void RTtimer_Clicked(object sender, RoutedEventArgs e)
         {
+            // outManager.startTimer();
+            //sManager.increment();
+            var elemList = sManager.sceneElems_;
+            string s = "";
+            for (int i = 0; i < elemList.Count - 2; i = i + 3)
+            {
+                s = s + elemList[0].ToString() + " " + elemList[1].ToString() + " " + elemList[2].ToString();
+            }
+            CoordTracker.Text = s;
+        }
 
+        //-----------------------------------------------------------------------------------
+
+
+
+
+
+
+        private void OpenBrowser(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openF = new Microsoft.Win32.OpenFileDialog();
+            openF.InitialDirectory = System.IO.Path.GetDirectoryName(outPan.TargetFile);
+            openF.ShowDialog();
+
+            outPan.TargetFile = openF.FileName;
+        }
+
+        private void stpButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (dispTimer.IsEnabled) { dispTimer.Stop(); }
+            else { dispTimer.Start(); }
+        }
+
+        private void onRTModeSelected(object sender, RoutedEventArgs e)
+        {
+            enableDisplay.IsChecked = true;
+            enableDisplay.IsEnabled = false;
+            proLog.IsEnabled = false;
+            proLog.IsChecked = false;
+            noLog.IsChecked = true;
+        }
+
+        private void onPrecsnMdSelected(object sender, RoutedEventArgs e)
+        {
+            if (outPan.fromSim) { proLog.IsEnabled = true; enableDisplay.IsEnabled = true; }
+        }
+
+        private void onClick(object sender, RoutedEventArgs e)
+        {
+            if (outPan.fromSim)
+            {
+                proLog.IsEnabled = false;
+                proLog.IsChecked = false;
+                noLog.IsChecked = true;
+                enableDisplay.IsEnabled = false;
+                enableDisplay.IsChecked = true;
+            }
+            else { if (sManager.accuracyMode) { proLog.IsEnabled = true; enableDisplay.IsEnabled = true; } }
         }
     }
 }

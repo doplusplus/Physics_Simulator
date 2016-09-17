@@ -8,95 +8,60 @@ using System.Timers;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace SimulationTool
 {
-    class SimManager
+    public class SimManager
     {
-        ManagedModel M;
-        DisplayVM dVM;
-        OutputPanelVM outPanel;
-        DispatcherTimer time = new DispatcherTimer();
-        double simTime = 0;
-        double compStep_ = 0;
-        double dispstep_ = 0;
-        double duration_ = 0;
+        ManagedModel M = new ManagedModel();
+        OutputManager outMan;
+
+        double accuracy_ = 0.00001;
         string testResult = string.Empty;
 
+        public double CompStep_ { get; set; }
+        public double DispStep_ { get; set; }
+        public double Duration_ { get; set; }
+        public bool accuracyMode { get; set; } //accuracy true, RT false
 
-        public SimManager(ManagedModel Mod, DisplayVM disp, OutputPanelVM outPanl)
+        //   public string coordString { get; set; }
+        List<double> sElem = new List<double>();
+        public List<double> sceneElems_
         {
-            M = Mod;
-            dVM = disp;
-            outPanel = outPanl;
-            time.Tick += new EventHandler(dispatcherTimer_Tick);
-            time.Tick += new EventHandler(checkStep);
+            get { return sElem; }
         }
 
+        public string SimCoordList { get { return sceneElems_.ToString(); } }
 
-        public void startSimulation(double comStep, double dispStep, double duration)
+        public SimManager(OutputManager OutManager)
         {
-            simTime = dispStep;
-            compStep_ = comStep;
-            dispstep_ = dispStep;
-            duration_ = duration;
-
-            //          M.stepSim(dispStep);
-            time.Interval = new TimeSpan(0, 0, 0, 0, (int)(dispStep * 1000));
-            outPanel.SimTime = simTime.ToString(CultureInfo.InvariantCulture);
-            time.Start();
+            outMan = OutManager;
+            accuracyMode = true;
+            sElem = M.getCoordinates().ToList<double>();
         }
 
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        internal void simulate(string targetFile)
         {
-           dVM.RefreshView();
-          //  M.stepSim(dispstep_);
-            //  testResult+= M.description();
-            simTime += dispstep_;
-            outPanel.SimTime = simTime.ToString(CultureInfo.InvariantCulture);
-            if (simTime > duration_)
-            {
-                time.Stop();
-            }
+            M.SimulateToFileOnly(Duration_, DispStep_, accuracy_, targetFile);
+         //   outMan.PlayRequest(targetFile);
         }
 
-
-        // RT SECTION
-        public List<double> localCoord { get; set; }
-        public double RTStep { get; set; }
-        public double MinStep { get; set; }
-        public double MaxStep { get; set; }
-        public bool RTenabled { get; set; }
-
-        public void RTSim(double duration, double timeAccuracy)
+        public void addActionPoint(uint v, double value1, double value2, double value3)
         {
-            MinStep = MaxStep = RTStep = duration * 0.001;
-            //start multithreading here
-            time.Interval = new TimeSpan(0, 0, 0, 0, (int)(timeAccuracy * 1000));
-            time.Start();
-            while (duration > 0)
-            {
-                M.directIncrement(RTStep);
-                localCoord.AddRange(M.getCoordinates());
-                duration -= RTStep;
-            }
+            M.addActionPoint(v, value1, value2, value3);
         }
 
-        private void checkStep(object sender, EventArgs e)
+        public void addMaterialPoint(double inputCx, double inputCy, double inputCz, double no1, double no2, double no3, double mass, double no4)
         {
-            if (RTenabled)
-            {
-                if (localCoord.Count < 2) { MinStep = RTStep; RTStep = Math.Max(RTStep * 2, (RTStep + MaxStep) * 0.5); return; }
-                if (localCoord.Count > 10) { MaxStep = RTStep; RTStep = Math.Min(RTStep * 0.5, (RTStep + MinStep) * 0.5); return; }
-            }
+            M.addMaterialPoint(inputCx, inputCy, inputCz, no1, no2, no3, mass, no4);
+            sElem = M.getCoordinates().ToList<double>();
         }
 
-        private void fetchData(object sender, EventArgs e)
+        public void increment()
         {
-
-
+            M.simpleIncrement(CompStep_);     
+            sElem = M.getCoordinates().ToList<double>();
         }
-
-
     }
 }

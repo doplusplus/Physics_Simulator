@@ -16,6 +16,7 @@ public:
 
 	//Display
 	virtual void consoleShow() const;
+	virtual double mass() const;
 
 protected:
 	double	Charge; 							// in Coulomb
@@ -35,6 +36,8 @@ public:
 
 protected:
 	std::vector< std::shared_ptr<ActionOnPoint> >	ExternalActions;
+	
+private:
 	void addAction(std::shared_ptr<ActionOnPoint> A);
 	void sortActions();
 };

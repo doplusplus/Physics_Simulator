@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../SimModule/Model.h"
+#include <msclr\marshal_cppstd.h>
 
 //#include <string>
 
@@ -13,7 +14,7 @@ namespace ManagedClasses {
 	public ref class ManagedModel
 	{
 		Model *SimModel;
-		
+
 
 		// TODO: Add your methods for this class here.
 	public:
@@ -32,6 +33,7 @@ namespace ManagedClasses {
 		{
 			SimModel->addMatPoint(Point(x, y, z), Vect(Vx, Vy, Vz), mass, charge_);
 		}
+
 		void addActionPoint(unsigned int elementReference, double Ax, double Ay, double Az)
 		{
 			SimModel->addActionOnPoint(elementReference, Vect(Ax, Ay, Az));
@@ -48,16 +50,16 @@ namespace ManagedClasses {
 			String^ result=gcnew String(SimModel->getDescription().c_str());
 			return result;
 		}*/
-	
+
 		array<double>^ getCoordinates()
 		{
 			std::vector<double> tempVec = SimModel->getCoordinate();
 			const int SIZE = tempVec.size();
-			array<double> ^tempArr = gcnew array<double>(SIZE);			
+			array<double> ^tempArr = gcnew array<double>(SIZE);
 			for (int i = 0; i < SIZE; i++)
 			{
 				tempArr[i] = tempVec[i];
-			}			
+			}
 			return tempArr;
 		}
 
@@ -66,14 +68,17 @@ namespace ManagedClasses {
 			SimModel->simulate(displayStep);
 		}*/
 
-		void simulate(double step, std::string target)
+		void SimulateToFileOnly(double duration, double outputStep, double accuracy, String^ target)
 		{
-			SimModel->simulate(10,step,target);//to change
+			std::string *filelocation = new std::string();
+			std::string unmanaged = msclr::interop::marshal_as<std::string>(target);
+			filelocation->append(unmanaged);
+			SimModel->simulate(duration, outputStep, *filelocation, accuracy);
 		}
 
-		void directIncrement(double RTStep)
+		void simpleIncrement(double dt)
 		{
-			SimModel->directIncrement(RTStep);
+			SimModel->increment(dt, 0.1);
 		}
 	};
 }

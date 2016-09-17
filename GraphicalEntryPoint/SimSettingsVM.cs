@@ -9,11 +9,32 @@ using System.Windows.Input;
 
 namespace SimulationTool
 {
-    class SimSettingsVM : INotifyPropertyChanged
+    public class SimSettingsVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
         private double duration_ = -1;
         private double computationalStep = -1;
+
+        bool precisionMde = true;
+        public bool PrecisionMode
+        {
+            get { return precisionMde; }
+            set { SMan.accuracyMode = precisionMde = value; Notify("RTMode"); Notify("PrecisionMode"); }
+        }
+        public bool RTMode
+        {
+            get { return !precisionMde; }
+            set { SMan.accuracyMode = precisionMde = !value; Notify("RTMode"); Notify("PrecisionMode"); }
+        }
+
+        SimManager SMan;
+
+        public SimSettingsVM(SimManager SManager_) { SMan = SManager_; }
+
+        private void setToRT(object obj) { SMan.accuracyMode = false; }
+
+        private void setToPrecision(object obj) { SMan.accuracyMode = true; }
 
         public string Duration
         {
@@ -25,6 +46,7 @@ namespace SimulationTool
             set
             {
                 duration_ = Double.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                SMan.Duration_ = duration_;
                 Notify("Duration");
             }
         }
@@ -41,11 +63,10 @@ namespace SimulationTool
                 double d;
                 bool b = Double.TryParse(value, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d);
                 computationalStep = b && d > 0 ? d : -1;
+                SMan.CompStep_ = computationalStep;
                 Notify("ComputStep");
             }
         }
-
-
 
         void Notify(string propName)
         {
@@ -54,7 +75,6 @@ namespace SimulationTool
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-
 
     }
 }
