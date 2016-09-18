@@ -124,7 +124,7 @@ namespace SimulationTool
 
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (outPan.DisplayStep == "disp. step in s" && outPan.DisplayEnbld) { MessageBox.Show("please specify the refresh period"); }
+            if (outPan.DisplayStep == "disp. step in s" && outPan.DisplayEnbld) { MessageBox.Show("please specify the refresh period"); return; }
 
             outManager.launch();
             (LaunchBtn.Template.FindName("buttnColor", LaunchBtn) as Path).Fill = Brushes.DeepPink;
