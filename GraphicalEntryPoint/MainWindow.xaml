@@ -1,0 +1,286 @@
+﻿<Window x:Class="SimulationTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimulationTool"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="375" Width="608">
+
+    <Window.Resources>
+        <!-- Launch button template -->
+        <ControlTemplate   x:Key="LaunchButtonTemplate" TargetType="Button">
+            <Path Name="buttnColor" Fill="LightGray">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude">
+                        <CombinedGeometry.Geometry1>
+                            <RectangleGeometry Rect="0,0 50 50"/>
+                        </CombinedGeometry.Geometry1>
+                        <CombinedGeometry.Geometry2>
+                            <EllipseGeometry Center="60,-10" RadiusX="60" RadiusY="60"/>
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+        </ControlTemplate>
+
+        <ControlTemplate   x:Key="PrevButtonTemplate" TargetType="Button">
+            <Path Name="lftbuttnColor" Fill="Yellow" Opacity="90">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="0,40" IsClosed="True">
+                                <LineSegment Point="10,0"/>
+                                <LineSegment Point="10,80"/>
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+        </ControlTemplate>
+
+        <ControlTemplate   x:Key="NextButtonTemplate" TargetType="Button">
+            <Path Name="rghtbuttnColor" Fill="Yellow" Opacity="10">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="0,0" IsClosed="True">
+                                <LineSegment Point="10,40"/>
+                                <LineSegment Point="0,80"/>
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <!-- .........................GENERAL LAYOUT ......................... -->
+    <Grid  Margin="5" ShowGridLines="False">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="200" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="87*"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="100*" MaxHeight="130"/>
+        </Grid.RowDefinitions>
+
+        <!-- .........................TOOLS SELECTOR ......................... -->
+        <ComboBox Name="DefSelector" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" 
+                  HorizontalAlignment="Stretch" Padding="2" Margin="1"
+                  IsEditable="True" IsReadOnly="True" Text="Tools"  HorizontalContentAlignment="Center" SelectionChanged="DefSelector_SelectionChanged">
+
+            <ComboBoxItem Name="Elmnt" HorizontalAlignment="Left" Content="Elements Def."/>
+            <ComboBoxItem Name="Env"   HorizontalAlignment="Left" Content="Env. Def"/>
+            <ComboBoxItem Name="Sim"   HorizontalAlignment="Left" Content="Sim. Settings"/>
+        </ComboBox>
+
+        <!-- .........................TOOLS BOXES......................... -->
+        <!-- ......................... Intro......................... -->
+        <GroupBox Name="DefToolsPres"  Grid.Row="1" Visibility="Visible" Grid.Column="0" Grid.RowSpan="4" Padding="2"
+                  Background="BlanchedAlmond" >
+            <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin ="0,30" Background="BlanchedAlmond" 
+                     BorderThickness="0" FontFamily="Candara"
+                     Text="Welcome to the Physics simulator.  &#10;Here, you can set a simulation.&#10; Use the scroll-down menu." FontSize="15"
+                     TextAlignment="Center" VerticalContentAlignment="Top" TextWrapping="WrapWithOverflow" />
+        </GroupBox>
+
+        <!-- .........................Elements definition......................... -->
+        <GroupBox Name="ElemDefTools"  Grid.Row="1" Visibility="Collapsed" Grid.Column="0" Grid.RowSpan="4"
+               Padding="2"   Background="SkyBlue">
+            <StackPanel>
+                <Label x:Name="CenterOfMasslabel" Content="Center of mass"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+                    <TextBox x:Name="massInput" TextWrapping="Wrap" Text="{Binding massInput}"  Margin="2,1,2,1" Width="45"/>
+                    <TextBox x:Name="Cx" TextWrapping="Wrap" Text="{Binding Xinput}" Margin="1"/>
+                    <TextBox x:Name="Cy" TextWrapping="Wrap" Text="{Binding Yinput}" Margin="1"/>
+                    <TextBox x:Name="Cz" TextWrapping="Wrap" Text="{Binding Zinput}" Margin="1"/>
+                </StackPanel>
+
+
+                <StackPanel Margin="0,8" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Button x:Name="MaterialPoint" Command="{Binding MPointCreation}"  Content="Add/alter" Margin="2"
+                            HorizontalAlignment="Left" VerticalAlignment="Top" Width="66" Height="29" />
+                    <Label x:Name="Nbrlabel" Content="N°"/>
+                    <TextBox x:Name="elmntNmbr" TextWrapping="Wrap" Text="{Binding SelectedItem}" Width="auto" Margin="1" TextChanged="elmntNmbr_TextChanged"/>
+                </StackPanel>
+
+                <Label x:Name="ExtActionslabel" Content="External mech. actions"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+                    <TextBox x:Name="Fx" TextWrapping="Wrap" Text="{Binding FXinput}" Margin="1"/>
+                    <TextBox x:Name="Fy" TextWrapping="Wrap" Text="{Binding FYinput}" Margin="1"/>
+                    <TextBox x:Name="Fz" TextWrapping="Wrap" Text="{Binding FZinput}" Margin="1"/>
+                    <Button  Name="AddAction"  Command="{Binding ActionAdd}"  Content="Add to" Margin="8,1"/>
+                    <TextBox x:Name="targetNbr" TextWrapping="Wrap" Text="{Binding SelectedItem}" Margin="1" Width="auto"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- .........................Physical environment definition......................... -->
+        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Collapsed"  Grid.Column="0" Grid.RowSpan="4" 
+                  Padding="2" Background="Turquoise">
+            <Grid  Margin="5" ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+                    <Label Content="Fluid friction" HorizontalAlignment="Stretch"/>
+                    <RadioButton  Content="None"/>
+                    <RadioButton Content="linear (kv)"/>
+                    <RadioButton Content="quadratic (kv²)"/>
+                    <RadioButton Content="lin. -> quad. v>Vc">
+                    </RadioButton>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <TextBox x:Name="klDef" TextWrapping="Wrap" Text="kLin" Margin="5"/>
+                        <TextBox x:Name="kQDef" TextWrapping="Wrap" Text="kQuad" Margin="5"/>
+                        <TextBox x:Name="VcDef"  TextWrapping="Wrap" Text="Vc"  Margin="5"/>
+                        <Label Content="m/s"/>
+
+                    </StackPanel>
+
+                    <Label Content="Dry friction" HorizontalAlignment="Stretch"/>
+                    <RadioButton  Content="None"/>
+                    <RadioButton >
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <TextBox x:Name="k_stat" TextWrapping="Wrap" Text="k stat" Margin="5"/>
+                            <TextBox x:Name="k_dyn"  TextWrapping="Wrap" Text="k dyn"  Margin="5"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <Label Content="Gravity field" HorizontalAlignment="Stretch" Height="23"/>
+                    <RadioButton Content="None"/>
+                    <RadioButton Content="Uniform along:" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <TextBox x:Name="gX" TextWrapping="Wrap" Text="x" Margin="5"/>
+                        <TextBox x:Name="gY" TextWrapping="Wrap" Text="y" Margin="5"/>
+                        <TextBox x:Name="gZ" TextWrapping="Wrap" Text="z" Margin="5"/>
+                    </StackPanel>
+
+                    <Label Content="Electric field" HorizontalAlignment="Stretch"/>
+                    <RadioButton Content="None"/>
+                    <RadioButton Content="Electrostatic along:"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <TextBox x:Name="eX" TextWrapping="Wrap" Text="x" Margin="5"/>
+                        <TextBox x:Name="eY" TextWrapping="Wrap" Text="y" Margin="5"/>
+                        <TextBox x:Name="eZ" TextWrapping="Wrap" Text="z" Margin="5"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Row="1"  Content="Update" Padding="1" Margin="0,7,0,0.333"/>
+            </Grid>
+        </GroupBox>
+        <!-- .........................Simulation settings......................... -->
+        <GroupBox Name="SimSetTools"   Grid.Row="1" Visibility="Collapsed" Grid.Column="0" Grid.RowSpan="4"
+                  Padding="2" Background="#FF3ED647">
+
+            <Grid  Margin="5" ShowGridLines="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Name="timePanel" Grid.Row="0">
+                    <TextBox Name="duration" Text="{Binding Duration}"/>
+                    <TextBox Name="compStep" Text="{Binding ComputStep}"/>
+                    <RadioButton   Name="RTModeSelect" Checked="onRTModeSelected" IsChecked="{Binding RTMode}"  Grid.Row="0" Grid.Column="1" Content="Real Time Mode &#10;(no log allowed)"  Margin="5" />
+                    <RadioButton   Name="PrecsnMdSlct" Checked="onPrecsnMdSelected" IsChecked="{Binding PrecisionMode}" Grid.Row="1" Grid.Column="1" Content="Precision Mode" Margin="5"/>
+
+                    <Separator VerticalAlignment="Stretch" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <Button Name="nextButton" Grid.Row="2" Template="{StaticResource NextButtonTemplate}" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="15" Content="N"
+                Click="NextButton_Click"  Height="78" />
+        <Button Name="prevButton" Grid.Row="2" Template="{StaticResource PrevButtonTemplate}" 
+                HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="15" Content="P"
+                Click="prevButton_Click"  Height="78"  />
+
+        <!-- .........................SIMULATION GRAPHICAL DISPLAY ......................... -->
+        <Grid Name="SceneGrid"  Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" >
+            <ItemsControl Name="SceneDisplay" ItemsSource="{Binding circleItems}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Azure">
+                        </Canvas >
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate >
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="Black">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding Xcoord}" Y="{Binding Ycoord}"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Rectangle Fill="Black" Width="1"/>
+            <Rectangle Fill="Black" Height="1"/>
+            <Line Name="Xstroke" X1="{Binding XUnit}" Y1="{Binding CY}" X2="{Binding XUnit}" Y2="{Binding CY}" Stroke="Red"  StrokeThickness="1" />
+            <Line Name="Ystroke" X1="{Binding CY}" Y1="{Binding YUnit}" X2="{Binding CY}" Y2="{Binding YUnit}" Stroke="Red"  StrokeThickness="1" />
+        </Grid>
+
+        <Button x:Name="LaunchBtn"  Template="{StaticResource LaunchButtonTemplate}" Content="Launch"
+        Click="LaunchButton_Click" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+
+        <!-- ......................... OUTPUT PANEL ......................... -->
+        <GroupBox Name="OutputPanel" Grid.Column="1" Grid.Row="3" Background="Gainsboro">
+
+            <Grid ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox  Name="enableDisplay" Grid.Row="0" Content="Display" IsChecked="{Binding DisplayEnbld}"   Margin="5"/>
+                <Button  Name="dbFetch"   Command="{Binding ToggleSource}" Background="{Binding srcColor}" Grid.Row="1" Content="Play from file" Click="onClick" Margin="5" />
+                <Button  Name="zoomBtn"        Grid.Row="2" Content="Adjust Zoom" Margin="5"/>
+
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
+                    <Label Content="log result?" VerticalAlignment="Center"/>
+                    <RadioButton Name="proLog" Content="Yes" IsChecked="{Binding EnableLog}" VerticalAlignment="Center" />
+                    <RadioButton Name="noLog" Content="No"   IsChecked="{Binding DisableLog}" VerticalAlignment="Center" />
+                </StackPanel>
+                <DockPanel  Grid.Column="1" Grid.Row="1" Margin="5" >
+                    <Button Content="..."  Click="OpenBrowser" Width="20"/>
+                    <TextBox Text="{Binding TargetFile}" />
+                </DockPanel>
+                <Button Name="stopButton"  Grid.Column="1" Grid.Row="2" Margin="5" Content="Stop/Resume" Visibility="Hidden" Click="stpButtonClicked"/>
+                    
+
+                        <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
+                           HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
+                           Text="{Binding SimTime, Mode=OneWay}" IsEnabled="False"/>
+                <ProgressBar Name="Progress"   Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" 
+                             HorizontalAlignment="Center" Width="100" Margin="14,2" Height="10" />
+                <TextBox   x:Name="displayBox" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" 
+                           HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
+                           Text="{Binding DisplayStep}" />
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="auto">
+            <Button  Name="TestButton"     Content="Test Element"   Margin="2" Width="auto" Click="TestButton_Click" Background="Orange"/>
+            <Button  Name="simTestButton"  Content="SimSettTest"   Margin="2" Width="auto" Click="SimTestButton_Click" Background="Orange"/>
+            <Button  Name="sequencialiser"     Content="startRTtimer"   Margin="2" Width="auto" Click="RTtimer_Clicked" Background="Orange"/>
+            <TextBox Name="CoordTracker"      />
+            <TextBox Name="Tmeasure"      />
+        </StackPanel>
+
+    </Grid>
+</Window>

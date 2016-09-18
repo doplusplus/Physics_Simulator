@@ -1,0 +1,10 @@
+Sim Module specific:
+
+Supports different accuracy settings
+Can calculate in Newtonian mechanics using finite difference
+Possible extension to different time integration methods.
+
+
+GUI:
+Allow access to Database
+record field: ID time element_n° element type Vx Vy Vz x y z 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,18 +15,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MultiPhys_GUI
+
+namespace SimulationTool
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowModel MainVM = new MainWindowModel();
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = MainVM;
         }
 
+
+        
         private void DefSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox cBox = sender as ComboBox;
@@ -59,7 +64,7 @@ namespace MultiPhys_GUI
         {
             MessageBox.Show("nah joking!...it's a placehoder", "Launching the simulation");
         }
-
+/*
         private void MaterialPoint_Click(object sender, RoutedEventArgs e)
         {
             double mass; bool b;
@@ -67,16 +72,16 @@ namespace MultiPhys_GUI
             string message = String.Empty;
 
             b = Double.TryParse(massInput.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out mass);
-            if (b) { message += "mass: "+ mass.ToString() + Environment.NewLine; }
-            else   { message += "not going anywhere without mass" + Environment.NewLine ; }
+            if (b) { message += "mass: " + mass.ToString() + Environment.NewLine; }
+            else { message += "not going anywhere without mass" + Environment.NewLine; }
 
-            message += "Position of the center of mass: "+Environment.NewLine;
+            message += "Position of the center of mass: " + Environment.NewLine;
             //Cx
             if (Cx.Text.Equals("x")) { message += " Cx = 0 "; }
             else
             {
                 b = Double.TryParse(Cx.Text, System.Globalization.NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out InputCx);
-                if (b) { message += " Cx = "+ InputCx.ToString() ; }
+                if (b) { message += " Cx = " + InputCx.ToString(); }
                 else { MessageBox.Show("numerical value required for Cx", " bad result"); }
             }
             //Cy
@@ -95,8 +100,10 @@ namespace MultiPhys_GUI
                 if (b) { message += " Cz= " + InputCz.ToString(); }
                 else { MessageBox.Show("this is text", " bad result"); }
             }
-            MessageBox.Show("Proceed with: " + Environment.NewLine + message , "data check", MessageBoxButton.OKCancel);
+            MessageBox.Show("Proceed with: " + Environment.NewLine + message, "data check", MessageBoxButton.OKCancel);
         }
+
+        */
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {

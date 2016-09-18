@@ -1,83 +1,61 @@
 #ifndef MatElem
 #define MatElem
 
-#include<vector>
+#include <vector>
 #include "Geo.h"
 #include "Torsor.h"
+#include "MechanicalAction.h"
 
 //=============================== Material element ==============================
 class MaterialElement
 {
 public:
 	//Constructors & destructor
-	MaterialElement(Point G = Point(0, 0, 0), Vect velocity = Vect(0, 0, 0), double mass = 0, double charge = 0);
+	MaterialElement(double mass, double charge);
 	virtual ~MaterialElement();
 
-	//Accessors
-	Point *pointerToPosition();
-	double mass();
-	double charge();
-
 	//Display
-	virtual void consoleShow();
-
-	//Modifier
-	void move(double dx, double dy, double dz);
-
-	//Operators
-	bool operator==(const MaterialElement & B);
-
-	//Simulation tool
-	virtual void addExternalAction(Vect F = Vect(), Torsor T = Torsor()) = 0;
-	virtual void update(double dt) = 0; //computes and updates the state of the element to t+dt
-
+	virtual void consoleShow() const;
+	virtual double mass() const;
 
 protected:
-	double	Charge = 0; 							// in Coulomb
-	double	Mass = 0;   							// in kg
-	Vect	CenterOfMassVelocity = Vect(0, 0, 0);	// m/s
-	Point	CenterOfMassPosition = Point(0, 0, 0);	// m 
+	double	Charge; 							// in Coulomb
+	double	Mass;   							// in kg
 };
 
 class MaterialPoint : public MaterialElement
 {
-	using MaterialElement::MaterialElement;
+	friend class MaterialPointObserver;
 
 public:
-	MaterialPoint();
+	MaterialPoint(double mass = 0.0, double charge = 0.0);
+	MaterialPoint(double mass, double charge, std::vector< std::shared_ptr<ActionOnPoint> > ExtActions);
 	~MaterialPoint();
 
-	void addExternalAction(Vect MechanicalAction);
-	void addExternalAction(Vect F, Torsor T);
+	bool operator ==(const  MaterialPoint& B);
 
-	void update(double dt);
-
+protected:
+	std::vector< std::shared_ptr<ActionOnPoint> >	ExternalActions;
+	
 private:
-	std::vector<Vect>	ExternalActions;
-	void updateSpeedandPosition(double dt);
+	void addAction(std::shared_ptr<ActionOnPoint> A);
+	void sortActions();
 };
 
-class Solid : public MaterialElement
+class RigidSolid : public MaterialElement
 {
-	using MaterialElement::MaterialElement;
-
 public:
-	Solid();
-	~Solid();
+	RigidSolid(double mass = 0.0, double charge = 0.0);
+	RigidSolid(double mass, double charge, std::vector< std::shared_ptr<ActionOnRigidSolid> > ExtActions);
+	~RigidSolid();
 
-	void addExternalAction(Torsor MechanicalAction);
-	void addExternalAction(Vect F, Torsor T);
-
-	void update(double dt);
-
-private:
-	std::vector<Torsor>	ExternalActions;
-
-	void updateSpeedandPosition(double dt);
+protected:
+	std::vector< std::shared_ptr< ActionOnRigidSolid> >	ExternalActions;
 
 	double	MomentOfInertia1;
 	double	MomentOfInertia2;
 	double	MomentOfInertia3;
+
 	Vect	FirstPrincipalComponent;
 	Vect	SecondPrincipalComponent;
 	Vect	ThirdPrincipalComponent;

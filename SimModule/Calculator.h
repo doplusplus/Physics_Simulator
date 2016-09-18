@@ -2,35 +2,61 @@
 
 #include <iostream>
 #include <vector>
-
+#include <algorithm> 
 #include "Scene.h"
 #include "Geo.h"
 #include "Torsor.h"
-
+#include "MechanicalAction.h"
 
 class Calculator
 {
 public:
 	Calculator();
+	Calculator(double accuracy, double range);
 	~Calculator();
 
-	Vect resultant(std::vector<Vect> extActions);
-	Vect resultant(std::vector<Torsor> extActions);
+	/*	void resultant(std::vector<MechanicalAction*> setOfT, MechanicalAction* result);
+		std::shared_ptr<MechanicalAction> resultant(std::vector<MechanicalAction* > setOfT)
+		{
+			auto Res = std::shared_ptr<MechanicalAction>(setOfT[0]->copy());
+			for (unsigned int i = 1; i < setOfT.size();i++)
+			{
+				*Res +=  *setOfT[i];
+			}
+			return Res;
+		};
+	*/
+	Vect centerOfMassAcceleration(Vect resultant, double mass) const;
+	//	Vect centerOfMassAcceleration(std::vector<MechanicalAction* > extActions, double mass);
 
-	Vect centerOfMassAcceleration(Vect Resultant, double mass);
-	Vect centerOfMassAcceleration(Torsor Resultant, double mass);
-	Vect centerOfMassAcceleration(std::vector<Vect> extActions, double mass);
-	Vect centerOfMassAcceleration(std::vector<Torsor> extActions, double mass);
+	Vect positionVariationCoM(Vect acceleration, Vect currentVelocity, double dt)const;
+	Vect velocityVariationCoM(Vect acceleration, double dt)const;
 
-	Vect  velocity(Vect Acceleration, Vect currentVelocity, double dt);
-	Point position(Vect Acceleration, Vect currentVelocity, Point currentPosition, double dt);
-
-	Vect  velocityVariation(Vect Acceleration, double dt);
-
-	Point positionVariation(Vect Acceleration, Vect currentVelocity, double dt);
-
+	template <typename T>
+	std::vector <T> finDiffIntegration(std::vector<T> toIntegrate, double step);
+	int samplesNb(double accuracy, double duration) 
+	{
+		int n= (int)(duration/std::sqrt(accuracy));
+		return (n*1E-14) < accuracy ? n : static_cast<int>(accuracy * 1E14);
+	}
 
 private:
-	Scene * SimScene;
+	double Accuracy;
+	double Range;
 
 };
+
+template<typename T>
+inline std::vector<T> Calculator::finDiffIntegration(std::vector<T> toIntegrate, double step)
+{
+	std::vector<T> res;
+	res.push_back(T().null());
+
+	for (unsigned int it = 0; it < toIntegrate.size() - 1; it++)
+	{
+		auto val = ((toIntegrate[it] + toIntegrate[it + 1])*0.5)*step + res[it];
+		res.push_back(val);
+	}
+
+	return res;
+}

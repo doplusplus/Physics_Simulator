@@ -1,42 +1,46 @@
 #ifndef SCENE
 #define SCENE
 
-#include <vector>
+#include <unordered_set>
 #include "MaterialElement.h"
 
 
 class Scene
 {
+	friend class Model;
+	friend class Model2;
 public:
 
 	//Constructors and destructor
 	Scene();
+	Scene(std::unordered_set<MaterialElement*> content);
 	~Scene();
 
-	//Accessors
-	MaterialElement* getElement(unsigned int i);
-	double getTime();
-
 	//Display
-	void consoleShow();
+	void consoleShow() const;
 
-	//Modifier
-	void addExternalAction(unsigned int place, Vect F, Torsor T = Torsor());	// adds force to element i starting from 0
-	void addExternalAction(unsigned int place, Torsor T);
-	void update(double dt);					 						// calculates the scene configuration in dt seconds
-	void simulate(double step, double duration);					// simulates the scene of certain duration and increment
-
-																	//---------- Model interface-----------------------
-	void addMatPoint();
-	void addMatPoint(Point p, Vect velocity = Vect(0, 0, 0), double mass = 0, double charge_ = 0);
-
-	void addSolid();
-	void addSolid(Point p, Vect velocity = Vect(0, 0, 0), double mass = 0, double charge_ = 0);
+	//Operators
+	bool operator ==(Scene s) const;
+	std::vector<double> streamCoordinate()
+	{
+		std::vector<double> res;
+		std::vector<double> temp;
+		for (auto elmt : Content)
+		{
+		//	temp = elmt->streamCoord();
+			res.insert(res.begin(), temp.begin(), temp.end());
+		}
+		return res;
+	}
 
 private:
-	std::vector<MaterialElement*> S;
+	std::unordered_set<MaterialElement*> Content;
 	double Time = 0;
-
+	
+	void addMatPoint(MaterialPoint *Mp);
+	void addSolid(RigidSolid *Content) {};
+	
+	void incrementTime(double dt);
 };
 
 

@@ -2,8 +2,45 @@
 #include <iostream>
 #include <cmath>
 
+//------------------------------ GENERAL -----------------------------------------
+//--------------------------------------//
+/**/ const double geoAccuracy = 1E-10; /**/
+//--------------------------------------//
+
+bool geoEqual(double a, double b)
+{
+	return abs(a - b) < geoAccuracy;
+}
+
+CartesianElement operator +(const CartesianElement &A, const CartesianElement &B)
+{
+	CartesianElement C(A.X + B.X, A.Y + B.Y, A.Z + B.Z);
+	return C;
+}
+
+CartesianElement operator -(const CartesianElement &A, const CartesianElement &B)
+{
+	CartesianElement C;
+	C.X = A.X - B.X;
+	C.Y = A.Y - B.Y;
+	C.Z = A.Z - B.Z;
+	return C;
+}
+
+bool operator <(const CartesianElement &left, const CartesianElement &right)
+{
+	return (left.X < right.X) && (left.Y < right.Y) && (left.Z < right.Z);
+}
+
+
+bool operator ==(const CartesianElement &left, const CartesianElement &right)
+{
+	return geoEqual(left.X, right.X)&& geoEqual(left.Y, right.Y) && geoEqual(left.Z, right.Z);
+}
+
+
 //----------------------------- Cartesian element ------------------------------------
-CartesianElement::CartesianElement() { X = Y = Z = 0; }
+CartesianElement::CartesianElement():X(0),Y(0),Z(0) {}
 
 CartesianElement::CartesianElement(double x, double y, double z)
 {
@@ -21,27 +58,28 @@ CartesianElement::CartesianElement(const CartesianElement &C)
 
 CartesianElement::~CartesianElement() {}
 
+std::string CartesianElement::getDescription() const
+{
+	return "x: " + std::to_string(X) + "y: " + std::to_string(Y) + "z: " + std::to_string(Z) + "\n";
+}
+
+std::vector<double> CartesianElement::coordStream() const
+{
+	std::vector<double> res;
+	res.push_back(X);
+	res.push_back(Y);
+	res.push_back(Z);
+	return res;
+}
+
 //Displays
-void CartesianElement::show()
+void CartesianElement::show() const
 {
 	std::cout << "x:" << X << '\n' << "y:" << Y << '\n' << "z:" << Z << '\n';
 }
 
-//Modifiers
-
-void CartesianElement::nullify()
-{
-	X = Y = Z = 0;
-}
-
 //Algebraic operators
-CartesianElement CartesianElement ::operator +(const CartesianElement &B)
-{
-	CartesianElement C(X + B.X, Y + B.Y, Z + B.Z);
-	return C;
-}
-
-CartesianElement CartesianElement ::operator -()
+CartesianElement CartesianElement ::operator -()const
 {
 	CartesianElement C;
 	C.X = -X;
@@ -50,32 +88,16 @@ CartesianElement CartesianElement ::operator -()
 	return C;
 }
 
-CartesianElement CartesianElement ::operator -(CartesianElement B)
-{
-	CartesianElement C;
-	C.X = X - B.X;
-	C.Y = Y - B.Y;
-	C.Z = Z - B.Z;
-	return C;
-}
-
-CartesianElement CartesianElement ::operator *(double a)	//multiplication by a scalar
+CartesianElement CartesianElement ::operator *(double a)const	//multiplication by a scalar
 {
 	CartesianElement C(X *a, Y *a, Z *a);
 	return C;
 }
 
-CartesianElement CartesianElement ::operator /(double a)
+CartesianElement CartesianElement ::operator /(double a)const
 {
 	if (a == 0)	throw "divideByZero";
-
 	return CartesianElement(X / a, Y / a, Z / a);
-}
-
-//logical operator	
-bool CartesianElement ::operator ==(const CartesianElement &B)
-{
-	return (X == B.X) && (Y == B.Y) && (Z == B.Z);
 }
 
 
@@ -99,7 +121,12 @@ Point::Point(Point P, Vect V) : CartesianElement(P + V)
 Point::~Point()
 {}
 
-
+void Point::move(double dx, double dy, double dz)
+{
+	X += dx;
+	Y += dy;
+	Z += dz;
+}
 //================================================================================
 //----------------------------------- Vect -------------------------------------
 
@@ -120,7 +147,7 @@ Vect::~Vect()
 {}
 
 //Operators
-Vect Vect::operator ^(Vect &B)
+Vect Vect::operator ^(const Vect &B)const
 {
 	double x, y, z;
 	x = Y*B.Z - Z*B.Y;
@@ -129,7 +156,7 @@ Vect Vect::operator ^(Vect &B)
 	return Vect(x, y, z);
 }
 
-double Vect::operator *(Vect &B)
+double Vect::operator *(const Vect &B)const
 {
 	double s =
 		X*B.X
@@ -138,17 +165,46 @@ double Vect::operator *(Vect &B)
 	return s;
 }
 
-// Characteristic elements
-double Vect::norm()
+Vect Vect::multiplyMemberwise(const Vect & B) const
 {
-	double sq = *this * *this;
+	return Vect(X*B.X,Y*B.Y,Z*B.Z);
+}
+
+Vect Vect::absMultiplyMemberwise(const Vect & B) const
+{
+	return Vect(X*abs(B.X), Y*abs(B.Y), Z*abs(B.Z));
+}
+
+Vect Vect::operator *(double a)const
+{
+	return (Vect)((CartesianElement)(*this)*a);
+};
+
+
+// Characteristic elements
+double Vect::norm() const
+{
+	Vect V =*this;
+	double sq = V*V;
 	sq = sqrt(sq);
 	return sq;
 }
 
-Vect Vect::unitVector()
+Vect Vect::unitVector() const
 {
 	Vect u;
 	u = (*this) / norm();
 	return u;
+}
+
+std::function<Vect(Vect, double)> operator+ (std::function<Vect(Vect, double)> a, std::function<Vect(Vect, double)> b)
+{
+	std::function<Vect(Vect, double)> sum = [a , b ](Vect v, double d){return a(v, d) + b(v, d); };
+	return sum;
+}
+
+std::function<Vect(Vect, Vect)> operator+ (std::function<Vect(Vect, Vect)> a, std::function<Vect(Vect, Vect)> b)
+{
+	std::function<Vect(Vect, Vect)> sum = [a, b](Vect v, Vect d) {return a(v, d) + b(v, d); };
+	return sum;
 }
