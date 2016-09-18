@@ -25,7 +25,7 @@ namespace SimulationTool
         List<double> timelist = new List<double>();
         List<int> targElement = new List<int>();
 
-     //   List<Point3D> locList = new List<Point3D>();
+        //   List<Point3D> locList = new List<Point3D>();
         //        List<List<Point3D>> SuperList = new List<List<Point3D>>();
 
         public double CurrentTime { get { return timelist[ReadPosition]; } }
@@ -37,7 +37,8 @@ namespace SimulationTool
         public List<Point3D> CurrentLoc
         {
             get
-            { toDisplay.Clear();
+            {
+                toDisplay.Clear();
                 foreach (var elmnt in data) { toDisplay.Add(elmnt.Value[ReadPosition].Value); }
                 return toDisplay;
             }
@@ -71,7 +72,7 @@ namespace SimulationTool
         {
             if (!Read) { return; }
             ReadPosition++;
-            if (ReadPosition >=  data[0].Count- 1) { Read = false; }
+            if (ReadPosition >= data[0].Count - 1) { Read = false; }
         }
 
         public void FilterFile(double step)
@@ -82,24 +83,26 @@ namespace SimulationTool
                 List<KeyValuePair<double, Point3D>> newLocList = new List<KeyValuePair<double, Point3D>>();
                 double t = step;
                 dat.Sort((x, y) => x.Key.CompareTo(y.Key));
-                for (int i = 1; i < dat.Count; i++)
+                int i = 1;
+                while (i < dat.Count - 1)
                 {
-                    if (dat[i].Key == t) { newLocList.Add(new KeyValuePair<double, Point3D>(t, dat[i].Value)); t += step; }
-                    else
+                    while (t < dat[i].Key)
                     {
-                        if (dat[i].Key > t && dat[i - 1].Key < t)
-                        {
-                            var slope = Point3D.Subtract(dat[i].Value, dat[i - 1].Value);
-                            Vector3D.Divide(slope, (dat[i].Key - dat[i - 1].Key));
-                            Vector3D.Multiply(slope, t - dat[i - 1].Key);
-                            newLocList.Add(new KeyValuePair<double, Point3D>(t, Point3D.Add(dat[i - 1].Value, slope)));
-                            t += step;
-                        }
+                        var slope = Point3D.Subtract(dat[i].Value, dat[i - 1].Value);
+                        Vector3D.Divide(slope, (dat[i].Key - dat[i - 1].Key));
+                        Vector3D.Multiply(slope, t - dat[i - 1].Key);
+                        newLocList.Add(new KeyValuePair<double, Point3D>(t, Point3D.Add(dat[i - 1].Value, slope)));
+                        t += step;
                     }
+                    if (t == dat[i].Key)
+                    {
+                        newLocList.Add(new KeyValuePair<double, Point3D>(t, dat[i].Value));
+                        t += step;
+                    }
+                    if (t > dat[i].Key) { i++; }
                 }
                 data[index] = newLocList;
             }
-            ReadPosition = 0;
         }
 
         public void FormatCoord(double Wdth, double Hght, double radius)
