@@ -207,7 +207,7 @@
             <ItemsControl Name="SceneDisplay" ItemsSource="{Binding circleItems}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Background="Azure">
+                        <Canvas Background="Azure" >
                         </Canvas >
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -260,10 +260,13 @@
                     <Button Content="..."  Click="OpenBrowser" Width="20"/>
                     <TextBox Text="{Binding TargetFile}" />
                 </DockPanel>
-                <Button Name="stopButton"  Grid.Column="1" Grid.Row="2" Margin="5" Content="Stop/Resume" Visibility="Hidden" Click="stpButtonClicked"/>
-                    
 
-                        <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
+                <StackPanel Name="postLaunchControls"  Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Visibility="Hidden">
+                    <Button Name="stopButton"   Margin="5" Content="Stop/Resume"  Click="stpButtonClicked"/>
+                    <Button Name="resetButton"  Grid.Column="1" Grid.Row="2" Margin="5" Content="Reset" Click="onReset"/>
+                </StackPanel>
+
+                <TextBox   x:Name="timeTracker"    Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" Width="100" Margin="14,2" Height="20" TextWrapping="Wrap" 
                            Text="{Binding SimTime, Mode=OneWay}" IsEnabled="False"/>
                 <ProgressBar Name="Progress"   Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" 

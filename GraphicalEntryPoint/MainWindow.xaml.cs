@@ -62,11 +62,13 @@ namespace SimulationTool
             this.EnvDefTools.DataContext = envDef;
             this.SimSetTools.DataContext = simSett;
             this.SceneDisplay.DataContext = display;
-            this.OutputPanel.DataContext = outPan;
+            this.OutputPanel.DataContext = outPan;        
 
             Loaded += MyWindow_Loaded;
             SizeChanged += OnResize;
             dispTimer.Tick += onDispStep;
+
+          
         }
 
 
@@ -122,6 +124,11 @@ namespace SimulationTool
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LaunchButton_Click(object sender, RoutedEventArgs e)
         {
             if (outPan.DisplayStep == "disp. step in s" && outPan.DisplayEnbld) { MessageBox.Show("please specify the refresh period"); return; }
@@ -132,7 +139,7 @@ namespace SimulationTool
             {
                 outPan.resetTimeTracker();
                 dispTimer.Interval = TimeSpan.Parse("0:00:" + outPan.DisplayStep);
-                stopButton.Visibility = Visibility.Visible;
+                postLaunchControls.Visibility = Visibility.Visible;
                 dispTimer.Start();
             }
         }
@@ -269,6 +276,16 @@ namespace SimulationTool
                 enableDisplay.IsChecked = true;
             }
             else { if (sManager.accuracyMode) { proLog.IsEnabled = true; enableDisplay.IsEnabled = true; } }
+        }
+
+        private void onReset(object sender, RoutedEventArgs e)
+        {
+            dispTimer.Stop();
+            outManager.stopTimer();
+
+            outPan.clearAll();
+            sManager.clearAll();
+            display.RefreshView();
         }
     }
 }

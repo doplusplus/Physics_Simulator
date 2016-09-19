@@ -24,10 +24,7 @@ namespace SimulationTool
         public string[] Content { get; set; }
         List<double> timelist = new List<double>();
         List<int> targElement = new List<int>();
-
-        //   List<Point3D> locList = new List<Point3D>();
-        //        List<List<Point3D>> SuperList = new List<List<Point3D>>();
-
+      
         public double CurrentTime { get { return timelist[ReadPosition]; } }
         public double TSpan { get { return timelist[ReadPosition + 1] - timelist[ReadPosition + 1]; } }
 

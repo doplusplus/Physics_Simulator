@@ -13,6 +13,8 @@ Model::Model()
 	ComputationUnit.push_back(C);
 }
 
+
+
 Model::~Model()
 {
 	for (auto element : ComputationUnit) { delete element; }

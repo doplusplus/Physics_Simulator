@@ -25,7 +25,12 @@ namespace SimulationTool
 
         bool dispEnbl = true;
         public bool DisplayEnbld { get { return dispEnbl; } set { dispEnbl = value; Notify("DisplayEnbld"); } }
-  
+
+        internal void clearAll()
+        {
+            Time = 0;
+        }
+
         bool enbleLog = true;
         public bool EnableLog { get { return enbleLog; } set { enbleLog = value; Notify("EnableLog"); Notify("DisableLog"); } }
         public bool DisableLog { get { return !enbleLog; } set { enbleLog = !value; } }

@@ -28,7 +28,7 @@ namespace ManagedClasses {
 
 		~ManagedModel() { this->!ManagedModel(); }
 		!ManagedModel() { delete SimModel; }
-
+			
 		void addMaterialPoint(double x, double y, double z, double Vx, double Vy, double Vz, double mass, double charge_)
 		{
 			SimModel->addMatPoint(Point(x, y, z), Vect(Vx, Vy, Vz), mass, charge_);
