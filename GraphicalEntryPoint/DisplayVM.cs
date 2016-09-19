@@ -26,7 +26,8 @@ namespace SimulationTool
             Radius = radius_;
         }
 
-     
+
+        
         public double Xcoord { get; set; }
         public double Ycoord { get; set; }
         public double Zcoord { get; set; }
@@ -70,13 +71,13 @@ namespace SimulationTool
             coordTodisplay = toDisp;
             for (int i = 0; i < toDisp.Count - 2; i = i + 3)
             {
-                circleItems.Add(new circle(toDisp[i] + DisplayWidth / 2 - radius, toDisp[i + 1] + DisplayHeight / 2 - radius, toDisp[i + 2], 2 * radius));
+                circleItems.Add(new circle(toDisp[i] + DisplayWidth / 2 - radius, -toDisp[i + 1] + DisplayHeight / 2 - radius, toDisp[i + 2], 2 * radius));
             }
         }
 
         public void addToDisplay(Point3D P)
         {
-            circleItems.Add(new circle(P.X+ DisplayWidth *0.5 - radius, P.Y + DisplayHeight*0.5  - radius, P.Z, 2 * radius));
+            circleItems.Add(new circle(P.X+ DisplayWidth *0.5 - radius, -P.Y + DisplayHeight*0.5  - radius, P.Z, 2 * radius));
         }
 
 
