@@ -10,18 +10,21 @@
     <Window.Resources>
         <!-- Launch button template -->
         <ControlTemplate   x:Key="LaunchButtonTemplate" TargetType="Button">
-            <Path Name="buttnColor" Fill="LightGray">
-                <Path.Data>
-                    <CombinedGeometry GeometryCombineMode="Exclude">
-                        <CombinedGeometry.Geometry1>
-                            <RectangleGeometry Rect="0,0 50 50"/>
-                        </CombinedGeometry.Geometry1>
-                        <CombinedGeometry.Geometry2>
-                            <EllipseGeometry Center="60,-10" RadiusX="60" RadiusY="60"/>
-                        </CombinedGeometry.Geometry2>
-                    </CombinedGeometry>
-                </Path.Data>
-            </Path>
+            <Grid>
+                <Path Name="buttnColor" Fill="LightGray">
+                    <Path.Data>
+                        <CombinedGeometry GeometryCombineMode="Exclude">
+                            <CombinedGeometry.Geometry1>
+                                <RectangleGeometry Rect="0,0 50 50"/>
+                            </CombinedGeometry.Geometry1>
+                            <CombinedGeometry.Geometry2>
+                                <EllipseGeometry Center="60,-10" RadiusX="60" RadiusY="60"/>
+                            </CombinedGeometry.Geometry2>
+                        </CombinedGeometry>
+                    </Path.Data>
+                </Path>
+                <TextBlock Text="Launch" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            </Grid>
         </ControlTemplate>
 
         <ControlTemplate   x:Key="PrevButtonTemplate" TargetType="Button">
