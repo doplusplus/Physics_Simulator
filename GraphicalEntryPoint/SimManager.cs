@@ -17,7 +17,6 @@ namespace SimulationTool
     {
         ManagedModel M = new ManagedModel();
 
-
         OutputManager outMan;
 
         double accuracy_ = 0.00001;
@@ -30,6 +29,9 @@ namespace SimulationTool
 
         Dictionary<int, Tuple<double, Point3D, Vector3D>> backUp = new Dictionary<int, Tuple<double, Point3D, Vector3D>>(); //element -(mass - coord - force)
         public int card { get; set; }
+
+        public Vector3D GravAction { get; set; }
+        public Vector3D ElecAction { get; set; }
 
         internal void clearAll()
         {
@@ -53,6 +55,8 @@ namespace SimulationTool
 
         public string SimCoordList { get { return sceneElems_.ToString(); } }
 
+
+
         public SimManager(OutputManager OutManager)
         {
             outMan = OutManager;
@@ -61,10 +65,6 @@ namespace SimulationTool
             card = 0;
         }
 
-        internal void simulate(string targetFile)
-        {
-            M.SimulateToFileOnly(Duration_, DispStep_, accuracy_, targetFile);
-        }
 
         public void addActionPoint(uint v, double value1, double value2, double value3)
         {
@@ -88,10 +88,26 @@ namespace SimulationTool
             card++;
         }
 
+        public void computeFieldForces()
+        {
+            for (uint i = 0; i < card; i++)
+            {
+                double m = backUp[Convert.ToInt32(i)].Item1;
+                double q = 1; //until charge is properly implemented
+                M.addActionPoint(i, m * GravAction.X + q * ElecAction.X, m * GravAction.Y + q * ElecAction.Y, m * GravAction.Z + q * ElecAction.Z);
+            }
+        }
+
         public void increment()
         {
             M.simpleIncrement(CompStep_);
             sElem = M.getCoordinates().ToList<double>();
         }
+
+        internal void simulate(string targetFile)
+        {
+            M.SimulateToFileOnly(Duration_, DispStep_, accuracy_, targetFile);
+        }
+
     }
 }

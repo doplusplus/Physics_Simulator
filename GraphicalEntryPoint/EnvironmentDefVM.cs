@@ -146,37 +146,60 @@ namespace SimulationTool
 
         private void setEnvironement(object obj)
         {
-            double x = 0, y = 0, z = 0;
             if (gField)
             {
-                if (!(gX.HasValue && gY.HasValue && gZ.HasValue /*&& gIntensity.HasValue*/)) { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
-                //Vector3D V = Regularize(gX, gY, gZ, gIntensity);
-                x += gX.Value - pushedGravAction.X;
-                y += gY.Value - pushedGravAction.Y;
-                z += gZ.Value - pushedGravAction.Z;
-                pushedGravAction.X = gX.Value;
-                pushedGravAction.Y = gY.Value;
-                pushedGravAction.Z = gZ.Value;
+                if (!(gX.HasValue && gY.HasValue && gZ.HasValue))
+                    { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
+                SMan.GravAction = new Vector3D( gX.Value, gY.Value, gZ.Value);
             }
-
             if (elecField)
             {
-                if (!(eX.HasValue && eY.HasValue && eZ.HasValue /*&& gIntensity.HasValue*/)) { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
-                x += eX.Value - pushedElecAction.X;
-                y += eY.Value - pushedElecAction.Y;
-                z += eZ.Value - pushedElecAction.Z;
-                pushedElecAction.X = eX.Value;
-                pushedElecAction.Y = eY.Value;
-                pushedElecAction.Z = eZ.Value;
-            }
-            for (uint i = 0; i < SMan.card; i++)
-            {
-                SMan.addActionPoint(i, x, y, z);
-            }
+                if (!(eX.HasValue && eY.HasValue && eZ.HasValue))
+                    { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
+                SMan.ElecAction = new Vector3D(eX.Value, eY.Value, eZ.Value);
+            }          
         }
 
 
-        void Notify(string propName)
+
+
+
+            /*   private void setEnvironement(object obj)
+               {
+                   double x = 0, y = 0, z = 0;
+                   if (gField)
+                   {
+                       if (!(gX.HasValue && gY.HasValue && gZ.HasValue 
+                           /*&& gIntensity.HasValue*/
+            //)) { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
+            //Vector3D V = Regularize(gX, gY, gZ, gIntensity);
+            /*           x += gX.Value - pushedGravAction.X;
+                       y += gY.Value - pushedGravAction.Y;
+                       z += gZ.Value - pushedGravAction.Z;
+                       pushedGravAction.X = gX.Value;
+                       pushedGravAction.Y = gY.Value;
+                       pushedGravAction.Z = gZ.Value;
+                   }
+
+                   if (elecField)
+                   {
+                       if (!(eX.HasValue && eY.HasValue && eZ.HasValue /*&& gIntensity.HasValue*/
+            /*         )) { MessageBox.Show("Please set all the gravity parameters or disable it"); return; }
+                     x += eX.Value - pushedElecAction.X;
+                     y += eY.Value - pushedElecAction.Y;
+                     z += eZ.Value - pushedElecAction.Z;
+                     pushedElecAction.X = eX.Value;
+                     pushedElecAction.Y = eY.Value;
+                     pushedElecAction.Z = eZ.Value;
+                 }
+                 for (uint i = 0; i < SMan.card; i++)
+                 {
+                     SMan.addActionPoint(i, x, y, z);
+                 }
+             }
+         */
+
+            void Notify(string propName)
         {
             if (PropertyChanged != null)
             {
@@ -185,4 +208,6 @@ namespace SimulationTool
         }
 
     }
+
+
 }
