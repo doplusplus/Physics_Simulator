@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimulationTool"
         mc:Ignorable="d"
-        Title="MainWindow" Height="375" Width="608">
+        Title="MainWindow" Height="481.667" Width="614">
 
     <Window.Resources>
         <!-- Launch button template -->
@@ -66,10 +66,10 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="33*"/>
-            <RowDefinition Height="87*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="80*"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="100*" MaxHeight="130"/>
+            <RowDefinition Height="80*" MaxHeight="130"/>
         </Grid.RowDefinitions>
 
         <!-- .........................TOOLS SELECTOR ......................... -->
@@ -124,7 +124,7 @@
         </GroupBox>
 
         <!-- .........................Physical environment definition......................... -->
-        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Collapsed"  Grid.Column="0" Grid.RowSpan="4" 
+        <GroupBox Name="EnvDefTools"   Grid.Row="1" Visibility="Visible"  Grid.Column="0" Grid.RowSpan="4" 
                   Padding="2" Background="Turquoise">
             <Grid  Margin="5" ShowGridLines="False">
                 <Grid.RowDefinitions>
@@ -134,47 +134,47 @@
 
                 <StackPanel>
                     <Label Content="Fluid friction" HorizontalAlignment="Stretch"/>
-                    <RadioButton  Content="None"/>
-                    <RadioButton Content="linear (kv)"/>
-                    <RadioButton Content="quadratic (kv²)"/>
-                    <RadioButton Content="lin. -> quad. v>Vc">
-                    </RadioButton>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <RadioButton  Content="None" GroupName="fluidFrictSett" />
+                    <RadioButton Content="linear (kv)" GroupName="fluidFrictSett" />
+                    <RadioButton Content="quadratic (kv²)" GroupName="fluidFrictSett" />
+                    <RadioButton Content="lin. -> quad. v>Vc" GroupName="fluidFrictSett" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0.333,0">
                         <TextBox x:Name="klDef" TextWrapping="Wrap" Text="kLin" Margin="5"/>
                         <TextBox x:Name="kQDef" TextWrapping="Wrap" Text="kQuad" Margin="5"/>
                         <TextBox x:Name="VcDef"  TextWrapping="Wrap" Text="Vc"  Margin="5"/>
                         <Label Content="m/s"/>
-
                     </StackPanel>
 
                     <Label Content="Dry friction" HorizontalAlignment="Stretch"/>
-                    <RadioButton  Content="None"/>
-                    <RadioButton >
+                    <RadioButton  Content="None" GroupName="dryFrictSett" />
+                    <RadioButton GroupName="dryFrictSett">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                             <TextBox x:Name="k_stat" TextWrapping="Wrap" Text="k stat" Margin="5"/>
                             <TextBox x:Name="k_dyn"  TextWrapping="Wrap" Text="k dyn"  Margin="5"/>
                         </StackPanel>
                     </RadioButton>
 
-                    <Label Content="Gravity field" HorizontalAlignment="Stretch" Height="23"/>
-                    <RadioButton Content="None"/>
-                    <RadioButton Content="Uniform along:" />
+                    <Label Content="Gravity field" HorizontalAlignment="Stretch" Height="25"/>
+                    <RadioButton Content="None" IsChecked="{Binding gravityOff}" GroupName="gravSett" />
+                    <RadioButton Content="Uniform along:" IsChecked="{Binding gravityOn}" GroupName="gravSett" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <TextBox x:Name="gX" TextWrapping="Wrap" Text="x" Margin="5"/>
-                        <TextBox x:Name="gY" TextWrapping="Wrap" Text="y" Margin="5"/>
-                        <TextBox x:Name="gZ" TextWrapping="Wrap" Text="z" Margin="5"/>
+                        <TextBox x:Name="gX" TextWrapping="Wrap" Text="{Binding Xgravity}" Margin="5"/>
+                        <TextBox x:Name="gY" TextWrapping="Wrap" Text="{Binding Ygravity}"  Margin="5"/>
+                        <TextBox x:Name="gZ" TextWrapping="Wrap" Text="{Binding Zgravity}"  Margin="5"/>
+                        <TextBox x:Name="gIntensity" TextWrapping="Wrap" Text="{Binding gravityIntensity , Mode=OneWay}" IsEnabled="False" Margin="5"/>
                     </StackPanel>
 
-                    <Label Content="Electric field" HorizontalAlignment="Stretch"/>
-                    <RadioButton Content="None"/>
-                    <RadioButton Content="Electrostatic along:"/>
+                    <Label Content="Electric field" HorizontalAlignment="Stretch" Margin="0"/>
+                    <RadioButton Content="None" IsChecked="{Binding elecOff}" GroupName="elecSett" />
+                    <RadioButton Content="Electrostatic along:" IsChecked="{Binding elecOn}"  GroupName="elecSett" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <TextBox x:Name="eX" TextWrapping="Wrap" Text="x" Margin="5"/>
-                        <TextBox x:Name="eY" TextWrapping="Wrap" Text="y" Margin="5"/>
-                        <TextBox x:Name="eZ" TextWrapping="Wrap" Text="z" Margin="5"/>
+                        <TextBox x:Name="eX" TextWrapping="Wrap" Text="{Binding Xelec}" Margin="1"/>
+                        <TextBox x:Name="eY" TextWrapping="Wrap" Text="{Binding Yelec}" Margin="1"/>
+                        <TextBox x:Name="eZ" TextWrapping="Wrap" Text="{Binding Zelec}" Margin="1"/>
+                        <TextBox x:Name="eIntensity" TextWrapping="Wrap" Text="{Binding  elecIntensity, Mode=OneWay}" IsEnabled="False" Margin="1"/>
                     </StackPanel>
                 </StackPanel>
-                <Button Grid.Row="1"  Content="Update" Padding="1" Margin="0,7,0,0.333"/>
+                <Button Grid.Row="1"  Content="Update" Command="{Binding UpdateEnvironment}"/>
             </Grid>
         </GroupBox>
         <!-- .........................Simulation settings......................... -->

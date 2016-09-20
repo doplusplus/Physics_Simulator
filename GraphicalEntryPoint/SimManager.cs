@@ -29,7 +29,7 @@ namespace SimulationTool
         public bool accuracyMode { get; set; } //accuracy true, RT false
 
         Dictionary<int, Tuple<double, Point3D, Vector3D>> backUp = new Dictionary<int, Tuple<double, Point3D, Vector3D>>(); //element -(mass - coord - force)
-        int card = 0;
+        public int card { get; set; }
 
         internal void clearAll()
         {
@@ -58,6 +58,7 @@ namespace SimulationTool
             outMan = OutManager;
             accuracyMode = true;
             sElem = M.getCoordinates().ToList<double>();
+            card = 0;
         }
 
         internal void simulate(string targetFile)

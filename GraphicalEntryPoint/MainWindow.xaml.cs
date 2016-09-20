@@ -203,17 +203,17 @@ namespace SimulationTool
         {
             elemDef.massInput = "1.0";
             this.elemDef.Xinput = this.elemDef.Yinput = this.elemDef.Zinput = testCoord.ToString(CultureInfo.InvariantCulture); testCoord += 2;
-            this.elemDef.FXinput = this.elemDef.FZinput = this.elemDef.FYinput = "1.0";
+          //  this.elemDef.FXinput = this.elemDef.FZinput = this.elemDef.FYinput = "1.0";
             MaterialPoint.Command.Execute(null);
-            AddAction.Command.Execute(null);
+          //  AddAction.Command.Execute(null);
         }
 
         private void SimTestButton_Click(object sender, RoutedEventArgs e)
         {
-            simSett.Duration = "12";
-            simSett.ComputStep = "0.5";
+            simSett.Duration = "30";
+            simSett.ComputStep = "0.3";
             simSett.RTMode = true;
-            outPan.DisplayStep = "1";
+            outPan.DisplayStep = "0.1";
         }
 
         private void RTtimer_Clicked(object sender, RoutedEventArgs e)
